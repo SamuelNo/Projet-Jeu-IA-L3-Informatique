@@ -1,0 +1,10 @@
+package exception
+
+// Déplacement du joueur interdit: exemple(Dépassement du nombre de pas possible)
+
+public class IllegalMoveException extends IllegalActionException{
+    
+    public IllegalMoveException(){
+        super("Attention! Déplacement interdit");
+    }
+}
