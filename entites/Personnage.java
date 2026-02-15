@@ -84,7 +84,7 @@ public class Personnage {
         }
     }
 
-    public void initialisationAttaque(){
+    private void initialisationAttaque(){
         attaques.add(new Attaques_Legere());
         attaques.add(new Attaques_Lourde());
         attaques.add(new Attaques_Distance());

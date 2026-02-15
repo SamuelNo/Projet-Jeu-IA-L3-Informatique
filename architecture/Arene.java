@@ -1,5 +1,6 @@
 package architecture;
 import entites.*;
+
 public class Arene {
     private int grille[][];
     private static final int TAILLE = 10;
@@ -28,6 +29,12 @@ public class Arene {
         grille[joueur2.getPosition().getLigne()][joueur2.getPosition().getColonne()] = 2;
 
     }
+
+    public void updatePosition(){
+        grille[joueur1.getPosition().getLigne()][joueur1.getPosition().getColonne()] = 1;
+        grille[joueur2.getPosition().getLigne()][joueur2.getPosition().getColonne()] = 2;
+    }
+
     public void getArene(){
         String[] indiceGrille = indice.split("");
         System.out.print("    ");
@@ -44,8 +51,13 @@ public class Arene {
         }
     }
 
+
+
     public static void main(String[] args){
         Arene a = new Arene(new Personnage("Samuel"), new Personnage("Brahim"));
         a.getArene();
+
+        Personnage p = new Personnage("Samuel");
+        System.out.println(p.estEnVie());
     }
 }
