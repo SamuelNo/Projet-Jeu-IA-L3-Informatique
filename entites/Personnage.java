@@ -2,28 +2,30 @@ package entites;
 import java.util.ArrayList;
 import java.util.List;
 
-import attaque.Attaques;
-import attaque.Attaques_Distance;
-import attaque.Attaques_Legere;
-import attaque.Attaques_Lourde;
+import attaques.Attaques;
+import attaques.Attaques_Distance;
+import attaques.Attaques_Legere;
+import attaques.Attaques_Lourde;
 
 public class Personnage {
-    protected String nom;
-    protected double hp;
-    protected double energie;
-    protected int pas;
-    protected int nbparades;
-    protected int nbrepos;
-    protected Position position;
-    protected List<Attaques> attaques;
-    protected Actions action;
-    // protected String statut;
+    private String nom;
+    private double hp;
+    private double energie;
+    private int pas;
+    private int nbparades;
+    private int nbrepos;
+    private Position position;
+    private List<Attaques> attaques;
+    private Arme arme;
+    private Actions action;
+    // private String statut;
     // Pour connaître le statut du personnage en jeu, genre "Etourdi", "En parade" etc etc
 
-    public Personnage(String nom){
+    public Personnage(String nom, Arme arme){
         this.nom = nom;
-        this.hp = 100;
-        this.energie = 50;
+        this.arme = arme;
+        this.hp = 120;
+        this.energie = 80;
         this.pas = 4;
         this.nbparades = 3;
         this.nbrepos = 0;
@@ -34,7 +36,10 @@ public class Personnage {
     }
 
 
-    public Personnage(double hp, double energie, int pas, int nbparades, int nbrepos){
+
+    public Personnage(String nom, Arme arme, double hp, double energie, int pas, int nbparades, int nbrepos){
+        this.nom = nom;
+        this.arme = arme;
         this.hp = hp;
         this.energie = energie;
         this.pas = pas;
@@ -48,6 +53,10 @@ public class Personnage {
 
     public double getHp(){
         return this.hp;
+    }
+
+    public void setHp(double supplement){
+        this.hp += supplement;
     }
 
     public double getEnergie(){
@@ -75,6 +84,18 @@ public class Personnage {
         this.position = position;
     }
 
+    public String getNom(){
+        return nom;
+    }
+
+    public Arme getArme(){
+        return arme;
+    }
+
+    public List<Attaques> getAttaques(){
+        return attaques;
+    }
+
     public boolean estEnVie(){
         if (this.hp <= 0){
             return false;
@@ -90,10 +111,16 @@ public class Personnage {
         attaques.add(new Attaques_Distance());
     }
 
+    @Override 
+    public String toString(){
+        StringBuffer sb = new StringBuffer("");
+        sb.append("Nom: "+nom+" -> ");
+        sb.append("Arme: "+ arme.getNom()+", ");
+        for(int i = 0; i<attaques.size();i++){
+            sb.append(attaques.get(i).toString()+" ; ");
+        }
+        sb.append(" PV : "+hp);
 
-    public static void main(String[] args) {
-        Personnage p1 = new Personnage("Legias");
-        System.out.println(p1.attaques.get(1).getDegat());
-        System.out.println(p1.estEnVie());
+        return sb.toString();
     }
 }

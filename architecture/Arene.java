@@ -51,13 +51,9 @@ public class Arene {
         }
     }
 
+    public void getJoueur(){
 
-
-    public static void main(String[] args){
-        Arene a = new Arene(new Personnage("Samuel"), new Personnage("Brahim"));
-        a.getArene();
-
-        Personnage p = new Personnage("Samuel");
-        System.out.println(p.estEnVie());
+        System.out.println("\nJoueur 1: "+joueur1.toString());
+        System.out.println("\nJoueur 2: "+joueur2.toString());
     }
 }
