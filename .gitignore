@@ -1,0 +1,16 @@
+# On ignore tout ce qui finit par .class, peu importe le dossier
+**/*.class
+
+# On ignore les fichiers système et IDE
+.DS_Store
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# On ignore les dossiers de build courants
+bin/
+out/
+target/

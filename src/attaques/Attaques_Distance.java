@@ -2,7 +2,7 @@ package attaques;
 
 public class Attaques_Distance extends Attaques {
     public Attaques_Distance(){
-        super("AD",20,3);
+        super("AD",20.0,3);
     }
 }  
 

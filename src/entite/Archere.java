@@ -1,4 +1,4 @@
-package entites;
+package entite;
 
 import attaques.Attaques;
 import attaques.Attaques_Distance;

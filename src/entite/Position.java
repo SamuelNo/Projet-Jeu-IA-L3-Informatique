@@ -1,4 +1,4 @@
-package entites;
+package entite;
 public class Position {
     
     private int ligne;
