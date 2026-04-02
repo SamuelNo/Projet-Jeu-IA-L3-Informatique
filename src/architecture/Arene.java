@@ -1,6 +1,7 @@
 package architecture;
 
 import entite.*;
+import java.util.Random; 
 
 /**
  * Représente l'arène de combat et l'état de sa grille.
@@ -23,10 +24,9 @@ public class Arene {
         this.joueur1 = joueur1;
         this.joueur2 = joueur2;
         initialiserGrille();
+        genererObstacles(10); 
     }
 
-    // Initialisation de la grille: toutes les cases sont pour l'instant à 0 (vide);
-    // case = 1 (Joueur 1); case = 2 (Joueur 2)
     /**
      * Initialise complètement la grille et place les deux joueurs aux coins.
      */
@@ -40,22 +40,33 @@ public class Arene {
         joueur2.setPosition(new Position(TAILLE - 1, TAILLE - 1));
         grille[joueur1.getPosition().getLigne()][joueur1.getPosition().getColonne()] = 1;
         grille[joueur2.getPosition().getLigne()][joueur2.getPosition().getColonne()] = 2;
+    }
 
+    private void genererObstacles(int nbObstacles) {
+        Random rand = new Random();
+        int obstaclesPlaces = 0;
+        
+        while (obstaclesPlaces < nbObstacles) {
+            int l = rand.nextInt(TAILLE);
+            int c = rand.nextInt(TAILLE);
+            
+            if (grille[l][c] == 0) {
+                grille[l][c] = -1;
+                obstaclesPlaces++;
+            }
+        }
     }
 
     /**
      * Recalcule la grille selon les positions courantes des joueurs.
      */
     public void updateFullGrille() {
-        // 1. Tout remettre à zéro (ou laisser les murs/objets fixes)
         for (int i = 0; i < TAILLE; i++) {
             for (int j = 0; j < TAILLE; j++) {
-                // La valeur -1 est réservée aux obstacles fixes éventuels.
-                if (grille[i][j] != -1) // Si c'est pas un mur
+                if (grille[i][j] != -1) 
                     grille[i][j] = 0;
             }
         }
-        // 2. Placer les entités vivantes
         grille[joueur1.getPosition().getLigne()][joueur1.getPosition().getColonne()] = 1;
         grille[joueur2.getPosition().getLigne()][joueur2.getPosition().getColonne()] = 2;
     }
@@ -103,4 +114,7 @@ public class Arene {
         System.out.println("Joueur 2 : " + joueur2.infoPersoString() + "\n");
     }
     
+    public int[][] getGrille() {
+        return grille;
+    }
 }

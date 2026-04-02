@@ -1,10 +1,11 @@
 package architecture;
 
+import entite.*;
+import exception.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import entite.*;
-import exception.*;
+
 public class Jeu {
 
     private List<Personnage> listePersonnages;
@@ -25,7 +26,6 @@ public class Jeu {
         System.out.println("\nEntrer le nom du personnage de votre choix :");
         String nom = sc.nextLine();
 
-        // Au lieu de retourner l'objet de la liste, on en crée un nouveau
         if (nom.equalsIgnoreCase("chevalier"))
             persoChoisi = new Chevalier();
         if (nom.equalsIgnoreCase("archère"))
@@ -36,7 +36,7 @@ public class Jeu {
         if(persoChoisi == null)
             throw new NullPointerException("Personnage non reconnu, veuillez réessayer.");
 
-        return persoChoisi; // Ou gérer l'erreur si le nom est faux
+        return persoChoisi; 
     }
 
     private void initialisation(){
@@ -57,20 +57,36 @@ public class Jeu {
                 System.out.println("\nChoix validé, voici votre arène :\n");
                 arene.getArene();
                 arene.afficherJoueur();
+                
+                FenetreArene.lancerFenetre(arene);
+                
             } catch (NullPointerException e) {
                 System.out.println("\nErreur : " + e.getMessage() + "\n");
              }
         }
-
     }
-
 
     public void tour(Personnage attaquant, Personnage defenseur) {
         boolean tourReussi = false;
         while (!tourReussi) {
             try {
                 System.out.println("\nChoisissez une case de destination pour votre personnage (ex : A1, B3, etc) :");
-                String destination = sc.nextLine();
+                String destination = sc.nextLine().toUpperCase();
+                
+                // parsing a1 b3 pour la grille
+                if (destination.length() >= 2) {
+                    int ligne = destination.charAt(0) - 'A';
+                    int colonne = destination.charAt(1) - '0';
+                    
+                    if (ligne >= 0 && ligne < 10 && colonne >= 0 && colonne < 10 && arene.getGrille()[ligne][colonne] != -1) {
+                        attaquant.setPosition(new Position(ligne, colonne));
+                        arene.updateFullGrille();
+                        FenetreArene.rafraichir(); 
+                    } else {
+                        System.out.println("\ndéplacement impossible (hors carte ou obstacle).");
+                    }
+                }
+
                 System.out.println("\nChoix d'action :\nA : Attaque\nP : Parade\nR : Repos");
                 String action = sc.nextLine();
                 switch (action.toLowerCase()) {
@@ -81,7 +97,6 @@ public class Jeu {
                         attaquant.attaquer(defenseur, attaque);
                         tourReussi = true;
                         break;
-
                         
                     case "p":
                         attaquant.parader();
@@ -97,20 +112,19 @@ public class Jeu {
                 System.out.println("\nAction impossible : " + e.getMessage() + "\n");
             }
         }
-        sc.close();
     }
 
     public void star() {
         while (arene.getJoueur1().getHp() > 0 && arene.getJoueur2().getHp() > 0) {
             arene.getArene();
-            System.out.println("\nJoueur 1, à vous de jouer : " + arene.getJoueur1().toString() + "\n");
+            System.out.println("\nJoueur 1, à vous de jouer : " + arene.getJoueur1().getNom() + "\n");
             System.out.println(arene.getJoueur1().statsJoueurString() + "\n");
             tour(arene.getJoueur1(), arene.getJoueur2());
             if (arene.getJoueur2().getHp() <= 0) {
                 System.out.println("\nJoueur 1 a gagné !\n");
                 break;
             }
-            System.out.println("\nJoueur 2, à vous de jouer : " + arene.getJoueur2().toString() + "\n");
+            System.out.println("\nJoueur 2, à vous de jouer : " + arene.getJoueur2().getNom() + "\n");
             System.out.println(arene.getJoueur2().statsJoueurString() + "\n");
             tour(arene.getJoueur2(), arene.getJoueur1());
             if (arene.getJoueur1().getHp() <= 0) {
