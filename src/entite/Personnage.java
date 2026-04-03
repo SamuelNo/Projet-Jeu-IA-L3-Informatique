@@ -37,7 +37,7 @@ public class Personnage {
         this.pas = 4;
         this.nbparades = 3;
         this.enParade = false;
-        this.nbrepos = 0;
+        this.nbrepos = 1;
         this.position = null;
         this.attaques = new ArrayList<>();
         initialisationAttaque();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Jeu {
 
     private List<Personnage> listePersonnages;
@@ -66,26 +67,34 @@ public class Jeu {
         }
     }
 
-    public void tour(Personnage attaquant, Personnage defenseur) {
+    private void move(String destination, Personnage joueur) throws IllegalMoveException {
+        // parsing a1 b3 pour la grille
+                if (destination.length() >= 2) {
+                    int ligne = destination.charAt(0) - 'A';
+                    int colonne = destination.charAt(1) - '0';
+                    
+                    if (ligne >= 0 && ligne < 10 && colonne >= 0 && colonne < 10 && arene.getGrille()[ligne][colonne] != -1) {
+                        joueur.setPosition(new Position(ligne, colonne));
+                        arene.updateFullGrille();
+                        FenetreArene.rafraichir(); 
+                    } else {
+                        throw new IllegalMoveException("Déplacement impossible (hors carte ou obstacle).");
+                    }
+                } else {
+                    throw new IllegalMoveException("Format de destination invalide.");
+                }
+    }
+
+        
+
+    public void tour(Personnage attaquant, Personnage cible) {
         boolean tourReussi = false;
         while (!tourReussi) {
             try {
                 System.out.println("\nChoisissez une case de destination pour votre personnage (ex : A1, B3, etc) :");
                 String destination = sc.nextLine().toUpperCase();
                 
-                // parsing a1 b3 pour la grille
-                if (destination.length() >= 2) {
-                    int ligne = destination.charAt(0) - 'A';
-                    int colonne = destination.charAt(1) - '0';
-                    
-                    if (ligne >= 0 && ligne < 10 && colonne >= 0 && colonne < 10 && arene.getGrille()[ligne][colonne] != -1) {
-                        attaquant.setPosition(new Position(ligne, colonne));
-                        arene.updateFullGrille();
-                        FenetreArene.rafraichir(); 
-                    } else {
-                        System.out.println("\ndéplacement impossible (hors carte ou obstacle).");
-                    }
-                }
+                move(destination, attaquant);
 
                 System.out.println("\nChoix d'action :\nA : Attaque\nP : Parade\nR : Repos");
                 String action = sc.nextLine();
@@ -94,7 +103,7 @@ public class Jeu {
                     case "a":
                         System.out.println("\nChoix de l'attaque :\nAL : Attaque légère\nAD : Attaque à distance\nALD : Attaque lourde");
                         String attaque = sc.nextLine();
-                        attaquant.attaquer(defenseur, attaque);
+                        attaquant.attaquer(cible, attaque);
                         tourReussi = true;
                         break;
                         
@@ -114,7 +123,7 @@ public class Jeu {
         }
     }
 
-    public void star() {
+    public void start() {
         while (arene.getJoueur1().getHp() > 0 && arene.getJoueur2().getHp() > 0) {
             arene.getArene();
             System.out.println("\nJoueur 1, à vous de jouer : " + arene.getJoueur1().getNom() + "\n");
@@ -132,6 +141,10 @@ public class Jeu {
                 break;
             }
         }
+    }
+
+    public Arene getArene() {
+        return arene;
     }
 
     public void fermer() {
