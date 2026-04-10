@@ -25,6 +25,7 @@ public class Arene {
         this.joueur2 = joueur2;
         initialiserGrille();
         genererObstacles(10); 
+        genererBonus(3, 3); // 3 parades, 3 energies
     }
 
     /**
@@ -57,13 +58,31 @@ public class Arene {
         }
     }
 
+    // generation des cases bonus
+    private void genererBonus(int nbParades, int nbEnergie) {
+        Random rand = new Random();
+        int places = 0;
+        while (places < nbParades) {
+            int l = rand.nextInt(TAILLE);
+            int c = rand.nextInt(TAILLE);
+            if (grille[l][c] == 0) { grille[l][c] = 3; places++; }
+        }
+        places = 0;
+        while (places < nbEnergie) {
+            int l = rand.nextInt(TAILLE);
+            int c = rand.nextInt(TAILLE);
+            if (grille[l][c] == 0) { grille[l][c] = 4; places++; }
+        }
+    }
+
     /**
      * Recalcule la grille selon les positions courantes des joueurs.
      */
     public void updateFullGrille() {
         for (int i = 0; i < TAILLE; i++) {
             for (int j = 0; j < TAILLE; j++) {
-                if (grille[i][j] != -1) 
+                // on ne supprime pas les obstacles (-1) ni les bonus (3, 4)
+                if (grille[i][j] != -1 && grille[i][j] != 3 && grille[i][j] != 4) 
                     grille[i][j] = 0;
             }
         }

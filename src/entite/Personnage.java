@@ -102,6 +102,10 @@ public class Personnage {
         this.energie += supplement;
     }
 
+    public int getParade() {
+        return this.nbparades;
+    }
+
     /**
      * Augmente le nombre de repos effectués.
      * @param supplement Le nombre de repos à ajouter
