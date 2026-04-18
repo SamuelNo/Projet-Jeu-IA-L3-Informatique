@@ -1,6 +1,8 @@
 package architecture;
 
 import entite.*;
+import exception.IllegalActionException;
+import exception.IllegalAttackException;
 import attaques.*;
 import java.awt.*;
 import javax.swing.*;
@@ -70,7 +72,7 @@ public class Jeu {
         for (String c : classes) {
             JButton btn = new JButton(c);
             btn.setBackground(new Color(60, 62, 74));
-            btn.setForeground(Color.WHITE);
+            btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -152,7 +154,7 @@ public class Jeu {
         }
     }
 
-    public void clicAction(String action) {
+    public void clicAction(String action) throws IllegalAttackException {
         if (!etat.equals("ACTION") && !etat.equals("MOUVEMENT")) return; 
 
         try {
@@ -170,8 +172,7 @@ public class Jeu {
                     }
                     
                     if (portee > 0 && distAtt > portee) {
-                        JOptionPane.showMessageDialog(null, "Cible hors de portée pour cette attaque ! (portée max : " + portee + ")");
-                        return;
+                        throw new IllegalAttackException("Cible hors de portée pour cette attaque ! (portée max : " + portee + ")");
                     }
                     
                     etat = "CIBLE";
@@ -192,7 +193,7 @@ public class Jeu {
                     finDeTour();
                     break;
             }
-        } catch (Exception e) {
+        } catch (IllegalActionException e) {
             JOptionPane.showMessageDialog(null, "Action impossible : " + e.getMessage());
         }
     }

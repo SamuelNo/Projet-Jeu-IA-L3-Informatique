@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import entite.Personnage;
+import exception.*;
 
 public class FenetreArene extends JPanel {
     private Arene arene;
@@ -173,18 +174,54 @@ public class FenetreArene extends JPanel {
         JButton[] boutons = {btnAL, btnALo, btnAD, btnParade, btnRepos, btnPasser};
         for (JButton b : boutons) {
             b.setBackground(new Color(60, 62, 74));
-            b.setForeground(Color.WHITE);
+            b.setForeground(Color.BLACK);
             b.setFocusPainted(false);
             b.setFont(new Font("Arial", Font.BOLD, 12));
             panelActions.add(b);
         }
 
-        btnAL.addActionListener(e -> jeu.clicAction("AL"));
-        btnALo.addActionListener(e -> jeu.clicAction("ALD"));
-        btnAD.addActionListener(e -> jeu.clicAction("AD"));
-        btnParade.addActionListener(e -> jeu.clicAction("P"));
-        btnRepos.addActionListener(e -> jeu.clicAction("R"));
-        btnPasser.addActionListener(e -> jeu.clicAction("T")); // 'T' pour Terminer
+        btnAL.addActionListener(e -> {
+            try {
+                jeu.clicAction("AL");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        });
+        btnALo.addActionListener(e -> {
+            try {
+                jeu.clicAction("ALD");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        });
+        btnAD.addActionListener(e -> {
+            try {
+                jeu.clicAction("AD");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        });
+        btnParade.addActionListener(e -> {
+            try {
+                jeu.clicAction("P");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        });
+        btnRepos.addActionListener(e -> {
+            try {
+                jeu.clicAction("R");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        });
+        btnPasser.addActionListener(e -> {
+            try {
+                jeu.clicAction("T");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        }); // 'T' pour Terminer
 
         fenetre.add(panelActions, BorderLayout.SOUTH);
 
