@@ -15,6 +15,8 @@ public class Jeu {
     
     private String etat = "INIT"; 
     private String attaqueEnCours = "";
+    private int pmRestants = 0;
+    private boolean attaqueDejaEffectuee = false;
     
     // Variable temporaire pour la sélection
     private String classChoisie = null;
@@ -43,9 +45,13 @@ public class Jeu {
         joueurActif = joueur1;
         adversaire = joueur2;
         etat = "MOUVEMENT";
+        pmRestants = joueurActif.getPas();
+        attaqueDejaEffectuee = false;
         
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-        FenetreArene.MAJTexte("Tour de " + joueurActif.getNom() + " (J1) : Cliquez sur une case pour bouger.");
+        FenetreArene.MAJTexte(
+                "Tour de " + joueurActif.getNom() + " (J1) : " + pmRestants + " PM disponibles."
+        );
         FenetreArene.rafraichir();
     }
 
@@ -123,8 +129,9 @@ public class Jeu {
             }
 
             int distMouv = Math.abs(ligne - joueurActif.getPosition().getLigne()) + Math.abs(colonne - joueurActif.getPosition().getColonne());
-            if (distMouv > joueurActif.getPas()) {
-                JOptionPane.showMessageDialog(null, "Déplacement trop grand (max " + joueurActif.getPas() + " pas).");
+            if (distMouv == 0) return;
+            if (distMouv > pmRestants) {
+                JOptionPane.showMessageDialog(null, "Déplacement trop grand (PM restants : " + pmRestants + ").");
                 return;
             }
 
@@ -137,20 +144,24 @@ public class Jeu {
             }
 
             joueurActif.setPosition(new Position(ligne, colonne));
+            pmRestants -= distMouv;
             arene.updateFullGrille();
             
-            etat = "ACTION";
+            etat = "MOUVEMENT";
             FenetreArene.MAJStats(joueur1, joueur2, joueurActif); 
-            FenetreArene.MAJTexte(joueurActif.getNom() + " s'est déplacé. Choisissez une action en bas.");
+            String infoAttaque = attaqueDejaEffectuee ? " Attaque déjà utilisée." : " Vous pouvez encore attaquer.";
+            FenetreArene.MAJTexte(
+                    joueurActif.getNom() + " s'est déplacé (" + pmRestants + " PM restants)." + infoAttaque
+            );
             FenetreArene.rafraichir();
 
         } else if (etat.equals("CIBLE")) {
             if (adversaire.getPosition().getLigne() == ligne && adversaire.getPosition().getColonne() == colonne) {
                 executerAttaque();
             } else {
-                JOptionPane.showMessageDialog(null, "Vous devez cliquer sur " + adversaire.getNom() + " !");
-                etat = "ACTION"; 
-                FenetreArene.MAJTexte("Action annulée. Choisissez une attaque via les boutons.");
+                etat = "MOUVEMENT";
+                FenetreArene.MAJTexte("Ciblage annulé. Choisissez une action.");
+                FenetreArene.rafraichir();
             }
         }
     }
@@ -165,6 +176,9 @@ public class Jeu {
                 case "AL":
                 case "ALD":
                 case "AD":
+                    if (attaqueDejaEffectuee) {
+                        throw new IllegalActionException("Attaque déjà utilisée ce tour.");
+                    }
                     attaqueEnCours = action;
                     
                     int portee = 0;
@@ -201,10 +215,6 @@ public class Jeu {
                     joueurActif.seReposer(); 
                     finDeTour(); 
                     break;
-
-                case "T":
-                    finDeTour();
-                    break;
                 default:
                     throw new IllegalActionException("Action inconnue : " + action);
             }
@@ -227,7 +237,11 @@ public class Jeu {
                 );
             }
 
+            double hpAvant = adversaire.getHp();
+            boolean paradeAvant = adversaire.isEnParade();
             joueurActif.attaquer(adversaire, attaqueEnCours);
+            attaqueDejaEffectuee = true;
+            attaqueEnCours = "";
             FenetreArene.MAJStats(joueur1, joueur2, joueurActif); 
             
             if (adversaire.getHp() <= 0) {
@@ -235,12 +249,20 @@ public class Jeu {
                 JOptionPane.showMessageDialog(null, "Coup de grâce ! " + joueurActif.getNom() + " a gagné le combat !");
                 System.exit(0);
             } else {
-                JOptionPane.showMessageDialog(null, "Attaque réussie ! Il reste " + adversaire.getHp() + " PV à " + adversaire.getNom());
-                finDeTour();
+                etat = "MOUVEMENT";
+                if (paradeAvant && adversaire.getHp() == hpAvant) {
+                    JOptionPane.showMessageDialog(null, "Attaque parée ! " + adversaire.getNom() + " ne perd aucun PV.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Attaque réussie ! Il reste " + adversaire.getHp() + " PV à " + adversaire.getNom());
+                }
+                FenetreArene.MAJTexte(
+                        "Attaque terminée. " + pmRestants + " PM restants pour te repositionner, ou Repos pour finir le tour."
+                );
+                FenetreArene.rafraichir();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erreur attaque : " + e.getMessage());
-            etat = "ACTION";
+            etat = "MOUVEMENT";
             FenetreArene.MAJTexte("Choisissez une action via les boutons.");
         }
     }
@@ -250,10 +272,15 @@ public class Jeu {
         joueurActif = adversaire;
         adversaire = temp;
         etat = "MOUVEMENT";
+        attaqueEnCours = "";
+        attaqueDejaEffectuee = false;
+        pmRestants = joueurActif.getPas();
         
         String numJ = (joueurActif == joueur1) ? "(J1)" : "(J2)";
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-        FenetreArene.MAJTexte("Tour de " + joueurActif.getNom() + " " + numJ + " : Cliquez sur une case pour bouger.");
+        FenetreArene.MAJTexte(
+                "Tour de " + joueurActif.getNom() + " " + numJ + " : " + pmRestants + " PM disponibles."
+        );
         FenetreArene.rafraichir();
     }
 
@@ -264,6 +291,7 @@ public class Jeu {
     public Personnage getAdversaire() { return adversaire; }
     public String getEtat() { return etat; }
     public String getAttaqueEnCours() { return attaqueEnCours; }
+    public int getPmRestants() { return pmRestants; }
 
     public int getPorteeAttaque(String typeAttaque) {
         if (typeAttaque == null || typeAttaque.isEmpty() || joueurActif == null) return 0;

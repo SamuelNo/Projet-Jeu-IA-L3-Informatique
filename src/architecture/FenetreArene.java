@@ -188,10 +188,9 @@ public class FenetreArene extends JPanel {
         JButton btnAD = new JButton("Att. Distance");
         JButton btnParade = new JButton("Parade");
         JButton btnRepos = new JButton("Se Reposer (+ Énergie)");
-        JButton btnPasser = new JButton("Terminer son tour"); // Bouton separé
 
         // Style des boutons
-        JButton[] boutons = {btnAL, btnALo, btnAD, btnParade, btnRepos, btnPasser};
+        JButton[] boutons = {btnAL, btnALo, btnAD, btnParade, btnRepos};
         for (JButton b : boutons) {
             b.setBackground(new Color(60, 62, 74));
             b.setForeground(new Color(235, 235, 235));
@@ -248,14 +247,6 @@ public class FenetreArene extends JPanel {
                 JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
             }
         });
-        btnPasser.addActionListener(e -> {
-            try {
-                jeu.clicAction("T");
-            } catch (IllegalActionException ex) {
-                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
-            }
-        }); // 'T' pour Terminer
-
         fenetre.add(panelActions, BorderLayout.SOUTH);
 
         // --- PANNEAU LATERAL DROIT (STATS) ---
@@ -348,7 +339,7 @@ public class FenetreArene extends JPanel {
 
         int dist = Math.abs(ligne - jeu.getJoueurActif().getPosition().getLigne())
                 + Math.abs(col - jeu.getJoueurActif().getPosition().getColonne());
-        return dist <= jeu.getJoueurActif().getPas();
+        return dist > 0 && dist <= jeu.getPmRestants();
     }
 
     private boolean caseDansPorteeAttaque(int ligne, int col) {

@@ -22,9 +22,7 @@ public class MoteurCoups {
             if (actif.getNbParades() > 0) {
                 coups.add(new Coup(dest, Coup.TypeAction.PARADE, null));
             }
-            if (actif.getNbRepos() > 0) {
-                coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
-            }
+            coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
 
             int distApresDeplacement = distanceManhattan(dest, adversaire.getPosition());
             for (Etat.AttaqueInfo attaque : actif.getAttaques()) {
@@ -52,10 +50,7 @@ public class MoteurCoups {
                 }
                 break;
             case REPOS:
-                if (actif.getNbRepos() > 0) {
-                    actif.setEnergie(actif.getEnergie() + 20.0);
-                    actif.setNbRepos(actif.getNbRepos() - 1);
-                }
+                actif.setEnergie(actif.getEnergie() + 20.0);
                 break;
             case ATTAQUE:
                 appliquerAttaque(actif, adversaire, c.getTypeAttaque());
