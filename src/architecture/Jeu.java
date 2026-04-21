@@ -3,6 +3,7 @@ package architecture;
 import entite.*;
 import exception.IllegalActionException;
 import exception.IllegalAttackException;
+import ia.Etat;
 import attaques.*;
 import java.awt.*;
 import javax.swing.*;
@@ -155,7 +156,9 @@ public class Jeu {
     }
 
     public void clicAction(String action) throws IllegalAttackException {
-        if (!etat.equals("ACTION") && !etat.equals("MOUVEMENT")) return; 
+        boolean estAttaque = "AL".equals(action) || "ALD".equals(action) || "AD".equals(action);
+        // En mode CIBLE, on autorise de changer d'attaque à la volée.
+        if (!etat.equals("ACTION") && !etat.equals("MOUVEMENT") && !(etat.equals("CIBLE") && estAttaque)) return; 
 
         try {
             switch (action) {
@@ -164,19 +167,29 @@ public class Jeu {
                 case "AD":
                     attaqueEnCours = action;
                     
-                    int distAtt = Math.abs(adversaire.getPosition().getLigne() - joueurActif.getPosition().getLigne()) + 
-                                  Math.abs(adversaire.getPosition().getColonne() - joueurActif.getPosition().getColonne());
                     int portee = 0;
+                    double coutEnergie = -1;
                     for (Attaques att : joueurActif.getAttaques()) {
-                        if (att.getType_attaque().equalsIgnoreCase(action)) portee = att.getPortee();
+                        if (att.getType_attaque().equalsIgnoreCase(action)) {
+                            portee = att.getPortee();
+                            coutEnergie = att.getDegat();
+                        }
                     }
-                    
-                    if (portee > 0 && distAtt > portee) {
-                        throw new IllegalAttackException("Cible hors de portée pour cette attaque ! (portée max : " + portee + ")");
+
+                    if (portee == 0) {
+                        throw new IllegalAttackException("Type d'attaque inconnu.");
                     }
-                    
+                    if (joueurActif.getEnergie() < coutEnergie) {
+                        throw new IllegalAttackException(
+                                "Énergie insuffisante pour " + action + " (coût : " + coutEnergie + ")."
+                        );
+                    }
+
                     etat = "CIBLE";
-                    FenetreArene.MAJTexte("Cliquez sur " + adversaire.getNom() + " sur la grille pour l'attaquer.");
+                    FenetreArene.MAJTexte(
+                            "Attaque " + action + " sélectionnée (portée " + portee + "). Cliquez une cible."
+                    );
+                    FenetreArene.rafraichir();
                     break;
                     
                 case "P":
@@ -192,6 +205,8 @@ public class Jeu {
                 case "T":
                     finDeTour();
                     break;
+                default:
+                    throw new IllegalActionException("Action inconnue : " + action);
             }
         } catch (IllegalActionException e) {
             JOptionPane.showMessageDialog(null, "Action impossible : " + e.getMessage());
@@ -200,6 +215,18 @@ public class Jeu {
 
     private void executerAttaque() {
         try {
+            int distance = Math.abs(adversaire.getPosition().getLigne() - joueurActif.getPosition().getLigne()) +
+                    Math.abs(adversaire.getPosition().getColonne() - joueurActif.getPosition().getColonne());
+            int portee = getPorteeAttaque(attaqueEnCours);
+            if (portee <= 0) {
+                throw new IllegalAttackException("Type d'attaque invalide.");
+            }
+            if (distance > portee) {
+                throw new IllegalAttackException(
+                        "Cible hors de portée pour " + attaqueEnCours + " (portée max : " + portee + ")."
+                );
+            }
+
             joueurActif.attaquer(adversaire, attaqueEnCours);
             FenetreArene.MAJStats(joueur1, joueur2, joueurActif); 
             
@@ -233,4 +260,29 @@ public class Jeu {
     public void start() {}
     public void fermer() {}
     public Arene getArene() { return arene; }
+    public Personnage getJoueurActif() { return joueurActif; }
+    public Personnage getAdversaire() { return adversaire; }
+    public String getEtat() { return etat; }
+    public String getAttaqueEnCours() { return attaqueEnCours; }
+
+    public int getPorteeAttaque(String typeAttaque) {
+        if (typeAttaque == null || typeAttaque.isEmpty() || joueurActif == null) return 0;
+        for (Attaques att : joueurActif.getAttaques()) {
+            if (att.getType_attaque().equalsIgnoreCase(typeAttaque)) {
+                return att.getPortee();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Exporte l'état courant du jeu vers une représentation dédiée à l'IA.
+     */
+    public Etat exporterEtatIA() {
+        return new Etat(
+                Etat.copieGrille(arene.getGrille()),
+                Etat.JoueurEtat.fromPersonnage(joueurActif),
+                Etat.JoueurEtat.fromPersonnage(adversaire)
+        );
+    }
 }

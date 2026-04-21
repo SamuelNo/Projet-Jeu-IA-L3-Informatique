@@ -11,6 +11,12 @@ public class FenetreArene extends JPanel {
     private Jeu jeu;
     private static final int TAILLE_CASE = 60; 
     private static final int MARGE = 30; 
+    private static final Color COULEUR_FOND = new Color(40, 42, 54);
+    private static final Color COULEUR_CASE_VIDE = new Color(90, 92, 106);
+    private static final Color COULEUR_CASE_HIGHLIGHT = new Color(70, 130, 180, 95);
+    private static final Color COULEUR_CASE_CIBLE = new Color(220, 20, 60, 130);
+    private static final Color COULEUR_PORTEE_ATTAQUE = new Color(255, 140, 0, 95);
+    private static final Color COULEUR_CASE_SELECTION = new Color(255, 255, 255, 70);
     private static FenetreArene instance; 
     
     // elements d'interface
@@ -25,7 +31,7 @@ public class FenetreArene extends JPanel {
     public FenetreArene(Jeu jeu) {
         this.jeu = jeu;
         setPreferredSize(new Dimension(10 * TAILLE_CASE + MARGE * 2, 10 * TAILLE_CASE + MARGE * 2));
-        setBackground(new Color(40, 42, 54)); // fond sombre
+        setBackground(COULEUR_FOND); // fond sombre
 
         // ecouteur de clics
         this.addMouseListener(new MouseAdapter() {
@@ -49,21 +55,10 @@ public class FenetreArene extends JPanel {
                 int ligne = (e.getY() - MARGE) / TAILLE_CASE;
                 
                 if (ligne >= 0 && ligne < 10 && col >= 0 && col < 10) {
-                    // On n'active le hover QUE sur les cases vides (0) ou bonus (3, 4)
-                    int caseCible = arene.getGrille()[ligne][col];
-                    if (caseCible == 0 || caseCible == 3 || caseCible == 4) {
-                        if (hoverLigne != ligne || hoverCol != col) {
-                            hoverLigne = ligne;
-                            hoverCol = col;
-                            rafraichir();
-                        }
-                    } else {
-                        // Si on passe sur un mur (-1) ou un joueur (1, 2), on annule le hover
-                        if (hoverLigne != -1) {
-                            hoverLigne = -1;
-                            hoverCol = -1;
-                            rafraichir();
-                        }
+                    if (hoverLigne != ligne || hoverCol != col) {
+                        hoverLigne = ligne;
+                        hoverCol = col;
+                        rafraichir();
                     }
                 } else {
                     if (hoverLigne != -1) {
@@ -83,6 +78,7 @@ public class FenetreArene extends JPanel {
         
         int[][] grille = arene.getGrille(); 
         g.setFont(new Font("Arial", Font.BOLD, 14));
+        String etatJeu = jeu.getEtat();
 
         // labels lignes et colonnes
         g.setColor(Color.LIGHT_GRAY);
@@ -98,15 +94,33 @@ public class FenetreArene extends JPanel {
                 int x = col * TAILLE_CASE + MARGE;
                 int y = ligne * TAILLE_CASE + MARGE;
 
-                // couleurs des cases
+                // couleurs de base
                 if (grille[ligne][col] == -1) g.setColor(new Color(50, 50, 60)); // obstacle
                 else if (grille[ligne][col] == 1) g.setColor(new Color(65, 105, 225)); // joueur 1
                 else if (grille[ligne][col] == 2) g.setColor(new Color(220, 20, 60)); // joueur 2
                 else if (grille[ligne][col] == 3) g.setColor(new Color(255, 193, 7)); // bonus parade
                 else if (grille[ligne][col] == 4) g.setColor(new Color(76, 175, 80)); // bonus energie
-                else g.setColor(new Color(90, 92, 106)); // case vide sombre
+                else g.setColor(COULEUR_CASE_VIDE); // case vide sombre
                 
                 g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+
+                // Surbrillance des cases accessibles en phase mouvement.
+                if ("MOUVEMENT".equals(etatJeu) && caseAccessible(ligne, col)) {
+                    g.setColor(COULEUR_CASE_HIGHLIGHT);
+                    g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+                }
+
+                // Cible clairement marquée en phase ciblage.
+                if ("CIBLE".equals(etatJeu) && estCaseAdversaire(ligne, col)) {
+                    g.setColor(COULEUR_CASE_CIBLE);
+                    g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+                }
+
+                // Prévisualisation de portée de l'attaque sélectionnée.
+                if ("CIBLE".equals(etatJeu) && caseDansPorteeAttaque(ligne, col)) {
+                    g.setColor(COULEUR_PORTEE_ATTAQUE);
+                    g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+                }
                 
                 // ajout d'un icone texte pour les bonus (pour faire plus propre)
                 if (grille[ligne][col] == 3) {
@@ -119,7 +133,7 @@ public class FenetreArene extends JPanel {
 
                 // effet de survol (hover)
                 if (ligne == hoverLigne && col == hoverCol) {
-                    g.setColor(new Color(255, 255, 255, 60)); // voile blanc leger
+                    g.setColor(COULEUR_CASE_SELECTION); // voile blanc leger
                     g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
                 }
 
@@ -132,8 +146,14 @@ public class FenetreArene extends JPanel {
         // DESSIN DE L'INFOBULLE (Tooltip) par-dessus la grille
         if (hoverLigne != -1 && hoverCol != -1) {
             int caseHover = grille[hoverLigne][hoverCol];
-            if (caseHover == 3 || caseHover == 4) {
-                String texteTooltip = (caseHover == 3) ? " Bonus : +1 Parade " : " Bonus : +20 Énergie ";
+            String texteTooltip = null;
+            if (caseHover == 3) texteTooltip = " Bonus : +1 Parade ";
+            else if (caseHover == 4) texteTooltip = " Bonus : +20 Énergie ";
+            else if ("MOUVEMENT".equals(etatJeu) && caseAccessible(hoverLigne, hoverCol)) texteTooltip = " Déplacement valide ";
+            else if ("CIBLE".equals(etatJeu) && estCaseAdversaire(hoverLigne, hoverCol)) texteTooltip = " Cible ennemie ";
+            else if ("CIBLE".equals(etatJeu) && caseDansPorteeAttaque(hoverLigne, hoverCol)) texteTooltip = " Dans la portée ";
+
+            if (texteTooltip != null) {
                 int mouseX = hoverCol * TAILLE_CASE + MARGE + TAILLE_CASE / 2;
                 int mouseY = hoverLigne * TAILLE_CASE + MARGE - 15; // affiché au-dessus de la case
                 
@@ -153,7 +173,7 @@ public class FenetreArene extends JPanel {
     public static void lancerFenetre(Jeu jeu) {
         JFrame fenetre = new JFrame("GLADIUS - Arène Tactique");
         fenetre.setLayout(new BorderLayout());
-        fenetre.getContentPane().setBackground(new Color(40, 42, 54));
+        fenetre.getContentPane().setBackground(COULEUR_FOND);
 
         instance = new FenetreArene(jeu);
         fenetre.add(instance, BorderLayout.CENTER);
@@ -174,9 +194,22 @@ public class FenetreArene extends JPanel {
         JButton[] boutons = {btnAL, btnALo, btnAD, btnParade, btnRepos, btnPasser};
         for (JButton b : boutons) {
             b.setBackground(new Color(60, 62, 74));
-            b.setForeground(Color.BLACK);
+            b.setForeground(new Color(235, 235, 235));
             b.setFocusPainted(false);
             b.setFont(new Font("Arial", Font.BOLD, 12));
+            b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            b.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+            b.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    b.setBackground(new Color(85, 88, 104));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    b.setBackground(new Color(60, 62, 74));
+                }
+            });
             panelActions.add(b);
         }
 
@@ -258,6 +291,8 @@ public class FenetreArene extends JPanel {
         infoLabel.setFont(new Font("Arial", Font.BOLD, 16));
         infoLabel.setForeground(new Color(220, 220, 220));
         infoLabel.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(new Color(32, 34, 44));
         fenetre.add(infoLabel, BorderLayout.NORTH);
 
         fenetre.pack();
@@ -297,5 +332,33 @@ public class FenetreArene extends JPanel {
 
     public static void rafraichir() {
         if (instance != null) instance.repaint();
+    }
+
+    private boolean estCaseAdversaire(int ligne, int col) {
+        Personnage adv = jeu.getAdversaire();
+        if (adv == null || adv.getPosition() == null) return false;
+        return adv.getPosition().getLigne() == ligne && adv.getPosition().getColonne() == col;
+    }
+
+    private boolean caseAccessible(int ligne, int col) {
+        if (jeu.getJoueurActif() == null || jeu.getAdversaire() == null) return false;
+        int[][] grille = arene.getGrille();
+        if (ligne < 0 || col < 0 || ligne >= grille.length || col >= grille[0].length) return false;
+        if (grille[ligne][col] == -1 || grille[ligne][col] == 1 || grille[ligne][col] == 2) return false;
+
+        int dist = Math.abs(ligne - jeu.getJoueurActif().getPosition().getLigne())
+                + Math.abs(col - jeu.getJoueurActif().getPosition().getColonne());
+        return dist <= jeu.getJoueurActif().getPas();
+    }
+
+    private boolean caseDansPorteeAttaque(int ligne, int col) {
+        if (jeu.getJoueurActif() == null) return false;
+        String attaque = jeu.getAttaqueEnCours();
+        int portee = jeu.getPorteeAttaque(attaque);
+        if (portee <= 0) return false;
+
+        int dist = Math.abs(ligne - jeu.getJoueurActif().getPosition().getLigne())
+                + Math.abs(col - jeu.getJoueurActif().getPosition().getColonne());
+        return dist <= portee;
     }
 }
