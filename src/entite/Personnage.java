@@ -233,8 +233,9 @@ public class Personnage {
         if(cible.isEnParade()){
             System.out.println("\nAttaque parée, aucun dégât subi\n");
             cible.setEnParade(false); // La parade ne dure que pour une attaque, elle est désactivée après avoir été utilisée.
+        } else {
+            cible.setHp(-degat);
         }
-        cible.setHp(-degat);
         energie -= degat;
         System.out.println("\nAttaque réussie, " + cible.getHp() + " points de vie restants\n");
         
