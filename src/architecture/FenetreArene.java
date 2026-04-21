@@ -2,6 +2,7 @@ package architecture;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 import entite.Personnage;
 import exception.*;
@@ -17,7 +18,19 @@ public class FenetreArene extends JPanel {
     private static final Color COULEUR_CASE_CIBLE = new Color(220, 20, 60, 130);
     private static final Color COULEUR_PORTEE_ATTAQUE = new Color(255, 140, 0, 95);
     private static final Color COULEUR_CASE_SELECTION = new Color(255, 255, 255, 70);
+    private static final Color COULEUR_UI_PANNEAU = new Color(28, 24, 35);
     private static FenetreArene instance; 
+    private static BufferedImage tuileSolA;
+    private static BufferedImage tuileSolB;
+    private static BufferedImage tuileObstacle;
+    private static BufferedImage tuileParade;
+    private static BufferedImage tuileEnergie;
+    private static BufferedImage chevalierBleu;
+    private static BufferedImage chevalierRouge;
+    private static BufferedImage archereBleu;
+    private static BufferedImage archereRouge;
+    private static BufferedImage soigneurBleu;
+    private static BufferedImage soigneurRouge;
     
     // elements d'interface
     private static JLabel infoLabel;
@@ -32,6 +45,7 @@ public class FenetreArene extends JPanel {
         this.jeu = jeu;
         setPreferredSize(new Dimension(10 * TAILLE_CASE + MARGE * 2, 10 * TAILLE_CASE + MARGE * 2));
         setBackground(COULEUR_FOND); // fond sombre
+        initialiserAssetsPixel();
 
         // ecouteur de clics
         this.addMouseListener(new MouseAdapter() {
@@ -95,14 +109,7 @@ public class FenetreArene extends JPanel {
                 int y = ligne * TAILLE_CASE + MARGE;
 
                 // couleurs de base
-                if (grille[ligne][col] == -1) g.setColor(new Color(50, 50, 60)); // obstacle
-                else if (grille[ligne][col] == 1) g.setColor(new Color(65, 105, 225)); // joueur 1
-                else if (grille[ligne][col] == 2) g.setColor(new Color(220, 20, 60)); // joueur 2
-                else if (grille[ligne][col] == 3) g.setColor(new Color(255, 193, 7)); // bonus parade
-                else if (grille[ligne][col] == 4) g.setColor(new Color(76, 175, 80)); // bonus energie
-                else g.setColor(COULEUR_CASE_VIDE); // case vide sombre
-                
-                g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+                dessinerTuile(g, grille[ligne][col], ligne, col, x, y);
 
                 // Surbrillance des cases accessibles en phase mouvement.
                 if ("MOUVEMENT".equals(etatJeu) && caseAccessible(ligne, col)) {
@@ -122,15 +129,6 @@ public class FenetreArene extends JPanel {
                     g.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
                 }
                 
-                // ajout d'un icone texte pour les bonus (pour faire plus propre)
-                if (grille[ligne][col] == 3) {
-                    g.setColor(Color.BLACK);
-                    g.drawString("P", x + 25, y + 35);
-                } else if (grille[ligne][col] == 4) {
-                    g.setColor(Color.BLACK);
-                    g.drawString("E", x + 25, y + 35);
-                }
-
                 // effet de survol (hover)
                 if (ligne == hoverLigne && col == hoverCol) {
                     g.setColor(COULEUR_CASE_SELECTION); // voile blanc leger
@@ -180,14 +178,19 @@ public class FenetreArene extends JPanel {
 
         // --- PANNEAU DU BAS (ACTIONS) ---
         JPanel panelActions = new JPanel();
-        panelActions.setBackground(new Color(30, 32, 40));
+        panelActions.setBackground(COULEUR_UI_PANNEAU);
         panelActions.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        JButton btnAL = new JButton("Att. Légère");
-        JButton btnALo = new JButton("Att. Lourde");
-        JButton btnAD = new JButton("Att. Distance");
-        JButton btnParade = new JButton("Parade");
-        JButton btnRepos = new JButton("Se Reposer (+ Énergie)");
+        JButton btnAL = new JButton("AL");
+        JButton btnALo = new JButton("ALD");
+        JButton btnAD = new JButton("AD");
+        JButton btnParade = new JButton("PARADE");
+        JButton btnRepos = new JButton("REPOS");
+        btnAL.setToolTipText("Attaque légère");
+        btnALo.setToolTipText("Attaque lourde");
+        btnAD.setToolTipText("Attaque à distance");
+        btnParade.setToolTipText("Active la parade pour la prochaine attaque reçue");
+        btnRepos.setToolTipText("Régénère de l'énergie et termine le tour");
 
         // Style des boutons
         JButton[] boutons = {btnAL, btnALo, btnAD, btnParade, btnRepos};
@@ -195,9 +198,12 @@ public class FenetreArene extends JPanel {
             b.setBackground(new Color(60, 62, 74));
             b.setForeground(new Color(235, 235, 235));
             b.setFocusPainted(false);
-            b.setFont(new Font("Arial", Font.BOLD, 12));
+            b.setFont(new Font("Monospaced", Font.BOLD, 14));
             b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            b.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+            b.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(129, 95, 203), 2),
+                    BorderFactory.createEmptyBorder(8, 14, 8, 14)
+            ));
             b.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -252,13 +258,13 @@ public class FenetreArene extends JPanel {
         // --- PANNEAU LATERAL DROIT (STATS) ---
         JPanel panelStats = new JPanel(new GridLayout(2, 1, 15, 15));
         panelStats.setPreferredSize(new Dimension(220, 0));
-        panelStats.setBackground(new Color(40, 42, 54));
+        panelStats.setBackground(COULEUR_FOND);
         panelStats.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 20));
         
         statsJ1 = new JLabel("<html><div style='color:white;'><b>Joueur 1</b><br>En attente...</div></html>");
         statsJ1.setFont(new Font("Arial", Font.PLAIN, 14));
         statsJ1.setOpaque(true);
-        statsJ1.setBackground(new Color(50, 52, 64));
+        statsJ1.setBackground(COULEUR_UI_PANNEAU);
         statsJ1.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(65, 105, 225), 3),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -267,7 +273,7 @@ public class FenetreArene extends JPanel {
         statsJ2 = new JLabel("<html><div style='color:white;'><b>Joueur 2</b><br>En attente...</div></html>");
         statsJ2.setFont(new Font("Arial", Font.PLAIN, 14));
         statsJ2.setOpaque(true);
-        statsJ2.setBackground(new Color(50, 52, 64));
+        statsJ2.setBackground(COULEUR_UI_PANNEAU);
         statsJ2.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 20, 60), 3),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -279,11 +285,11 @@ public class FenetreArene extends JPanel {
 
         // --- BARRE D'INFOS (HAUT) ---
         infoLabel = new JLabel("Bienvenue dans Gladius !", SwingConstants.CENTER);
-        infoLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        infoLabel.setFont(new Font("Monospaced", Font.BOLD, 16));
         infoLabel.setForeground(new Color(220, 220, 220));
         infoLabel.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         infoLabel.setOpaque(true);
-        infoLabel.setBackground(new Color(32, 34, 44));
+        infoLabel.setBackground(COULEUR_UI_PANNEAU);
         fenetre.add(infoLabel, BorderLayout.NORTH);
 
         fenetre.pack();
@@ -304,19 +310,21 @@ public class FenetreArene extends JPanel {
         if (statsJ1 != null && j1 != null) {
             String tourIndic = (actif == j1) ? "<br><br><font color='#4169e1'><b>▶ À TON TOUR</b></font>" : "";
             statsJ1.setText("<html><div style='color:#E0E0E0;'><b>" + j1.getNom() + " (J1)</b><hr>"
-                    + "PV : " + j1.getHp() + "<br>"
-                    + "Énergie : " + j1.getEnergie() + "<br>"
+                    + "PV : " + barre(j1.getHp(), 150, "#4caf50") + " " + (int) j1.getHp() + "<br>"
+                    + "Énergie : " + barre(j1.getEnergie(), 150, "#ffca28") + " " + (int) j1.getEnergie() + "<br>"
                     + "Parades : " + j1.getParade() + "<br>"
-                    + "Pas max : " + j1.getPas() 
+                    + "PM max : " + j1.getPas()
+                    + ((actif == j1 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
                     + tourIndic + "</div></html>");
         }
         if (statsJ2 != null && j2 != null) {
             String tourIndic = (actif == j2) ? "<br><br><font color='#dc143c'><b>▶ À TON TOUR</b></font>" : "";
             statsJ2.setText("<html><div style='color:#E0E0E0;'><b>" + j2.getNom() + " (J2)</b><hr>"
-                    + "PV : " + j2.getHp() + "<br>"
-                    + "Énergie : " + j2.getEnergie() + "<br>"
+                    + "PV : " + barre(j2.getHp(), 150, "#4caf50") + " " + (int) j2.getHp() + "<br>"
+                    + "Énergie : " + barre(j2.getEnergie(), 150, "#ffca28") + " " + (int) j2.getEnergie() + "<br>"
                     + "Parades : " + j2.getParade() + "<br>"
-                    + "Pas max : " + j2.getPas() 
+                    + "PM max : " + j2.getPas()
+                    + ((actif == j2 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
                     + tourIndic + "</div></html>");
         }
     }
@@ -351,5 +359,152 @@ public class FenetreArene extends JPanel {
         int dist = Math.abs(ligne - jeu.getJoueurActif().getPosition().getLigne())
                 + Math.abs(col - jeu.getJoueurActif().getPosition().getColonne());
         return dist <= portee;
+    }
+
+    private static String barre(double valeur, double max, String couleur) {
+        int largeur = 10;
+        int remplie = (int) Math.round(Math.max(0, Math.min(max, valeur)) / max * largeur);
+        StringBuilder sb = new StringBuilder();
+        sb.append("<font color='").append(couleur).append("'>");
+        for (int i = 0; i < remplie; i++) sb.append("■");
+        sb.append("</font><font color='#555'>");
+        for (int i = remplie; i < largeur; i++) sb.append("■");
+        sb.append("</font>");
+        return sb.toString();
+    }
+
+    private void dessinerTuile(Graphics g, int valeurCase, int ligne, int col, int x, int y) {
+        BufferedImage tuile;
+        if (valeurCase == -1) tuile = tuileObstacle;
+        else if (valeurCase == 3) tuile = tuileParade;
+        else if (valeurCase == 4) tuile = tuileEnergie;
+        else tuile = ((ligne + col) % 2 == 0) ? tuileSolA : tuileSolB;
+        g.drawImage(tuile, x, y, TAILLE_CASE, TAILLE_CASE, null);
+
+        if (valeurCase == 1 && arene != null) {
+            BufferedImage sprite = spritePour(arene.getJoueur1(), true);
+            g.drawImage(sprite, x + 6, y + 6, TAILLE_CASE - 12, TAILLE_CASE - 12, null);
+        }
+        if (valeurCase == 2 && arene != null) {
+            BufferedImage sprite = spritePour(arene.getJoueur2(), false);
+            g.drawImage(sprite, x + 6, y + 6, TAILLE_CASE - 12, TAILLE_CASE - 12, null);
+        }
+    }
+
+    private static void initialiserAssetsPixel() {
+        if (tuileSolA != null) return;
+        tuileSolA = creerTuile(new Color(92, 78, 66), new Color(108, 92, 76));
+        tuileSolB = creerTuile(new Color(84, 70, 58), new Color(100, 84, 70));
+        tuileObstacle = creerTuile(new Color(52, 56, 68), new Color(70, 75, 90));
+        tuileParade = creerTuile(new Color(179, 129, 38), new Color(214, 159, 58));
+        tuileEnergie = creerTuile(new Color(36, 122, 90), new Color(48, 156, 116));
+        chevalierBleu = creerSpriteChevalier(new Color(91, 131, 255), new Color(213, 224, 255));
+        chevalierRouge = creerSpriteChevalier(new Color(220, 74, 74), new Color(255, 214, 214));
+        archereBleu = creerSpriteArchere(new Color(91, 131, 255), new Color(213, 224, 255));
+        archereRouge = creerSpriteArchere(new Color(220, 74, 74), new Color(255, 214, 214));
+        soigneurBleu = creerSpriteSoigneur(new Color(91, 131, 255), new Color(213, 224, 255));
+        soigneurRouge = creerSpriteSoigneur(new Color(220, 74, 74), new Color(255, 214, 214));
+    }
+
+    private static BufferedImage creerTuile(Color c1, Color c2) {
+        int size = 16;
+        BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                boolean motif = ((x / 4) + (y / 4)) % 2 == 0;
+                img.setRGB(x, y, (motif ? c1 : c2).getRGB());
+            }
+        }
+        return img;
+    }
+
+    private static BufferedImage creerSpriteChevalier(Color principal, Color accent) {
+        int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setColor(new Color(0, 0, 0, 0));
+        g2.fillRect(0, 0, s, s);
+        // Casque
+        g2.setColor(new Color(165, 170, 180));
+        g2.fillRect(5, 2, 6, 3);
+        g2.setColor(new Color(120, 126, 140));
+        g2.fillRect(4, 4, 8, 2);
+        // Armure
+        g2.setColor(principal);
+        g2.fillRect(4, 6, 8, 6);
+        g2.setColor(accent);
+        g2.fillRect(6, 8, 4, 2);
+        // Épée
+        g2.setColor(new Color(190, 195, 205));
+        g2.fillRect(11, 6, 2, 5);
+        g2.setColor(new Color(135, 105, 65));
+        g2.fillRect(10, 10, 3, 1);
+        g2.setColor(new Color(30, 30, 30));
+        g2.fillRect(5, 12, 2, 2);
+        g2.fillRect(9, 12, 2, 2);
+        g2.dispose();
+        return img;
+    }
+
+    private static BufferedImage creerSpriteArchere(Color principal, Color accent) {
+        int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setColor(new Color(0, 0, 0, 0));
+        g2.fillRect(0, 0, s, s);
+        // Capuche
+        g2.setColor(new Color(72, 82, 56));
+        g2.fillRect(5, 2, 6, 3);
+        // Tunique
+        g2.setColor(principal);
+        g2.fillRect(4, 5, 8, 7);
+        g2.setColor(accent);
+        g2.fillRect(6, 7, 4, 2);
+        // Arc
+        g2.setColor(new Color(133, 92, 53));
+        g2.fillRect(2, 5, 1, 7);
+        g2.fillRect(3, 4, 1, 1);
+        g2.fillRect(3, 12, 1, 1);
+        g2.setColor(new Color(220, 220, 220));
+        g2.fillRect(3, 5, 1, 7);
+        g2.setColor(new Color(30, 30, 30));
+        g2.fillRect(5, 12, 2, 2);
+        g2.fillRect(9, 12, 2, 2);
+        g2.dispose();
+        return img;
+    }
+
+    private static BufferedImage creerSpriteSoigneur(Color principal, Color accent) {
+        int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setColor(new Color(0, 0, 0, 0));
+        g2.fillRect(0, 0, s, s);
+        // Coiffe
+        g2.setColor(new Color(205, 190, 120));
+        g2.fillRect(5, 2, 6, 2);
+        // Robe
+        g2.setColor(principal);
+        g2.fillRect(4, 4, 8, 8);
+        g2.setColor(accent);
+        g2.fillRect(6, 7, 4, 3);
+        // Bâton
+        g2.setColor(new Color(134, 97, 63));
+        g2.fillRect(12, 4, 1, 8);
+        g2.setColor(new Color(120, 224, 170));
+        g2.fillRect(11, 3, 3, 2);
+        g2.setColor(new Color(30, 30, 30));
+        g2.fillRect(5, 12, 2, 2);
+        g2.fillRect(9, 12, 2, 2);
+        g2.dispose();
+        return img;
+    }
+
+    private static BufferedImage spritePour(Personnage p, boolean equipeBleue) {
+        if (p == null || p.getNom() == null) return equipeBleue ? chevalierBleu : chevalierRouge;
+        String nom = p.getNom().toLowerCase();
+        if (nom.contains("arch")) return equipeBleue ? archereBleu : archereRouge;
+        if (nom.contains("soign")) return equipeBleue ? soigneurBleu : soigneurRouge;
+        return equipeBleue ? chevalierBleu : chevalierRouge;
     }
 }

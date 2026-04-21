@@ -272,6 +272,8 @@ public class Jeu {
         joueurActif = adversaire;
         adversaire = temp;
         etat = "MOUVEMENT";
+        // Une parade ne peut pas survivre au-delà du prochain tour du joueur.
+        joueurActif.setEnParade(false);
         attaqueEnCours = "";
         attaqueDejaEffectuee = false;
         pmRestants = joueurActif.getPas();
