@@ -395,7 +395,7 @@ public class FenetreArene extends JPanel {
         if (tuileSolA != null) return;
         tuileSolA = creerTuile(new Color(92, 78, 66), new Color(108, 92, 76));
         tuileSolB = creerTuile(new Color(84, 70, 58), new Color(100, 84, 70));
-        tuileObstacle = creerTuile(new Color(52, 56, 68), new Color(70, 75, 90));
+        tuileObstacle = creerTuileMur();
         tuileParade = creerTuile(new Color(179, 129, 38), new Color(214, 159, 58));
         tuileEnergie = creerTuile(new Color(36, 122, 90), new Color(48, 156, 116));
         chevalierBleu = creerSpriteChevalier(new Color(91, 131, 255), new Color(213, 224, 255));
@@ -415,6 +415,40 @@ public class FenetreArene extends JPanel {
                 img.setRGB(x, y, (motif ? c1 : c2).getRGB());
             }
         }
+        return img;
+    }
+
+    private static BufferedImage creerTuileMur() {
+        int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        // Fond pierre clair
+        for (int y = 0; y < s; y++) {
+            for (int x = 0; x < s; x++) {
+                boolean motif = ((x / 4) + (y / 4)) % 2 == 0;
+                Color c = motif ? new Color(78, 86, 104) : new Color(98, 108, 126);
+                img.setRGB(x, y, c.getRGB());
+            }
+        }
+        // Joints de briques
+        g2.setColor(new Color(58, 64, 78));
+        g2.drawLine(0, 5, 15, 5);
+        g2.drawLine(0, 10, 15, 10);
+        g2.drawLine(3, 0, 3, 5);
+        g2.drawLine(11, 0, 11, 5);
+        g2.drawLine(7, 5, 7, 10);
+        g2.drawLine(14, 5, 14, 10);
+        g2.drawLine(2, 10, 2, 15);
+        g2.drawLine(9, 10, 9, 15);
+        // Symbole inaccessible
+        g2.setColor(new Color(196, 58, 58));
+        g2.fillRect(4, 4, 8, 8);
+        g2.setColor(new Color(242, 242, 242));
+        g2.fillRect(5, 7, 6, 2);
+        // Bordure claire
+        g2.setColor(new Color(180, 188, 205));
+        g2.drawRect(0, 0, 15, 15);
+        g2.dispose();
         return img;
     }
 
