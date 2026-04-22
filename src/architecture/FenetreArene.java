@@ -3,6 +3,9 @@ package architecture;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import entite.Personnage;
 import exception.*;
@@ -89,17 +92,19 @@ public class FenetreArene extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (arene == null) return; 
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         
         int[][] grille = arene.getGrille(); 
-        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
         String etatJeu = jeu.getEtat();
 
         // labels lignes et colonnes
-        g.setColor(Color.LIGHT_GRAY);
+        g2.setColor(Color.LIGHT_GRAY);
         char[] lettres = "ABCDEFGHIJ".toCharArray();
         for (int i = 0; i < 10; i++) {
-            g.drawString(String.valueOf(i), MARGE + i * TAILLE_CASE + (TAILLE_CASE / 2) - 5, MARGE - 10);
-            g.drawString(String.valueOf(lettres[i]), MARGE - 20, MARGE + i * TAILLE_CASE + (TAILLE_CASE / 2) + 5);
+            g2.drawString(String.valueOf(i), MARGE + i * TAILLE_CASE + (TAILLE_CASE / 2) - 5, MARGE - 10);
+            g2.drawString(String.valueOf(lettres[i]), MARGE - 20, MARGE + i * TAILLE_CASE + (TAILLE_CASE / 2) + 5);
         }
 
         // dessin de la grille
@@ -396,8 +401,10 @@ public class FenetreArene extends JPanel {
         tuileSolA = creerTuile(new Color(92, 78, 66), new Color(108, 92, 76));
         tuileSolB = creerTuile(new Color(84, 70, 58), new Color(100, 84, 70));
         tuileObstacle = creerTuileMur();
-        tuileParade = creerTuile(new Color(179, 129, 38), new Color(214, 159, 58));
-        tuileEnergie = creerTuile(new Color(36, 122, 90), new Color(48, 156, 116));
+        tuileParade = creerTuileParade();
+        tuileEnergie = creerTuileEnergie();
+        tuileParade = chargerImageLocale("shield icon.png", tuileParade);
+        tuileEnergie = chargerImageLocale("energy icon.png", tuileEnergie);
         chevalierBleu = creerSpriteChevalier(new Color(91, 131, 255), new Color(213, 224, 255));
         chevalierRouge = creerSpriteChevalier(new Color(220, 74, 74), new Color(255, 214, 214));
         archereBleu = creerSpriteArchere(new Color(91, 131, 255), new Color(213, 224, 255));
@@ -447,6 +454,60 @@ public class FenetreArene extends JPanel {
         g2.fillRect(5, 7, 6, 2);
         // Bordure claire
         g2.setColor(new Color(180, 188, 205));
+        g2.drawRect(0, 0, 15, 15);
+        g2.dispose();
+        return img;
+    }
+
+    private static BufferedImage creerTuileParade() {
+        int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        for (int y = 0; y < s; y++) {
+            for (int x = 0; x < s; x++) {
+                boolean motif = ((x / 2) + (y / 2)) % 2 == 0;
+                Color c = motif ? new Color(195, 138, 46) : new Color(224, 167, 67);
+                img.setRGB(x, y, c.getRGB());
+            }
+        }
+        // mini bouclier
+        g2.setColor(new Color(106, 74, 31));
+        g2.fillRect(4, 3, 8, 1);
+        g2.fillRect(3, 4, 10, 1);
+        g2.fillRect(3, 5, 10, 5);
+        g2.fillRect(4, 10, 8, 2);
+        g2.fillRect(6, 12, 4, 1);
+        g2.setColor(new Color(244, 226, 179));
+        g2.fillRect(5, 5, 6, 5);
+        g2.setColor(new Color(255, 247, 217));
+        g2.fillRect(7, 6, 2, 3);
+        g2.setColor(new Color(100, 65, 20));
+        g2.drawRect(0, 0, 15, 15);
+        g2.dispose();
+        return img;
+    }
+
+    private static BufferedImage creerTuileEnergie() {
+        int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        for (int y = 0; y < s; y++) {
+            for (int x = 0; x < s; x++) {
+                boolean motif = ((x / 2) + (y / 2)) % 2 == 0;
+                Color c = motif ? new Color(34, 126, 99) : new Color(44, 158, 124);
+                img.setRGB(x, y, c.getRGB());
+            }
+        }
+        // eclair
+        g2.setColor(new Color(219, 255, 188));
+        g2.fillRect(8, 2, 2, 4);
+        g2.fillRect(6, 5, 3, 2);
+        g2.fillRect(7, 7, 2, 4);
+        g2.fillRect(9, 7, 2, 2);
+        g2.fillRect(8, 10, 3, 2);
+        g2.setColor(new Color(238, 255, 220));
+        g2.fillRect(8, 3, 1, 7);
+        g2.setColor(new Color(18, 92, 71));
         g2.drawRect(0, 0, 15, 15);
         g2.dispose();
         return img;
@@ -532,6 +593,17 @@ public class FenetreArene extends JPanel {
         g2.fillRect(9, 12, 2, 2);
         g2.dispose();
         return img;
+    }
+
+    private static BufferedImage chargerImageLocale(String nomFichier, BufferedImage fallback) {
+        File fichier = new File("assets", nomFichier);
+        if (!fichier.exists()) return fallback;
+        try {
+            BufferedImage image = ImageIO.read(fichier);
+            return image != null ? image : fallback;
+        } catch (IOException e) {
+            return fallback;
+        }
     }
 
     private static BufferedImage spritePour(Personnage p, boolean equipeBleue) {
