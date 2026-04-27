@@ -4,6 +4,9 @@ import entite.*;
 import exception.IllegalActionException;
 import exception.IllegalAttackException;
 import ia.Etat;
+import ia.IAFacile;
+import ia.Coup;
+import ia.MoteurCoups;
 import attaques.*;
 import java.awt.*;
 import javax.swing.*;
@@ -20,15 +23,38 @@ public class Jeu {
     
     // Variable temporaire pour la sélection
     private String classChoisie = null;
+    private String modeJeu = "PVP"; // PVP, PVIA_FACILE, PVIA_MOYEN, PVIA_DIFFICILE, IAVIA
 
     public Jeu() {
+        this("PVP"); // Mode par défaut pour compatibilité
+    }
+    
+    public Jeu(String mode) {
+        this.modeJeu = mode;
         // On lance d'abord la fenêtre principale en arrière-plan
         FenetreArene.lancerFenetre(this);
         demarrerJeu();
     }
 
     private void demarrerJeu() {
-        // Remplacement du vieux JOptionPane par notre menu stylé
+        switch (modeJeu) {
+            case "PVP":
+                demarrerJoueurVsJoueur();
+                break;
+            case "PVIA_FACILE":
+            case "PVIA_MOYEN":
+            case "PVIA_DIFFICILE":
+                demarrerJoueurVsIA();
+                break;
+            case "IAVIA":
+                demarrerIAVsIA();
+                break;
+            default:
+                demarrerJoueurVsJoueur(); // Mode par défaut
+        }
+    }
+    
+    private void demarrerJoueurVsJoueur() {
         String choix1 = demanderClasse("Joueur 1 (Bleu), choisissez votre classe :");
         joueur1 = instancierPerso(choix1);
 
@@ -39,6 +65,42 @@ public class Jeu {
             System.exit(0); 
         }
 
+        initialiserPartie();
+    }
+    
+    private void demarrerJoueurVsIA() {
+        String choix1 = demanderClasse("Joueur 1 (Bleu), choisissez votre classe :");
+        joueur1 = instancierPerso(choix1);
+
+        // L'IA choisit une classe aléatoirement pour l'instant
+        String[] classesIA = {"Chevalier", "Archère", "Soigneur"};
+        String choixIA = classesIA[(int)(Math.random() * classesIA.length)];
+        joueur2 = instancierPerso(choixIA);
+        // Le nom reste celui par défaut de la classe
+
+        if (joueur1 == null || joueur2 == null) {
+            System.exit(0); 
+        }
+
+        initialiserPartie();
+    }
+    
+    private void demarrerIAVsIA() {
+        // Les deux IA choisissent des classes aléatoirement
+        String[] classesIA = {"Chevalier", "Archère", "Soigneur"};
+        
+        String choixIA1 = classesIA[(int)(Math.random() * classesIA.length)];
+        joueur1 = instancierPerso(choixIA1);
+        // Le nom reste celui par défaut de la classe
+        
+        String choixIA2 = classesIA[(int)(Math.random() * classesIA.length)];
+        joueur2 = instancierPerso(choixIA2);
+        // Le nom reste celui par défaut de la classe
+
+        initialiserPartie();
+    }
+    
+    private void initialiserPartie() {
         arene = new Arene(joueur1, joueur2);
         FenetreArene.setArene(arene);
         
@@ -49,10 +111,22 @@ public class Jeu {
         attaqueDejaEffectuee = false;
         
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
+        String modeAffiche = getModeAffichage();
         FenetreArene.MAJTexte(
-                "Tour de " + joueurActif.getNom() + " (J1) : " + pmRestants + " PM disponibles."
+                modeAffiche + " - Tour de " + joueurActif.getNom() + " : " + pmRestants + " PM disponibles."
         );
         FenetreArene.rafraichir();
+    }
+    
+    private String getModeAffichage() {
+        switch (modeJeu) {
+            case "PVP": return "Joueur vs Joueur";
+            case "PVIA_FACILE": return "Joueur vs IA (Facile)";
+            case "PVIA_MOYEN": return "Joueur vs IA (Moyen)";
+            case "PVIA_DIFFICILE": return "Joueur vs IA (Difficile)";
+            case "IAVIA": return "IA vs IA (Spectateur)";
+            default: return "Combat";
+        }
     }
 
     // --- NOUVEAU MENU DE SÉLECTION PROPRE ---
@@ -284,6 +358,97 @@ public class Jeu {
                 "Tour de " + joueurActif.getNom() + " " + numJ + " : " + pmRestants + " PM disponibles."
         );
         FenetreArene.rafraichir();
+        
+        // Si c'est à l'IA de jouer, on lance son tour automatiquement
+        if (estTourIA()) {
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    Thread.sleep(1000); // Petite pause pour la lisibilité
+                    jouerTourIA();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+        }
+    }
+    
+    /**
+     * Vérifie si c'est le tour de l'IA selon le mode de jeu
+     */
+    private boolean estTourIA() {
+        return (modeJeu.equals("PVIA_FACILE") && joueurActif == joueur2) ||
+               (modeJeu.equals("PVIA_MOYEN") && joueurActif == joueur2) ||
+               (modeJeu.equals("PVIA_DIFFICILE") && joueurActif == joueur2) ||
+               (modeJeu.equals("IAVIA"));
+    }
+    
+    /**
+     * Fait jouer l'IA un tour complet
+     */
+    private void jouerTourIA() {
+        try {
+            Etat etatIA = exporterEtatIA();
+            Coup coupChoisi = IAFacile.choisirCoup(etatIA);
+            
+            if (coupChoisi == null) {
+                finDeTour();
+                return;
+            }
+            
+            // Exécuter le déplacement
+            if (coupChoisi.getDestination() != null) {
+                Position dest = coupChoisi.getDestination();
+                int dist = Math.abs(dest.getLigne() - joueurActif.getPosition().getLigne()) + 
+                          Math.abs(dest.getColonne() - joueurActif.getPosition().getColonne());
+                
+                // Appliquer le déplacement
+                int caseCible = arene.getGrille()[dest.getLigne()][dest.getColonne()];
+                if (caseCible == 3) {
+                    joueurActif.setParade(1);
+                    arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
+                } else if (caseCible == 4) {
+                    joueurActif.setEnergie(20.0);
+                    arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
+                }
+                
+                joueurActif.setPosition(dest);
+                pmRestants -= dist;
+                arene.updateFullGrille();
+                FenetreArene.rafraichir();
+                
+                Thread.sleep(500);
+            }
+            
+            // Exécuter l'action
+            switch (coupChoisi.getAction()) {
+                case ATTAQUE:
+                    if (coupChoisi.getTypeAttaque() != null) {
+                        attaqueEnCours = coupChoisi.getTypeAttaque();
+                        executerAttaque();
+                        // Forcer la fin du tour après l'attaque
+                        Thread.sleep(1000);
+                        finDeTour();
+                    }
+                    break;
+                case PARADE:
+                    joueurActif.parader();
+                    Thread.sleep(500);
+                    finDeTour();
+                    break;
+                case REPOS:
+                    joueurActif.seReposer();
+                    Thread.sleep(500);
+                    finDeTour();
+                    break;
+                case TERMINER:
+                    Thread.sleep(500);
+                    finDeTour();
+                    break;
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur pendant le tour de l'IA : " + e.getMessage());
+            finDeTour();
+        }
     }
 
     public void start() {}
