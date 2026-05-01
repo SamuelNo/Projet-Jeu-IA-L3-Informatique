@@ -295,16 +295,30 @@ public class Jeu {
                             joueurActif.setParade(1);
                             arene.getGrille()[l][c] = 0;
                             bonusPris++;
+                            FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
+                            FenetreArene.rafraichir();
                         } else if (caseType == 4) {
                             joueurActif.setEnergie(20.0);
                             arene.getGrille()[l][c] = 0;
                             bonusPris++;
+                            FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
+                            FenetreArene.rafraichir();
                         }
                     }
                 }
             }
 
             joueurActif.setPosition(new Position(ligne, colonne));
+            int caseArrivee = arene.getGrille()[ligne][colonne];
+            if (caseArrivee == 3) {
+                joueurActif.setParade(1);
+                arene.getGrille()[ligne][colonne] = 0;
+                bonusPris++;
+            } else if (caseArrivee == 4) {
+                joueurActif.setEnergie(20.0);
+                arene.getGrille()[ligne][colonne] = 0;
+                bonusPris++;
+            }
             pmRestants -= distMouv;
             arene.updateFullGrille();
             
@@ -529,9 +543,11 @@ public class Jeu {
                 if (caseCible == 3) {
                     joueurActif.setParade(1);
                     arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
+                    FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
                 } else if (caseCible == 4) {
                     joueurActif.setEnergie(20.0);
                     arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
+                    FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
                 }
                 
                 joueurActif.setPosition(dest);
