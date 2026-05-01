@@ -89,7 +89,7 @@ public class Arene {
         grille[joueur1.getPosition().getLigne()][joueur1.getPosition().getColonne()] = 1;
         grille[joueur2.getPosition().getLigne()][joueur2.getPosition().getColonne()] = 2;
     }
-
+    
     /**
      * Affiche l'état actuel de la grille dans la console.
      */
