@@ -245,33 +245,59 @@ public class Jeu {
                 return;
             }
 
-            // prendre les bonus sur le trajet de déplacement
+            // vérifier que le trajet est valide (pas d'obstacles)
             Position depart = joueurActif.getPosition();
+            int ligneDepart = depart.getLigne();
+            int colonneDepart = depart.getColonne();
+            
+            // vérification simple : la case de destination ne doit pas être un obstacle
+            int caseDestination = arene.getGrille()[ligne][colonne];
+            if (caseDestination == -1) {
+                JOptionPane.showMessageDialog(null, "Déplacement impossible : case destination bloquée !");
+                return;
+            }
+            
+            // vérification du chemin avec pathfinding simple (BFS)
+            if (!estCheminAccessible(ligneDepart, colonneDepart, ligne, colonne, pmRestants)) {
+                JOptionPane.showMessageDialog(null, "Déplacement impossible : aucun chemin valide !");
+                return;
+            }
+            
+            // prendre les bonus sur le trajet de déplacement (toutes les cases possibles)
             int bonusPris = 0;
             
-            // parcourir le trajet case par case (manhattan)
-            int ligneActuelle = depart.getLigne();
-            int colonneActuelle = depart.getColonne();
+            // vérifier toutes les cases sur les chemins possibles (pour les diagonales)
+            int ligneMin = Math.min(ligneDepart, ligne);
+            int ligneMax = Math.max(ligneDepart, ligne);
+            int colonneMin = Math.min(colonneDepart, colonne);
+            int colonneMax = Math.max(colonneDepart, colonne);
             
-            // déplacement horizontal puis vertical (ou inversement)
-            while (ligneActuelle != ligne || colonneActuelle != colonne) {
-                // déplacement horizontal
-                if (colonneActuelle != colonne) {
-                    colonneActuelle += (colonne > colonneActuelle) ? 1 : -1;
-                } else {
-                    ligneActuelle += (ligne > ligneActuelle) ? 1 : -1;
-                }
-                
-                // vérifier si la case contient un bonus
-                int caseType = arene.getGrille()[ligneActuelle][colonneActuelle];
-                if (caseType == 3) {
-                    joueurActif.setParade(1);
-                    arene.getGrille()[ligneActuelle][colonneActuelle] = 0;
-                    bonusPris++;
-                } else if (caseType == 4) {
-                    joueurActif.setEnergie(20.0);
-                    arene.getGrille()[ligneActuelle][colonneActuelle] = 0;
-                    bonusPris++;
+            // parcourir le rectangle de déplacement
+            for (int l = ligneMin; l <= ligneMax; l++) {
+                for (int c = colonneMin; c <= colonneMax; c++) {
+                    // ne pas vérifier la case de départ ni la destination
+                    if ((l == ligneDepart && c == colonneDepart) || (l == ligne && c == colonne)) {
+                        continue;
+                    }
+                    
+                    // vérifier si cette case est sur un chemin de déplacement valide
+                    int distanceFromDepart = Math.abs(l - ligneDepart) + Math.abs(c - colonneDepart);
+                    int distanceToDest = Math.abs(l - ligne) + Math.abs(c - colonne);
+                    int totalDistance = Math.abs(ligne - ligneDepart) + Math.abs(colonne - colonneDepart);
+                    
+                    // si cette case est sur un chemin le plus court
+                    if (distanceFromDepart + distanceToDest == totalDistance) {
+                        int caseType = arene.getGrille()[l][c];
+                        if (caseType == 3) {
+                            joueurActif.setParade(1);
+                            arene.getGrille()[l][c] = 0;
+                            bonusPris++;
+                        } else if (caseType == 4) {
+                            joueurActif.setEnergie(20.0);
+                            arene.getGrille()[l][c] = 0;
+                            bonusPris++;
+                        }
+                    }
                 }
             }
 
@@ -566,6 +592,69 @@ public class Jeu {
     
     public String getDifficulteIA2() {
         return difficulteIA2;
+    }
+    
+    /**
+     * vérifie si un chemin est accessible entre deux positions en utilisant un BFS simple
+     */
+    private boolean estCheminAccessible(int ligneDepart, int colonneDepart, int ligneDest, int colonneDest, int pmMax) {
+        int[][] grille = arene.getGrille();
+        int taille = grille.length;
+        
+        // si la destination est la même position
+        if (ligneDepart == ligneDest && colonneDepart == colonneDest) {
+            return true;
+        }
+        
+        // BFS pour trouver le chemin le plus court
+        boolean[][] visite = new boolean[taille][taille];
+        java.util.Queue<int[]> file = new java.util.LinkedList<>();
+        
+        // position de départ : [ligne, colonne, distance]
+        file.add(new int[]{ligneDepart, colonneDepart, 0});
+        visite[ligneDepart][colonneDepart] = true;
+        
+        // directions possibles (haut, bas, gauche, droite)
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        
+        while (!file.isEmpty()) {
+            int[] courant = file.poll();
+            int ligne = courant[0];
+            int colonne = courant[1];
+            int distance = courant[2];
+            
+            // si on a atteint la destination avec un nombre de PM acceptable
+            if (ligne == ligneDest && colonne == colonneDest && distance <= pmMax) {
+                return true;
+            }
+            
+            // si on a dépassé la limite de PM
+            if (distance >= pmMax) {
+                continue;
+            }
+            
+            // explorer les 4 directions
+            for (int[] dir : directions) {
+                int nouvelleLigne = ligne + dir[0];
+                int nouvelleColonne = colonne + dir[1];
+                
+                // vérifier les limites de la grille
+                if (nouvelleLigne >= 0 && nouvelleLigne < taille && 
+                    nouvelleColonne >= 0 && nouvelleColonne < taille) {
+                    
+                    // vérifier si la case n'est pas un obstacle et n'a pas été visitée
+                    if (!visite[nouvelleLigne][nouvelleColonne] && 
+                        grille[nouvelleLigne][nouvelleColonne] != -1) {
+                        
+                        visite[nouvelleLigne][nouvelleColonne] = true;
+                        file.add(new int[]{nouvelleLigne, nouvelleColonne, distance + 1});
+                    }
+                }
+            }
+        }
+        
+        // aucun chemin trouvé
+        return false;
     }
 
     public int getPorteeAttaque(String typeAttaque) {
