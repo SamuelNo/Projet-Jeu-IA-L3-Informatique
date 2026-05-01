@@ -1,8 +1,8 @@
 package architecture;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
@@ -12,8 +12,10 @@ public class MenuPrincipal extends JFrame {
     private static final Color COULEUR_FOND = new Color(245, 245, 245);
     private static final Color COULEUR_BOUTON = new Color(220, 220, 220);
     private static final Color COULEUR_BOUTON_SURVOL = new Color(200, 200, 200);
+    private static final Color COULEUR_BOUTON_ACTIVE = new Color(255, 246, 180);
     private static final Color COULEUR_TEXTE = new Color(50, 50, 50);
     private static final Color COULEUR_BORDURE = new Color(180, 180, 180);
+    private static final Color COULEUR_BORDURE_ACTIVE = new Color(255, 200, 0);
     
     public MenuPrincipal() {
         setTitle("Jeu de Combat IA");
@@ -88,7 +90,7 @@ public class MenuPrincipal extends JFrame {
         JButton bouton = new JButton(texte);
         bouton.setBackground(COULEUR_BOUTON);
         bouton.setForeground(COULEUR_TEXTE);
-        bouton.setFont(new Font("Arial", Font.BOLD, 16));
+        bouton.setFont(new Font("Arial", Font.PLAIN, 16));
         bouton.setFocusPainted(false);
         bouton.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -116,27 +118,43 @@ public class MenuPrincipal extends JFrame {
         bouton.setFocusPainted(false);
         bouton.setFont(new Font("Arial", Font.PLAIN, 16));
         bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bouton.setBorder(BorderFactory.createCompoundBorder(
+        Border bordureNormale = BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(COULEUR_BORDURE, 1),
             BorderFactory.createEmptyBorder(12, 20, 12, 20)
-        ));
+        );
+        Border bordureHover = BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 2),
+            BorderFactory.createEmptyBorder(12, 20, 12, 20)
+        );
+        Border bordureClique = BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE.brighter(), 3),
+            BorderFactory.createEmptyBorder(12, 20, 12, 20)
+        );
+        bouton.setBorder(bordureNormale);
         bouton.setPreferredSize(new Dimension(250, 45));
         
         // effets hover subtils
         bouton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 bouton.setBackground(COULEUR_BOUTON_SURVOL);
-                bouton.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(COULEUR_TEXTE, 1),
-                    BorderFactory.createEmptyBorder(12, 20, 12, 20)
-                ));
+                bouton.setBorder(bordureHover);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bouton.setBackground(Color.WHITE);
-                bouton.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(COULEUR_BORDURE, 1),
-                    BorderFactory.createEmptyBorder(12, 20, 12, 20)
-                ));
+                bouton.setBorder(bordureNormale);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bouton.setBackground(COULEUR_BOUTON_ACTIVE);
+                bouton.setBorder(bordureClique);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                if (bouton.getBounds().contains(evt.getPoint())) {
+                    bouton.setBackground(COULEUR_BOUTON_SURVOL);
+                    bouton.setBorder(bordureHover);
+                } else {
+                    bouton.setBackground(Color.WHITE);
+                    bouton.setBorder(bordureNormale);
+                }
             }
         });
         
@@ -151,7 +169,7 @@ public class MenuPrincipal extends JFrame {
         bouton.setBackground(couleur);
         bouton.setForeground(Color.WHITE);
         bouton.setFocusPainted(false);
-        bouton.setFont(new Font("Arial", Font.BOLD, 16));
+        bouton.setFont(new Font("Arial", Font.PLAIN, 16));
         bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bouton.setBorder(BorderFactory.createLineBorder(couleur.darker(), 2));
         bouton.setPreferredSize(new Dimension(300, 50));
@@ -163,6 +181,14 @@ public class MenuPrincipal extends JFrame {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bouton.setBackground(couleur);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bouton.setBackground(couleur.brighter().brighter());
+                bouton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                bouton.setBackground(bouton.getBounds().contains(evt.getPoint()) ? couleur.brighter() : couleur);
+                bouton.setBorder(BorderFactory.createLineBorder(couleur.darker(), 2));
             }
         });
         
@@ -207,12 +233,12 @@ public class MenuPrincipal extends JFrame {
             }
             
             // mettre en évidence le bouton sélectionné
-            btnFacile.setBackground(new Color(230, 240, 255)); // bleu très clair
+            btnFacile.setBackground(COULEUR_BOUTON_ACTIVE);
             btnFacile.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(100, 150, 255), 3),
+                BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 3),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
-            btnFacile.setFont(new Font("Arial", Font.BOLD, 16));
+            btnFacile.setFont(new Font("Arial", Font.PLAIN, 16));
             boutonSelectionne[0] = btnFacile;
             difficulteChoisie[0] = "PVIA_FACILE";
         });
@@ -226,12 +252,12 @@ public class MenuPrincipal extends JFrame {
                 ));
             }
             
-            btnMoyenne.setBackground(new Color(255, 248, 220)); // jaune très clair
+            btnMoyenne.setBackground(COULEUR_BOUTON_ACTIVE);
             btnMoyenne.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 200, 0), 3),
+                BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 3),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
-            btnMoyenne.setFont(new Font("Arial", Font.BOLD, 16));
+            btnMoyenne.setFont(new Font("Arial", Font.PLAIN, 16));
             boutonSelectionne[0] = btnMoyenne;
             difficulteChoisie[0] = "PVIA_MOYEN";
         });
@@ -320,12 +346,12 @@ public class MenuPrincipal extends JFrame {
                     BorderFactory.createEmptyBorder(12, 20, 12, 20)
                 ));
             }
-            btnIA1Facile.setBackground(new Color(230, 240, 255)); // bleu très clair
+            btnIA1Facile.setBackground(COULEUR_BOUTON_ACTIVE);
             btnIA1Facile.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(100, 150, 255), 3),
+                BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 3),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
-            btnIA1Facile.setFont(new Font("Arial", Font.BOLD, 16));
+            btnIA1Facile.setFont(new Font("Arial", Font.PLAIN, 16));
             boutonSelectionneIA1[0] = btnIA1Facile;
             difficulteIA1Choisie[0] = "FACILE";
         });
@@ -338,12 +364,12 @@ public class MenuPrincipal extends JFrame {
                     BorderFactory.createEmptyBorder(12, 20, 12, 20)
                 ));
             }
-            btnIA1Moyenne.setBackground(new Color(255, 248, 220)); // jaune très clair
+            btnIA1Moyenne.setBackground(COULEUR_BOUTON_ACTIVE);
             btnIA1Moyenne.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 200, 0), 3),
+                BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 3),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
-            btnIA1Moyenne.setFont(new Font("Arial", Font.BOLD, 16));
+            btnIA1Moyenne.setFont(new Font("Arial", Font.PLAIN, 16));
             boutonSelectionneIA1[0] = btnIA1Moyenne;
             difficulteIA1Choisie[0] = "MOYEN";
         });
@@ -374,12 +400,12 @@ public class MenuPrincipal extends JFrame {
                     BorderFactory.createEmptyBorder(12, 20, 12, 20)
                 ));
             }
-            btnIA2Facile.setBackground(new Color(230, 240, 255)); // bleu très clair
+            btnIA2Facile.setBackground(COULEUR_BOUTON_ACTIVE);
             btnIA2Facile.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(100, 150, 255), 3),
+                BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 3),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
-            btnIA2Facile.setFont(new Font("Arial", Font.BOLD, 16));
+            btnIA2Facile.setFont(new Font("Arial", Font.PLAIN, 16));
             boutonSelectionneIA2[0] = btnIA2Facile;
             difficulteIA2Choisie[0] = "FACILE";
         });
@@ -392,12 +418,12 @@ public class MenuPrincipal extends JFrame {
                     BorderFactory.createEmptyBorder(12, 20, 12, 20)
                 ));
             }
-            btnIA2Moyenne.setBackground(new Color(255, 248, 220)); // jaune très clair
+            btnIA2Moyenne.setBackground(COULEUR_BOUTON_ACTIVE);
             btnIA2Moyenne.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 200, 0), 3),
+                BorderFactory.createLineBorder(COULEUR_BORDURE_ACTIVE, 3),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
-            btnIA2Moyenne.setFont(new Font("Arial", Font.BOLD, 16));
+            btnIA2Moyenne.setFont(new Font("Arial", Font.PLAIN, 16));
             boutonSelectionneIA2[0] = btnIA2Moyenne;
             difficulteIA2Choisie[0] = "MOYEN";
         });
