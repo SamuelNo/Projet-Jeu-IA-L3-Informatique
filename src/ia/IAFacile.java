@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * IA Facile - Stratégie aléatoire avec quelques heuristiques simples.
+ * IA Facile - strat aléatoire avec quelques heuristiques simples
  */
 public class IAFacile {
     private static final Random rand = new Random();
     
     /**
-     * Choisit un coup aléatoire parmi les coups légaux.
+     * Choisit un coup aléatoire parmi les coups possibles
      */
     public static Coup choisirCoup(Etat etat) {
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat);
@@ -19,7 +19,7 @@ public class IAFacile {
             return new Coup(null, Coup.TypeAction.TERMINER, null);
         }
         
-        // Stratégie très simple : choix aléatoire
+        // choix aléatoire
         return coupsLegaux.get(rand.nextInt(coupsLegaux.size()));
     }
 }

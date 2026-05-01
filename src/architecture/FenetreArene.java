@@ -314,22 +314,49 @@ public class FenetreArene extends JPanel {
     public static void MAJStats(Personnage j1, Personnage j2, Personnage actif) {
         if (statsJ1 != null && j1 != null) {
             String tourIndic = (actif == j1) ? "<br><br><font color='#4169e1'><b>▶ À TON TOUR</b></font>" : "";
+            
+            // ajouter les informations IA si applicable
+            String infoIA1 = "";
+            if (instance != null && instance.jeu != null) {
+                String modeJeu = instance.jeu.getModeJeu();
+                if (modeJeu.startsWith("PVIA_")) {
+                    String difficulte = modeJeu.substring(5); // enlever "PVIA_"
+                    infoIA1 = "<br><font color='#81c784'><i>IA (" + difficulte + ")</i></font>";
+                } else if (modeJeu.startsWith("IAVIA_")) {
+                    String difficulte1 = instance.jeu.getDifficulteIA1();
+                    infoIA1 = "<br><font color='#81c784'><i>IA (" + difficulte1 + ")</i></font>";
+                }
+            }
+            
             statsJ1.setText("<html><div style='color:#E0E0E0;'><b>" + j1.getNom() + " (J1)</b><hr>"
                     + "PV : " + barre(j1.getHp(), 150, "#4caf50") + " " + (int) j1.getHp() + "<br>"
                     + "Énergie : " + barre(j1.getEnergie(), 150, "#ffca28") + " " + (int) j1.getEnergie() + "<br>"
                     + "Parades : " + j1.getParade() + "<br>"
                     + "PM max : " + j1.getPas()
                     + ((actif == j1 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
+                    + infoIA1
                     + tourIndic + "</div></html>");
         }
         if (statsJ2 != null && j2 != null) {
             String tourIndic = (actif == j2) ? "<br><br><font color='#dc143c'><b>▶ À TON TOUR</b></font>" : "";
+            
+            // ajouter les informations IA si applicable
+            String infoIA2 = "";
+            if (instance != null && instance.jeu != null) {
+                String modeJeu = instance.jeu.getModeJeu();
+                if (modeJeu.startsWith("IAVIA_")) {
+                    String difficulte2 = instance.jeu.getDifficulteIA2();
+                    infoIA2 = "<br><font color='#81c784'><i>IA (" + difficulte2 + ")</i></font>";
+                }
+            }
+            
             statsJ2.setText("<html><div style='color:#E0E0E0;'><b>" + j2.getNom() + " (J2)</b><hr>"
                     + "PV : " + barre(j2.getHp(), 150, "#4caf50") + " " + (int) j2.getHp() + "<br>"
                     + "Énergie : " + barre(j2.getEnergie(), 150, "#ffca28") + " " + (int) j2.getEnergie() + "<br>"
                     + "Parades : " + j2.getParade() + "<br>"
                     + "PM max : " + j2.getPas()
                     + ((actif == j2 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
+                    + infoIA2
                     + tourIndic + "</div></html>");
         }
     }

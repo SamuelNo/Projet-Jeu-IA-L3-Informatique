@@ -249,7 +249,7 @@ public class Personnage {
         if (nbparades <= 0){
             throw new IllegalParadeException("Attention! Nombre de parades épuisé");
         }
-        System.out.println("\nParade activée pour le prochain tour\n");
+        // System.out.println("\nParade activée pour le prochain tour\n"); // commentaire pour éviter l'affichage en boucle
         setEnParade(true);
         setParade(-1);
     }

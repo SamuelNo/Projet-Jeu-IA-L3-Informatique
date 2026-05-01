@@ -139,3 +139,6 @@ public class MoteurCoups {
         return Math.abs(p1.getLigne() - p2.getLigne()) + Math.abs(p1.getColonne() - p2.getColonne());
     }
 }
+
+
+
