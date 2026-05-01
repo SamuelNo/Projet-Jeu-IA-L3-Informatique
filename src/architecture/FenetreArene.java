@@ -39,6 +39,7 @@ public class FenetreArene extends JPanel {
     private static JLabel infoLabel;
     private static JLabel statsJ1;
     private static JLabel statsJ2;
+    private static JFrame fenetrePrincipale;
     
     // pour l'effet de survol (hover)
     private int hoverLigne = -1;
@@ -175,6 +176,7 @@ public class FenetreArene extends JPanel {
 
     public static void lancerFenetre(Jeu jeu) {
         JFrame fenetre = new JFrame("GLADIUS - Arène Tactique");
+        fenetrePrincipale = fenetre;
         fenetre.setLayout(new BorderLayout());
         fenetre.getContentPane().setBackground(COULEUR_FOND);
 
@@ -289,13 +291,46 @@ public class FenetreArene extends JPanel {
         fenetre.add(panelStats, BorderLayout.EAST);
 
         // --- BARRE D'INFOS (HAUT) ---
+        JPanel panelHaut = new JPanel(new BorderLayout(10, 0));
+        panelHaut.setBackground(COULEUR_UI_PANNEAU);
+        panelHaut.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+        JButton btnMenuPrincipal = new JButton("Menu principal");
+        btnMenuPrincipal.setFocusPainted(false);
+        btnMenuPrincipal.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnMenuPrincipal.setForeground(new Color(235, 235, 235));
+        btnMenuPrincipal.setBackground(new Color(60, 62, 74));
+        btnMenuPrincipal.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 200, 0), 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        btnMenuPrincipal.setToolTipText("Quitter la partie et revenir au menu principal");
+        btnMenuPrincipal.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnMenuPrincipal.setBackground(new Color(85, 88, 104));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnMenuPrincipal.setBackground(new Color(60, 62, 74));
+            }
+        });
+        btnMenuPrincipal.addActionListener(e -> {
+            if (jeu != null) {
+                jeu.retourMenuPrincipal();
+            }
+        });
+
         infoLabel = new JLabel("Bienvenue dans Gladius !", SwingConstants.CENTER);
         infoLabel.setFont(new Font("Monospaced", Font.BOLD, 16));
         infoLabel.setForeground(new Color(220, 220, 220));
         infoLabel.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         infoLabel.setOpaque(true);
         infoLabel.setBackground(COULEUR_UI_PANNEAU);
-        fenetre.add(infoLabel, BorderLayout.NORTH);
+        panelHaut.add(btnMenuPrincipal, BorderLayout.WEST);
+        panelHaut.add(infoLabel, BorderLayout.CENTER);
+        fenetre.add(panelHaut, BorderLayout.NORTH);
 
         fenetre.pack();
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -363,6 +398,17 @@ public class FenetreArene extends JPanel {
 
     public static void rafraichir() {
         if (instance != null) instance.repaint();
+    }
+
+    public static void fermerFenetreDeJeu() {
+        if (fenetrePrincipale != null) {
+            fenetrePrincipale.dispose();
+            fenetrePrincipale = null;
+        }
+        instance = null;
+        infoLabel = null;
+        statsJ1 = null;
+        statsJ2 = null;
     }
 
     private boolean estCaseAdversaire(int ligne, int col) {

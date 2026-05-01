@@ -27,6 +27,7 @@ public class Jeu {
     private String modeJeu = "PVP"; // PVP, PVIA_FACILE, PVIA_MOYEN, PVIA_DIFFICILE, IAVIA
     private String difficulteIA1 = "FACILE"; // Difficulté de l'IA 1 en mode IAVIA
     private String difficulteIA2 = "FACILE"; // Difficulté de l'IA 2 en mode IAVIA
+    private boolean partieActive = true;
 
     public Jeu() {
         this("PVP"); // Mode par défaut pour compatibilité
@@ -120,6 +121,7 @@ public class Jeu {
     }
     
     private void initialiserPartie() {
+        partieActive = true;
         arene = new Arene(joueur1, joueur2);
         FenetreArene.setArene(arene);
         
@@ -226,6 +228,7 @@ public class Jeu {
     }
     
     public void clicSurCase(int ligne, int colonne) {
+        if (!partieActive) return;
         if (etat.equals("MOUVEMENT")) {
             int caseCible = arene.getGrille()[ligne][colonne];
             
@@ -326,6 +329,7 @@ public class Jeu {
     }
 
     public void clicAction(String action) throws IllegalAttackException {
+        if (!partieActive) return;
         boolean estAttaque = "AL".equals(action) || "ALD".equals(action) || "AD".equals(action);
         // En mode CIBLE, on autorise de changer d'attaque à la volée.
         if (!etat.equals("ACTION") && !etat.equals("MOUVEMENT") && !(etat.equals("CIBLE") && estAttaque)) return; 
@@ -383,6 +387,7 @@ public class Jeu {
     }
 
     private void executerAttaque() {
+        if (!partieActive) return;
         try {
             int distance = Math.abs(adversaire.getPosition().getLigne() - joueurActif.getPosition().getLigne()) +
                     Math.abs(adversaire.getPosition().getColonne() - joueurActif.getPosition().getColonne());
@@ -427,6 +432,7 @@ public class Jeu {
     }
 
     private void finDeTour() {
+        if (!partieActive) return;
         Personnage temp = joueurActif;
         joueurActif = adversaire;
         adversaire = temp;
@@ -471,6 +477,7 @@ public class Jeu {
      * Fait jouer l'IA un tour complet
      */
     private void jouerTourIA() {
+        if (!partieActive) return;
         try {
             Etat etatIA = exporterEtatIA();
             Coup coupChoisi;
@@ -572,6 +579,13 @@ public class Jeu {
             System.err.println("Erreur pendant le tour de l'IA : " + e.getMessage());
             finDeTour();
         }
+    }
+
+    public void retourMenuPrincipal() {
+        if (!partieActive) return;
+        partieActive = false;
+        FenetreArene.fermerFenetreDeJeu();
+        SwingUtilities.invokeLater(() -> new MenuPrincipal().setVisible(true));
     }
 
     public void start() {}
