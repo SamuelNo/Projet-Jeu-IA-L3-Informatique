@@ -233,10 +233,11 @@ public class Personnage {
         if(cible.isEnParade()){
             System.out.println("\nAttaque parée, aucun dégât subi\n");
             cible.setEnParade(false); // La parade ne dure que pour une attaque, elle est désactivée après avoir été utilisée.
+        } else {
+            cible.setHp(-degat);
+            System.out.println("\nAttaque réussie, " + cible.getHp() + " points de vie restants\n");
         }
-        cible.setHp(-degat);
         energie -= degat;
-        System.out.println("\nAttaque réussie, " + cible.getHp() + " points de vie restants\n");
         
     }
 
@@ -248,7 +249,7 @@ public class Personnage {
         if (nbparades <= 0){
             throw new IllegalParadeException("Attention! Nombre de parades épuisé");
         }
-        System.out.println("\nParade activée pour le prochain tour\n");
+        // System.out.println("\nParade activée pour le prochain tour\n"); // commentaire pour éviter l'affichage en boucle
         setEnParade(true);
         setParade(-1);
     }
@@ -258,12 +259,8 @@ public class Personnage {
      * @throws IllegalReposException si le quota de repos est épuisé
      */
     public void seReposer() throws IllegalReposException{
-        if(nbrepos <= 0){
-            throw new IllegalReposException("Attention! Nombre de repos épuisé");
-        }
         System.out.println("\nRepos activé, énergie régénérée pour le prochain tour\n");
         setEnergie(20.0); // Exemple de régénération d'énergie
-        setNbRepos(-1);
     }
 
     /**
@@ -297,7 +294,7 @@ public class Personnage {
         sb.append("PV : " + hp + "\n");
         sb.append("Energie : " + energie + "\n");
         sb.append("Parades restantes : " + nbparades + "\n");
-        sb.append("Repos restants : " + nbrepos);
+        sb.append("Repos : illimité");
         return sb.toString();
     }
 

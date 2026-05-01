@@ -1,9 +1,10 @@
 package test;
 
-import architecture.Jeu;
+import architecture.MenuPrincipal;
 
 public class TestGeneral {
     public static void main(String[] args) {
-        new Jeu(); 
+        // Lancement du menu principal au lieu du jeu direct
+        MenuPrincipal.main(args);
     }
 }
