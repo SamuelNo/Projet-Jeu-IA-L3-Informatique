@@ -35,9 +35,9 @@ public class Personnage {
         this.hp = 120.0;
         this.energie = 80.0;
         this.pas = 4;
-        this.nbparades = 3;
+        this.nbparades = 1;
         this.enParade = false;
-        this.nbrepos = 1;
+        this.nbrepos = 4;
         this.position = null;
         this.attaques = new ArrayList<>();
         initialisationAttaque();
@@ -259,8 +259,12 @@ public class Personnage {
      * @throws IllegalReposException si le quota de repos est épuisé
      */
     public void seReposer() throws IllegalReposException{
+        if (nbrepos <= 0) {
+            throw new IllegalReposException("Attention! Nombre de repos épuisé");
+        }
         System.out.println("\nRepos activé, énergie régénérée pour le prochain tour\n");
-        setEnergie(20.0); // Exemple de régénération d'énergie
+        setNbRepos(-1);
+        setEnergie(20.0); // Régénération d'énergie
     }
 
     /**
@@ -294,7 +298,7 @@ public class Personnage {
         sb.append("PV : " + hp + "\n");
         sb.append("Energie : " + energie + "\n");
         sb.append("Parades restantes : " + nbparades + "\n");
-        sb.append("Repos : illimité");
+        sb.append("Repos restants : " + nbrepos);
         return sb.toString();
     }
 

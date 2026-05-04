@@ -392,6 +392,9 @@ public class Jeu {
                     joueurActif.seReposer(); 
                     finDeTour(); 
                     break;
+                case "T":
+                    finDeTour();
+                    break;
                 default:
                     throw new IllegalActionException("Action inconnue : " + action);
             }

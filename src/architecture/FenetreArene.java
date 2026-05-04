@@ -193,6 +193,7 @@ public class FenetreArene extends JPanel {
         JButton btnAD = new JButton("AD");
         JButton btnParade = new JButton("PARADE");
         JButton btnRepos = new JButton("REPOS");
+        JButton btnTerminer = new JButton("TERMINER");
         btnAL.setToolTipText("Attaque légère");
         btnALo.setToolTipText("Attaque lourde");
         btnAD.setToolTipText("Attaque à distance");
@@ -224,6 +225,32 @@ public class FenetreArene extends JPanel {
             });
             panelActions.add(b);
         }
+
+        // Ajouter le bouton Terminer séparément pour garder l'ordre visuel
+        btnTerminer.setBackground(new Color(60, 62, 74));
+        btnTerminer.setForeground(new Color(235, 235, 235));
+        btnTerminer.setFocusPainted(false);
+        btnTerminer.setFont(new Font("Monospaced", Font.BOLD, 14));
+        btnTerminer.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnTerminer.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(129, 95, 203), 2),
+                BorderFactory.createEmptyBorder(8, 14, 8, 14)
+        ));
+        btnTerminer.setToolTipText("Terminer le tour");
+        btnTerminer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) { btnTerminer.setBackground(new Color(85, 88, 104)); }
+            @Override
+            public void mouseExited(MouseEvent e) { btnTerminer.setBackground(new Color(60, 62, 74)); }
+        });
+        btnTerminer.addActionListener(e -> {
+            try {
+                jeu.clicAction("T");
+            } catch (IllegalActionException ex) {
+                JOptionPane.showMessageDialog(null, "Action impossible : " + ex.getMessage());
+            }
+        });
+        panelActions.add(btnTerminer);
 
         btnAL.addActionListener(e -> {
             try {
@@ -366,7 +393,7 @@ public class FenetreArene extends JPanel {
             statsJ1.setText("<html><div style='color:#E0E0E0;'><b>" + j1.getNom() + " (J1)</b><hr>"
                     + "PV : " + barre(j1.getHp(), 150, "#4caf50") + " " + (int) j1.getHp() + "<br>"
                     + "Énergie : " + barre(j1.getEnergie(), 150, "#ffca28") + " " + (int) j1.getEnergie() + "<br>"
-                    + "Parades : " + j1.getParade() + "<br>"
+                    + "Parades : " + j1.getParade() + " | Repos : " + j1.getNbRepos() + "<br>"
                     + "PM max : " + j1.getPas()
                     + ((actif == j1 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
                     + infoIA1
@@ -388,7 +415,7 @@ public class FenetreArene extends JPanel {
             statsJ2.setText("<html><div style='color:#E0E0E0;'><b>" + j2.getNom() + " (J2)</b><hr>"
                     + "PV : " + barre(j2.getHp(), 150, "#4caf50") + " " + (int) j2.getHp() + "<br>"
                     + "Énergie : " + barre(j2.getEnergie(), 150, "#ffca28") + " " + (int) j2.getEnergie() + "<br>"
-                    + "Parades : " + j2.getParade() + "<br>"
+                    + "Parades : " + j2.getParade() + " | Repos : " + j2.getNbRepos() + "<br>"
                     + "PM max : " + j2.getPas()
                     + ((actif == j2 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
                     + infoIA2

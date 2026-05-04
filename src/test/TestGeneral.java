@@ -7,4 +7,4 @@ public class TestGeneral {
         // Lancement du menu principal au lieu du jeu direct
         MenuPrincipal.main(args);
     }
-}
+} 

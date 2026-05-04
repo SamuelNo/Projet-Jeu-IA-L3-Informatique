@@ -92,7 +92,9 @@ public class MoteurCoups {
         Position ancienne = actif.getPosition();
 
         // Nettoyage de l'ancienne case si c'était une case joueur.
-        if (grille[ancienne.getLigne()][ancienne.getColonne()] == 1 || grille[ancienne.getLigne()][ancienne.getColonne()] == 2) {
+        // C'est mieux d'utiliser les ID dynamiques au cas où
+        if (grille[ancienne.getLigne()][ancienne.getColonne()] == actif.getId() || 
+            grille[ancienne.getLigne()][ancienne.getColonne()] == adversaire.getId()) {
             grille[ancienne.getLigne()][ancienne.getColonne()] = 0;
         }
 
@@ -106,8 +108,10 @@ public class MoteurCoups {
         }
 
         actif.setPosition(new Position(destination.getLigne(), destination.getColonne()));
-        grille[actif.getPosition().getLigne()][actif.getPosition().getColonne()] = 1;
-        grille[adversaire.getPosition().getLigne()][adversaire.getPosition().getColonne()] = 2;
+        
+        // CORRECTION DE L'AFFICHAGE : On utilise l'ID du joueur, pas 1 et 2 en dur
+        grille[actif.getPosition().getLigne()][actif.getPosition().getColonne()] = actif.getId();
+        grille[adversaire.getPosition().getLigne()][adversaire.getPosition().getColonne()] = adversaire.getId();
     }
 
     private static void appliquerAttaque(Etat.JoueurEtat actif, Etat.JoueurEtat adversaire, String typeAttaque) {
@@ -130,7 +134,8 @@ public class MoteurCoups {
         if (adversaire.isEnParade()) {
             adversaire.setEnParade(false);
         } else {
-            adversaire.setHp(adversaire.getHp() - attaque.getDegat());
+            // CORRECTION DE L'ERREUR DE COMPILATION : Cast explicite en (int)
+            adversaire.setHp(adversaire.getHp() - (int) attaque.getDegat());
         }
         actif.setEnergie(actif.getEnergie() - attaque.getDegat());
     }
@@ -139,6 +144,5 @@ public class MoteurCoups {
         return Math.abs(p1.getLigne() - p2.getLigne()) + Math.abs(p1.getColonne() - p2.getColonne());
     }
 }
-
 
 
