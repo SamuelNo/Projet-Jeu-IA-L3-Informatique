@@ -14,6 +14,7 @@ public class Personnage {
     private String nom;
     private double hp;
     private double energie;
+    private double maxEnergie;
     private int pas;
     private int nbparades;
     private boolean enParade; // 
@@ -34,6 +35,7 @@ public class Personnage {
         this.arme = arme;
         this.hp = 120.0;
         this.energie = 80.0;
+        this.maxEnergie = 100.0;
         this.pas = 4;
         this.nbparades = 1;
         this.enParade = false;
@@ -61,6 +63,7 @@ public class Personnage {
         this.arme = arme;
         this.hp = hp;
         this.energie = energie;
+        this.maxEnergie = Math.max(energie, 100.0);
         this.pas = pas;
         this.nbparades = nbparades;
         this.enParade = false;
@@ -100,6 +103,23 @@ public class Personnage {
      */
     public void setEnergie(double supplement){
         this.energie += supplement;
+        if (this.energie < 0) this.energie = 0;
+        if (this.energie > this.maxEnergie) this.energie = this.maxEnergie;
+    }
+
+    /**
+     * Retourne le maximum d'énergie possible pour ce personnage.
+     */
+    public double getMaxEnergie() {
+        return maxEnergie;
+    }
+
+    /**
+     * Définit le plafond d'énergie (utile pour équilibrage).
+     */
+    public void setMaxEnergie(double maxEnergie) {
+        this.maxEnergie = maxEnergie;
+        if (this.energie > this.maxEnergie) this.energie = this.maxEnergie;
     }
 
     public int getParade() {

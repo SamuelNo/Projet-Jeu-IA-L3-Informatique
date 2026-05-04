@@ -392,7 +392,7 @@ public class FenetreArene extends JPanel {
             
             statsJ1.setText("<html><div style='color:#E0E0E0;'><b>" + j1.getNom() + " (J1)</b><hr>"
                     + "PV : " + barre(j1.getHp(), 150, "#4caf50") + " " + (int) j1.getHp() + "<br>"
-                    + "Énergie : " + barre(j1.getEnergie(), 150, "#ffca28") + " " + (int) j1.getEnergie() + "<br>"
+                    + "Énergie : " + barre(j1.getEnergie(), j1.getMaxEnergie(), "#ffca28") + " " + (int) j1.getEnergie() + " / " + (int) j1.getMaxEnergie() + "<br>"
                     + "Parades : " + j1.getParade() + " | Repos : " + j1.getNbRepos() + "<br>"
                     + "PM max : " + j1.getPas()
                     + ((actif == j1 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
@@ -414,7 +414,7 @@ public class FenetreArene extends JPanel {
             
             statsJ2.setText("<html><div style='color:#E0E0E0;'><b>" + j2.getNom() + " (J2)</b><hr>"
                     + "PV : " + barre(j2.getHp(), 150, "#4caf50") + " " + (int) j2.getHp() + "<br>"
-                    + "Énergie : " + barre(j2.getEnergie(), 150, "#ffca28") + " " + (int) j2.getEnergie() + "<br>"
+                    + "Énergie : " + barre(j2.getEnergie(), j2.getMaxEnergie(), "#ffca28") + " " + (int) j2.getEnergie() + " / " + (int) j2.getMaxEnergie() + "<br>"
                     + "Parades : " + j2.getParade() + " | Repos : " + j2.getNbRepos() + "<br>"
                     + "PM max : " + j2.getPas()
                     + ((actif == j2 && instance != null && instance.jeu != null) ? "<br>PM restants : " + instance.jeu.getPmRestants() : "")
