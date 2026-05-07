@@ -37,10 +37,11 @@ public class MoteurCoups {
             }
 
            // 2. ACTIONS DÉFENSIVES / SOUTIEN
-            if (actif.getNbParades() > 0) {
+            if (actif.getNbParades() > 0 && actif.getEnergie() >= 5) {
                 coups.add(new Coup(dest, Coup.TypeAction.PARADE, null));
             }
-            if (actif.getNbRepos() > 0) { // LA CORRECTION EST ICI
+            // N'autorise le repos que si l'énergie n'est pas déjà au maximum
+            if (actif.getNbRepos() > 0 && actif.getEnergie() < actif.getMaxEnergie()) {
                 coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
             }
             // 3. EN DERNIER RECOURS : NE RIEN FAIRE (Se déplacer et Terminer)
@@ -60,9 +61,10 @@ public class MoteurCoups {
 
         switch (c.getAction()) {
             case PARADE:
-                if (actif.getNbParades() > 0) {
+                if (actif.getNbParades() > 0 && actif.getEnergie() >= 5) {
                     actif.setEnParade(true);
                     actif.setNbParades(actif.getNbParades() - 1);
+                    actif.setEnergie(actif.getEnergie() - 5); // COÛT DE LA PARADE
                 }
                 break;
             case REPOS:

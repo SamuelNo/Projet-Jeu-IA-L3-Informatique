@@ -37,7 +37,7 @@ public class Personnage {
         this.energie = 80.0;
         this.maxEnergie = 100.0;
         this.pas = 4;
-        this.nbparades = 1;
+        this.nbparades = 3;
         this.enParade = false;
         this.nbrepos = 4;
         this.position = null;
@@ -269,7 +269,11 @@ public class Personnage {
         if (nbparades <= 0){
             throw new IllegalParadeException("Attention! Nombre de parades épuisé");
         }
-        // System.out.println("\nParade activée pour le prochain tour\n"); // commentaire pour éviter l'affichage en boucle
+        if (this.energie < 5.0) {
+            throw new IllegalParadeException("Énergie insuffisante pour effectuer une parade (coût : 5)");
+        }
+        // Coût en énergie de la parade
+        setEnergie(-5.0);
         setEnParade(true);
         setParade(-1);
     }
@@ -282,7 +286,9 @@ public class Personnage {
         if (nbrepos <= 0) {
             throw new IllegalReposException("Attention! Nombre de repos épuisé");
         }
-        // System.out.println("\nRepos activé, énergie régénérée pour le prochain tour\n"); // commentaire pour éviter l'affichage en boucle
+        if (this.energie >= this.maxEnergie) {
+            throw new IllegalReposException("Énergie déjà maximale");
+        }
         setNbRepos(-1);
         setEnergie(20.0); // Régénération d'énergie
     }

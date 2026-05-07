@@ -72,7 +72,7 @@ public class Etat {
         if (joueurActif.getEnergie() > 15 && !joueurActif.isEnParade()) {
             score -= 10;
         }
-
+        
         return (int) score;
     }
 
@@ -118,6 +118,80 @@ public class Etat {
     public JoueurEtat getAdversaire() { return adversaire; }
 
     // =========================================================================
+    // 🧠 HEURISTIQUE DE L'IA MOYENNE (Le Tacticien)
+    // =========================================================================
+    
+    public int getScoreHeuristiqueMoyenne() {
+        if (adversaire.getHp() <= 0) return 1000000;
+        if (joueurActif.getHp() <= 0) return -1000000;
+        
+        double score = 0;
+        
+        // 1. POINTS DE VIE (Priorité absolue)
+        score += (joueurActif.getHp() - adversaire.getHp()) * 50; 
+        
+        // 2. GESTION DE L'ÉNERGIE (Anti-Farming)
+        // Les attaques coûtent 15, 20 ou 30. À partir de 50, on n'a plus besoin de "farmer" le repos.
+        if (joueurActif.getEnergie() <= 50) {
+            score += joueurActif.getEnergie() * 1.5; 
+        } else {
+            score += 75; // Plafond : se reposer au-delà de 50 ne rapporte PLUS de points !
+        }
+        
+        // Alerte rouge : l'IA est obligée de se reposer si elle n'a même plus de quoi faire une attaque légère
+        if (joueurActif.getEnergie() < 15) {
+            score -= 100; 
+        }
+        
+        // 3. PARADES EN INVENTAIRE
+        score += Math.min(joueurActif.getNbParades(), 3) * 20;
+        score -= Math.min(adversaire.getNbParades(), 3) * 15;
+        
+        // 4. LE "GPS" À BONUS (Boosté pour la rendre très gourmande)
+        score += evaluerCasesBoostMoyenne(this, joueurActif); 
+        
+        // 5. PRESSION CONSTANTE ET COMBAT (Anti-Standoff)
+        int distance = Math.abs(joueurActif.getPosition().getLigne() - adversaire.getPosition().getLigne()) +
+                       Math.abs(joueurActif.getPosition().getColonne() - adversaire.getPosition().getColonne());
+                       
+        // Pénalité linéaire : l'IA doit TOUJOURS chercher à réduire la distance
+        score -= distance * 3.0; 
+        
+        // Bonus immédiat si elle est à portée de tir (1 à 3 cases)
+        if (distance <= 3) {
+            score += 20.0; 
+        }
+        score += (joueurActif.getPas() * 0.2); // Bonus pour la mobilité restante (plus elle peut se déplacer, mieux c'est)
+        return (int) score;
+    }
+    
+    private double evaluerCasesBoostMoyenne(Etat etat, JoueurEtat actif) {
+        double scoreBoost = 0;
+        int[][] grille = etat.getGrille();
+        Position pos = actif.getPosition();
+        
+        // On scanne jusqu'à 4 cases (son déplacement maximum)
+        int rayon = 4; 
+        
+        for(int l = Math.max(0, pos.getLigne() - rayon); l <= Math.min(grille.length - 1, pos.getLigne() + rayon); l++) {
+            for(int c = Math.max(0, pos.getColonne() - rayon); c <= Math.min(grille[0].length - 1, pos.getColonne() + rayon); c++) {
+                
+                int dist = Math.abs(pos.getLigne() - l) + Math.abs(pos.getColonne() - c);
+                
+                if (dist > 0 && dist <= rayon) {
+                    if (grille[l][c] == 3 && actif.getNbParades() < 3) {
+                        scoreBoost += 80.0 / dist; // Appât surpuissant pour la parade
+                    } 
+                    else if (grille[l][c] == 4 && actif.getEnergie() <= 60) {
+                        scoreBoost += 60.0 / dist; // Appât surpuissant pour l'énergie
+                    }
+                }
+            }
+        }
+        return scoreBoost;
+    }
+
+    // =========================================================================
     // 👤 CLASSES INTERNES DE DONNÉES
     // =========================================================================
 
@@ -125,6 +199,7 @@ public class Etat {
         private Position position;
         private int hp;
         private double energie;
+        private double maxEnergie;
         private int nbParades;
         private int nbRepos;
         private boolean enParade;
@@ -133,10 +208,11 @@ public class Etat {
         private List<AttaqueInfo> attaques;
 
         // Constructeur standard
-        public JoueurEtat(Position position, int hp, double energie, int nbParades, int nbRepos, int pas, int id, List<AttaqueInfo> attaques) {
+        public JoueurEtat(Position position, int hp, double energie, double maxEnergie, int nbParades, int nbRepos, int pas, int id, List<AttaqueInfo> attaques) {
             this.position = position;
             this.hp = hp;
             this.energie = energie;
+            this.maxEnergie = maxEnergie;
             this.nbParades = nbParades;
             this.nbRepos = nbRepos;
             this.enParade = false;
@@ -150,6 +226,7 @@ public class Etat {
             this.position = new Position(autre.position.getLigne(), autre.position.getColonne());
             this.hp = autre.hp;
             this.energie = autre.energie;
+            this.maxEnergie = autre.maxEnergie;
             this.nbParades = autre.nbParades;
             this.nbRepos = autre.nbRepos;
             this.enParade = autre.enParade;
@@ -166,7 +243,7 @@ public class Etat {
             for (Attaques a : p.getAttaques()) {
                 infos.add(new AttaqueInfo(a.getType_attaque(), a.getDegat(), a.getPortee()));
             }
-            return new JoueurEtat(p.getPosition(), (int) Math.max(0, p.getHp()), p.getEnergie(), p.getNbParades(), p.getNbRepos(), p.getPas(), idJoueur, infos);
+            return new JoueurEtat(p.getPosition(), (int) Math.max(0, p.getHp()), p.getEnergie(), p.getMaxEnergie(), p.getNbParades(), p.getNbRepos(), p.getPas(), idJoueur, infos);
         }
 
         /**
@@ -182,7 +259,12 @@ public class Etat {
         public int getHp() { return hp; }
         public void setHp(int hp) { this.hp = hp; }
         public double getEnergie() { return energie; }
-        public void setEnergie(double energie) { this.energie = energie; }
+        public void setEnergie(double energie) { 
+            this.energie = energie;
+            if (this.energie < 0) this.energie = 0;
+            if (this.energie > this.maxEnergie) this.energie = this.maxEnergie;
+        }
+        public double getMaxEnergie() { return maxEnergie; }
         public int getNbParades() { return nbParades; }
         public void setNbParades(int nbParades) { this.nbParades = nbParades; }
         public int getNbRepos() { return nbRepos; }

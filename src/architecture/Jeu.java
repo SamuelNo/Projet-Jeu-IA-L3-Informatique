@@ -3,6 +3,8 @@ package architecture;
 import entite.*;
 import exception.IllegalActionException;
 import exception.IllegalAttackException;
+import exception.IllegalParadeException;
+import exception.IllegalReposException;
 import ia.Etat;
 import ia.IAFacile;
 import ia.IAMoyenne;
@@ -266,47 +268,8 @@ public class Jeu {
                 return;
             }
             
-            // prendre les bonus sur le trajet de déplacement (toutes les cases possibles)
+            // ne récupérer un bonus que si l'on s'arrête sur la case d'arrivée (uniformisé IA / joueur)
             int bonusPris = 0;
-            
-            // vérifier toutes les cases sur les chemins possibles (pour les diagonales)
-            int ligneMin = Math.min(ligneDepart, ligne);
-            int ligneMax = Math.max(ligneDepart, ligne);
-            int colonneMin = Math.min(colonneDepart, colonne);
-            int colonneMax = Math.max(colonneDepart, colonne);
-            
-            // parcourir le rectangle de déplacement
-            for (int l = ligneMin; l <= ligneMax; l++) {
-                for (int c = colonneMin; c <= colonneMax; c++) {
-                    // ne pas vérifier la case de départ ni la destination
-                    if ((l == ligneDepart && c == colonneDepart) || (l == ligne && c == colonne)) {
-                        continue;
-                    }
-                    
-                    // vérifier si cette case est sur un chemin de déplacement valide
-                    int distanceFromDepart = Math.abs(l - ligneDepart) + Math.abs(c - colonneDepart);
-                    int distanceToDest = Math.abs(l - ligne) + Math.abs(c - colonne);
-                    int totalDistance = Math.abs(ligne - ligneDepart) + Math.abs(colonne - colonneDepart);
-                    
-                    // si cette case est sur un chemin le plus court
-                    if (distanceFromDepart + distanceToDest == totalDistance) {
-                        int caseType = arene.getGrille()[l][c];
-                        if (caseType == 3) {
-                            joueurActif.setParade(1);
-                            arene.getGrille()[l][c] = 0;
-                            bonusPris++;
-                            FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-                            FenetreArene.rafraichir();
-                        } else if (caseType == 4) {
-                            joueurActif.setEnergie(20.0);
-                            arene.getGrille()[l][c] = 0;
-                            bonusPris++;
-                            FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-                            FenetreArene.rafraichir();
-                        }
-                    }
-                }
-            }
 
             joueurActif.setPosition(new Position(ligne, colonne));
             int caseArrivee = arene.getGrille()[ligne][colonne];
@@ -398,6 +361,8 @@ public class Jeu {
                 default:
                     throw new IllegalActionException("Action inconnue : " + action);
             }
+        } catch (IllegalParadeException | IllegalReposException e) {
+            JOptionPane.showMessageDialog(null, "Action impossible : " + e.getMessage());
         } catch (IllegalActionException e) {
             JOptionPane.showMessageDialog(null, "Action impossible : " + e.getMessage());
         }
