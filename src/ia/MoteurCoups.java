@@ -21,26 +21,35 @@ public class MoteurCoups {
 
         List<Position> destinations = genererDestinationsLegales(s, actif, adversaire);
         for (Position dest : destinations) {
-            // Actions toujours disponibles sous conditions.
-            if (actif.getNbParades() > 0) {
-                coups.add(new Coup(dest, Coup.TypeAction.PARADE, null));
-            }
-            coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
-
+            
+            // 1. PRIORITÉ ABSOLUE : LES ATTAQUES
             if (!attaqueDejaEffectuee) {
                 int distApresDeplacement = distanceManhattan(dest, adversaire.getPosition());
-                int pmUtilisesPourDeplacement = distApresDeplacement;
+                int pmUtilisesPourDeplacement = distanceManhattan(actif.getPosition(), dest);
+                
                 for (Etat.AttaqueInfo attaque : actif.getAttaques()) {
-                    if (actif.getEnergie() >= attaque.getDegat() && pmUtilisesPourDeplacement <= actif.getPas()
+                    if (actif.getEnergie() >= attaque.getDegat() 
+                            && pmUtilisesPourDeplacement <= actif.getPas()
                             && distApresDeplacement <= attaque.getPortee()) {
                         coups.add(new Coup(dest, Coup.TypeAction.ATTAQUE, attaque.getType()));
                     }
                 }
             }
+
+           // 2. ACTIONS DÉFENSIVES / SOUTIEN
+            if (actif.getNbParades() > 0) {
+                coups.add(new Coup(dest, Coup.TypeAction.PARADE, null));
+            }
+            if (actif.getNbRepos() > 0) { // LA CORRECTION EST ICI
+                coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
+            }
+            // 3. EN DERNIER RECOURS : NE RIEN FAIRE (Se déplacer et Terminer)
+            coups.add(new Coup(dest, Coup.TypeAction.TERMINER, null));
         }
 
         return coups;
     }
+        
 
     public static Etat simulerCoup(Etat s, Coup c) {
         Etat suivant = new Etat(s);
@@ -57,7 +66,10 @@ public class MoteurCoups {
                 }
                 break;
             case REPOS:
-                actif.setEnergie(actif.getEnergie() + 20.0);
+                if (actif.getNbRepos() > 0) {
+                    actif.setEnergie(actif.getEnergie() + 20.0);
+                    actif.setNbRepos(actif.getNbRepos() - 1); // ON CONSOMME LE REPOS ICI
+                }
                 break;
             case ATTAQUE:
                 appliquerAttaque(actif, adversaire, c.getTypeAttaque());

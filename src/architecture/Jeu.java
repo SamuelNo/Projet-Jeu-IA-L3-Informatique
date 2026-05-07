@@ -426,9 +426,7 @@ public class Jeu {
             FenetreArene.MAJStats(joueur1, joueur2, joueurActif); 
             
             if (adversaire.getHp() <= 0) {
-                etat = "FIN";
-                JOptionPane.showMessageDialog(null, "Victoire ! " + joueurActif.getNom() + " a remporté le combat !");
-                System.exit(0);
+                terminerCombat("Victoire ! " + joueurActif.getNom() + " a remporté le combat !");
             } else {
                 etat = "MOUVEMENT";
                 if (paradeAvant && adversaire.getHp() == hpAvant) {
@@ -465,9 +463,7 @@ public class Jeu {
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
 
         if (adversaire.getHp() <= 0) {
-            etat = "FIN";
-            JOptionPane.showMessageDialog(null, "Victoire ! " + joueurActif.getNom() + " a remporté le combat !");
-            System.exit(0);
+            terminerCombat("Victoire ! " + joueurActif.getNom() + " a remporté le combat !");
             return;
         }
 
@@ -485,6 +481,22 @@ public class Jeu {
                 }
             });
         }
+    }
+
+    private void terminerCombat(String message) {
+        etat = "FIN";
+        Object[] options = {"Retour au menu"};
+        JOptionPane.showOptionDialog(
+                null,
+                message,
+                "Combat terminé",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+        retourMenuPrincipal();
     }
 
     /**
@@ -609,7 +621,6 @@ public class Jeu {
     }
 
     public void retourMenuPrincipal() {
-        if (!partieActive) return;
         partieActive = false;
         FenetreArene.fermerFenetreDeJeu();
         SwingUtilities.invokeLater(() -> new MenuPrincipal().setVisible(true));

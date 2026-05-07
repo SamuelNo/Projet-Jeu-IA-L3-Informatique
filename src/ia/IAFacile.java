@@ -3,13 +3,12 @@ package ia;
 import java.util.List;
 
 /**
- * IA Facile - Utilise l'algorithme Minimax basique.
- * Se base sur l'heuristique getScoreHeuristique() de la classe Etat.
+ * IA Facile - Le "Berserker".
+ * Profondeur 1 : Elle fonce et frappe sans se soucier de la riposte.
  */
 public class IAFacile {
     
-    // Profondeur 2 : l'IA regarde son coup puis la réponse de l'adversaire.
-    private static final int PROFONDEUR = 2; 
+    private static final int PROFONDEUR = 1; 
 
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);
@@ -18,23 +17,19 @@ public class IAFacile {
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
         
-        // Sécurité : si aucun coup n'est possible, on termine le tour.
         if (coupsLegaux.isEmpty()) {
-            return new Coup(null, Coup.TypeAction.REPOS, null);
+            return new Coup(null, Coup.TypeAction.TERMINER, null);
         }
 
-        // On initialise avec le premier coup par défaut (évite les retours null)
         Coup meilleurCoup = coupsLegaux.get(0); 
         int meilleurScore = Integer.MIN_VALUE;
 
         for (Coup c : coupsLegaux) {
-            Etat simulation = MoteurCoups.simulerCoup(etatActuel, c);
+            Etat simulation = MoteurCoups.simulerCoup(etat, c);
             
-            // On lance le minimax. 
-            // estMax = false car après ce coup, c'est au tour de l'adversaire (MIN).
             int score = minimax(simulation, PROFONDEUR - 1, false);
             
-            if (score >= meilleurScore) {
+            if (score > meilleurScore) {
                 meilleurScore = score;
                 meilleurCoup = c;
             }
@@ -42,27 +37,26 @@ public class IAFacile {
         return meilleurCoup;
     }
 
-    /**
-     * Algorithme récursif Minimax.
-     */
     private static int minimax(Etat etat, int profondeur, boolean estMax) {
-        // Condition d'arrêt : fin de partie ou limite de profondeur atteinte.
         if (profondeur == 0 || etat.estTerminal()) {
-            // Gestion de la perspective (L'astuce Negamax)
             if (estMax) {
-                // C'est au tour de l'IA de jouer, l'heuristique est de son point de vue.
+                // C'est le tour de l'IA, on évalue normalement.
                 return etat.getScoreHeuristique(); 
             } else {
-                // C'est au tour de l'Humain, on inverse le score pour que l'IA comprenne que c'est une victoire pour elle.
-                return -etat.getScoreHeuristique();
+                // CORRECTION MAGIQUE : C'est le tour de l'adversaire dans la simulation.
+                // On met temporairement l'IA en "joueur actif" pour qu'elle lise la grille avec ses propres yeux.
+                etat.changerJoueurActif();
+                int score = etat.getScoreHeuristique();
+                etat.changerJoueurActif(); // On remet l'adversaire pour ne rien casser.
+                return score;
             }
         }
 
         if (estMax) {
             int maxEval = Integer.MIN_VALUE;
-            List<Coup> coups = MoteurCoups.genererCoupsLegaux(etat);
+            List<Coup> coups = MoteurCoups.genererCoupsLegaux(etat, false);
             
-            if (coups.isEmpty()) return etat.getScoreHeuristique(); // Gère les impasses
+            if (coups.isEmpty()) return etat.getScoreHeuristique();
             
             for (Coup c : coups) {
                 int eval = minimax(MoteurCoups.simulerCoup(etat, c), profondeur - 1, false);
@@ -71,9 +65,14 @@ public class IAFacile {
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
-            List<Coup> coups = MoteurCoups.genererCoupsLegaux(etat);
+            List<Coup> coups = MoteurCoups.genererCoupsLegaux(etat, false);
             
-            if (coups.isEmpty()) return -etat.getScoreHeuristique(); // Gère les impasses avec inversion
+            if (coups.isEmpty()) {
+                etat.changerJoueurActif();
+                int s = etat.getScoreHeuristique();
+                etat.changerJoueurActif();
+                return s;
+            }
             
             for (Coup c : coups) {
                 int eval = minimax(MoteurCoups.simulerCoup(etat, c), profondeur - 1, true);
