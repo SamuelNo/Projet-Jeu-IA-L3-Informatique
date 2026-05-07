@@ -11,6 +11,10 @@ import java.util.List;
 public class MoteurCoups {
 
     public static List<Coup> genererCoupsLegaux(Etat s) {
+        return genererCoupsLegaux(s, false);
+    }
+
+    public static List<Coup> genererCoupsLegaux(Etat s, boolean attaqueDejaEffectuee) {
         List<Coup> coups = new ArrayList<>();
         Etat.JoueurEtat actif = s.getJoueurActif();
         Etat.JoueurEtat adversaire = s.getAdversaire();
@@ -18,16 +22,19 @@ public class MoteurCoups {
         List<Position> destinations = genererDestinationsLegales(s, actif, adversaire);
         for (Position dest : destinations) {
             // Actions toujours disponibles sous conditions.
-            coups.add(new Coup(dest, Coup.TypeAction.TERMINER, null));
             if (actif.getNbParades() > 0) {
                 coups.add(new Coup(dest, Coup.TypeAction.PARADE, null));
             }
             coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
 
-            int distApresDeplacement = distanceManhattan(dest, adversaire.getPosition());
-            for (Etat.AttaqueInfo attaque : actif.getAttaques()) {
-                if (actif.getEnergie() >= attaque.getDegat() && distApresDeplacement <= attaque.getPortee()) {
-                    coups.add(new Coup(dest, Coup.TypeAction.ATTAQUE, attaque.getType()));
+            if (!attaqueDejaEffectuee) {
+                int distApresDeplacement = distanceManhattan(dest, adversaire.getPosition());
+                int pmUtilisesPourDeplacement = distApresDeplacement;
+                for (Etat.AttaqueInfo attaque : actif.getAttaques()) {
+                    if (actif.getEnergie() >= attaque.getDegat() && pmUtilisesPourDeplacement <= actif.getPas()
+                            && distApresDeplacement <= attaque.getPortee()) {
+                        coups.add(new Coup(dest, Coup.TypeAction.ATTAQUE, attaque.getType()));
+                    }
                 }
             }
         }
@@ -97,6 +104,8 @@ public class MoteurCoups {
             grille[ancienne.getLigne()][ancienne.getColonne()] == adversaire.getId()) {
             grille[ancienne.getLigne()][ancienne.getColonne()] = 0;
         }
+        // Nettoyage de la position actuelle du joueur (case 1 ou 2)
+        grille[actif.getPosition().getLigne()][actif.getPosition().getColonne()] = 0;
 
         int caseCible = grille[destination.getLigne()][destination.getColonne()];
         if (caseCible == 3) {

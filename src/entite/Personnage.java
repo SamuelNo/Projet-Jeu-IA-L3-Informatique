@@ -282,7 +282,7 @@ public class Personnage {
         if (nbrepos <= 0) {
             throw new IllegalReposException("Attention! Nombre de repos épuisé");
         }
-        System.out.println("\nRepos activé, énergie régénérée pour le prochain tour\n");
+        // System.out.println("\nRepos activé, énergie régénérée pour le prochain tour\n"); // commentaire pour éviter l'affichage en boucle
         setNbRepos(-1);
         setEnergie(20.0); // Régénération d'énergie
     }

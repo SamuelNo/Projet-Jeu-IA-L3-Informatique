@@ -4,7 +4,7 @@ import architecture.MenuPrincipal;
 
 public class TestGeneral {
     public static void main(String[] args) {
-        // Lancement du menu principal au lieu du jeu direct
+        // Lancement du menu principal
         MenuPrincipal.main(args);
     }
 } 

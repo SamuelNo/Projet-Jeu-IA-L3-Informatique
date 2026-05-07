@@ -445,33 +445,40 @@ public class Jeu {
             JOptionPane.showMessageDialog(null, "Erreur attaque : " + e.getMessage());
             etat = "MOUVEMENT";
             FenetreArene.MAJTexte("Choisissez une action via les boutons.");
+        } finally {
+            // ajout de l'accolade manquante à la fin du bloc catch
         }
     }
 
     private void finDeTour() {
         if (!partieActive) return;
+
+        // Changer de joueur et réinitialiser l'état pour le nouveau tour.
         Personnage temp = joueurActif;
         joueurActif = adversaire;
         adversaire = temp;
         etat = "MOUVEMENT";
-        // Une parade ne peut pas survivre au-delà du prochain tour du joueur.
-        joueurActif.setEnParade(false);
         attaqueEnCours = "";
         attaqueDejaEffectuee = false;
         pmRestants = joueurActif.getPas();
-        
-        String numJ = (joueurActif == joueur1) ? "(J1)" : "(J2)";
+
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-        FenetreArene.MAJTexte(
-                joueurActif.getNom() + " " + numJ + " : " + pmRestants + " PM disponibles"
-        );
+
+        if (adversaire.getHp() <= 0) {
+            etat = "FIN";
+            JOptionPane.showMessageDialog(null, "Victoire ! " + joueurActif.getNom() + " a remporté le combat !");
+            System.exit(0);
+            return;
+        }
+
+        FenetreArene.MAJTexte("Tour de " + joueurActif.getNom() + " : " + pmRestants + " PM disponibles.");
         FenetreArene.rafraichir();
-        
-        // Si c'est à l'IA de jouer, on lance son tour automatiquement
+
+        // Si le prochain joueur est une IA, on déclenche son tour automatiquement.
         if (estTourIA()) {
             SwingUtilities.invokeLater(() -> {
                 try {
-                    Thread.sleep(1000); // Petite pause pour la lisibilité
+                    Thread.sleep(500);
                     jouerTourIA();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -479,7 +486,7 @@ public class Jeu {
             });
         }
     }
-    
+
     /**
      * Vérifie si c'est le tour de l'IA selon le mode de jeu
      */
@@ -495,108 +502,109 @@ public class Jeu {
      */
     private void jouerTourIA() {
         if (!partieActive) return;
+
+        boolean attaqueEffectuee = false;
         try {
-            Etat etatIA = exporterEtatIA();
-            Coup coupChoisi;
-            
-            // choix de l'ia selon le mode de jeu et la difficulté spécifique
-            if (modeJeu.equals("PVIA_FACILE")) {
-                coupChoisi = IAFacile.choisirCoup(etatIA);
-            } else if (modeJeu.equals("PVIA_MOYEN")) {
-                coupChoisi = IAMoyenne.choisirCoup(etatIA);
-            } else if (modeJeu.equals("PVIA_DIFFICILE")) {
-                // todo : implémenter ia difficile
-                coupChoisi = IAFacile.choisirCoup(etatIA);
-            } else if (modeJeu.equals("IAVIA")) {
-                // mode ia vs ia avec difficultés spécifiques
-                String difficulteActuelle;
-                if (joueurActif == joueur1) {
-                    difficulteActuelle = difficulteIA1;
-                } else {
-                    difficulteActuelle = difficulteIA2;
-                }
-                
-                if (difficulteActuelle.equals("FACILE")) {
-                    coupChoisi = IAFacile.choisirCoup(etatIA);
-                } else if (difficulteActuelle.equals("MOYEN")) {
-                    coupChoisi = IAMoyenne.choisirCoup(etatIA);
-                } else if (difficulteActuelle.equals("DIFFICILE")) {
+            while (partieActive && pmRestants > 0) {
+                Etat etatIA = exporterEtatIA();
+                Coup coupChoisi;
+
+                if (modeJeu.equals("PVIA_FACILE")) {
+                    coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                } else if (modeJeu.equals("PVIA_MOYEN")) {
+                    coupChoisi = IAMoyenne.choisirCoup(etatIA, attaqueEffectuee);
+                } else if (modeJeu.equals("PVIA_DIFFICILE")) {
                     // todo : implémenter ia difficile
-                    coupChoisi = IAFacile.choisirCoup(etatIA);
-                } else {
-                    coupChoisi = IAFacile.choisirCoup(etatIA);
-                }
-            } else {
-                coupChoisi = IAFacile.choisirCoup(etatIA);
-            }
-            
-            if (coupChoisi == null) {
-                finDeTour();
-                return;
-            }
-            
-            // Exécuter le déplacement
-            if (coupChoisi.getDestination() != null) {
-                Position dest = coupChoisi.getDestination();
-                int dist = Math.abs(dest.getLigne() - joueurActif.getPosition().getLigne()) + 
-                          Math.abs(dest.getColonne() - joueurActif.getPosition().getColonne());
-                
-                // Appliquer le déplacement
-                int caseCible = arene.getGrille()[dest.getLigne()][dest.getColonne()];
-                if (caseCible == 3) {
-                    joueurActif.setParade(1);
-                    arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
-                    FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-                } else if (caseCible == 4) {
-                    joueurActif.setEnergie(20.0);
-                    arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
-                    FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
-                }
-                
-                joueurActif.setPosition(dest);
-                pmRestants -= dist;
-                arene.updateFullGrille();
-                FenetreArene.rafraichir();
-                
-                // afficher un message si un bonus a été pris
-                if (caseCible == 3) {
-                    FenetreArene.MAJTexte("Bonus de parade obtenu !");
-                } else if (caseCible == 4) {
-                    FenetreArene.MAJTexte("Bonus d'énergie obtenu !");
-                }
-                
-                Thread.sleep(500);
-            }
-            
-            // Exécuter l'action
-            switch (coupChoisi.getAction()) {
-                case ATTAQUE:
-                    if (coupChoisi.getTypeAttaque() != null) {
-                        attaqueEnCours = coupChoisi.getTypeAttaque();
-                        executerAttaque();
-                        // Forcer la fin du tour après l'attaque
-                        Thread.sleep(1000);
-                        finDeTour();
+                    coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                } else if (modeJeu.equals("IAVIA")) {
+                    String difficulteActuelle = joueurActif == joueur1 ? difficulteIA1 : difficulteIA2;
+                    if (difficulteActuelle.equals("FACILE")) {
+                        coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                    } else if (difficulteActuelle.equals("MOYEN")) {
+                        coupChoisi = IAMoyenne.choisirCoup(etatIA, attaqueEffectuee);
+                    } else if (difficulteActuelle.equals("DIFFICILE")) {
+                        // todo : implémenter ia difficile
+                        coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                    } else {
+                        coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
                     }
+                } else {
+                    coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                }
+
+                if (coupChoisi == null) {
                     break;
-                case PARADE:
-                    joueurActif.parader();
+                }
+
+                if (coupChoisi.getDestination() != null) {
+                    Position dest = coupChoisi.getDestination();
+                    int dist = Math.abs(dest.getLigne() - joueurActif.getPosition().getLigne()) +
+                              Math.abs(dest.getColonne() - joueurActif.getPosition().getColonne());
+
+                    int caseCible = arene.getGrille()[dest.getLigne()][dest.getColonne()];
+                    if (caseCible == 3) {
+                        joueurActif.setParade(1);
+                        arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
+                    } else if (caseCible == 4) {
+                        joueurActif.setEnergie(20.0);
+                        arene.getGrille()[dest.getLigne()][dest.getColonne()] = 0;
+                    }
+
+                    joueurActif.setPosition(dest);
+                    pmRestants -= dist;
+                    arene.updateFullGrille();
+                    FenetreArene.rafraichir();
+
+                    if (caseCible == 3) {
+                        FenetreArene.MAJTexte("Bonus de parade obtenu !");
+                    } else if (caseCible == 4) {
+                        FenetreArene.MAJTexte("Bonus d'énergie obtenu !");
+                    }
+
                     Thread.sleep(500);
-                    finDeTour();
-                    break;
-                case REPOS:
-                    joueurActif.seReposer();
-                    Thread.sleep(500);
-                    finDeTour();
-                    break;
-                case TERMINER:
-                    Thread.sleep(500);
-                    finDeTour();
-                    break;
+                }
+
+                boolean continuer = false;
+                switch (coupChoisi.getAction()) {
+                    case ATTAQUE:
+                        if (coupChoisi.getTypeAttaque() != null) {
+                            attaqueEnCours = coupChoisi.getTypeAttaque();
+                            executerAttaque();
+                            attaqueEffectuee = true;
+                            Thread.sleep(1000);
+                            if (partieActive && pmRestants > 0) {
+                                continuer = true;
+                            }
+                        }
+                        break;
+                    case PARADE:
+                        joueurActif.parader();
+                        Thread.sleep(500);
+                        break;
+                    case REPOS:
+                        joueurActif.seReposer();
+                        Thread.sleep(500);
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!partieActive) {
+                    return;
+                }
+
+                if (continuer) {
+                    continue;
+                }
+
+                break;
             }
         } catch (Exception e) {
             System.err.println("Erreur pendant le tour de l'IA : " + e.getMessage());
-            finDeTour();
+        } finally {
+            if (partieActive) {
+                finDeTour();
+            }
         }
     }
 

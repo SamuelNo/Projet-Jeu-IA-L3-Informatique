@@ -11,12 +11,16 @@ public class IAFacile {
     // Profondeur 2 : l'IA regarde son coup puis la réponse de l'adversaire.
     private static final int PROFONDEUR = 2; 
 
-    public static Coup choisirCoup(Etat etatActuel) {
-        List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etatActuel);
+    public static Coup choisirCoup(Etat etat) {
+        return choisirCoup(etat, false);
+    }
+
+    public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
+        List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
         
         // Sécurité : si aucun coup n'est possible, on termine le tour.
         if (coupsLegaux.isEmpty()) {
-            return new Coup(null, Coup.TypeAction.TERMINER, null);
+            return new Coup(null, Coup.TypeAction.REPOS, null);
         }
 
         // On initialise avec le premier coup par défaut (évite les retours null)
