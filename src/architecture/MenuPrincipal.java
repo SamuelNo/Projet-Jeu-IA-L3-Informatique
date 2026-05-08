@@ -1,9 +1,8 @@
 package architecture;
 
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.event.ActionListener;
 
 /**
  * Menu principal du jeu Gladius
@@ -234,7 +233,7 @@ public class MenuPrincipal extends JFrame {
     // Sélection de la difficulté de l'IA
     private void selectionnerDifficulteIA() {
         JDialog dialogDifficulte = new JDialog(this, "Sélection de la difficulté de l'IA", true);
-        dialogDifficulte.setSize(500, 400);
+        dialogDifficulte.setSize(500, 450);
         dialogDifficulte.setLocationRelativeTo(this);
         dialogDifficulte.setLayout(new BorderLayout());
         dialogDifficulte.getContentPane().setBackground(COULEUR_FOND);
@@ -247,12 +246,13 @@ public class MenuPrincipal extends JFrame {
         titre.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
         
         // panneau pour les boutons avec design amélioré
-        JPanel panneauBoutons = new JPanel(new GridLayout(2, 1, 15, 15));
+        JPanel panneauBoutons = new JPanel(new GridLayout(3, 1, 15, 15));
         panneauBoutons.setBackground(COULEUR_FOND);
         panneauBoutons.setBorder(BorderFactory.createEmptyBorder(0, 60, 30, 60));
         
         JButton btnFacile = creerBoutonClassique("Facile");
         JButton btnMoyenne = creerBoutonClassique("Moyenne");
+        JButton btnDifficile = creerBoutonClassique("Difficile");
         
         // variables pour stocker la sélection
         final String[] difficulteChoisie = {null};
@@ -281,9 +281,21 @@ public class MenuPrincipal extends JFrame {
             boutonSelectionne[0] = btnMoyenne;
             difficulteChoisie[0] = "PVIA_MOYEN";
         });
+
+        btnDifficile.addActionListener(e -> {
+            if (boutonSelectionne[0] != null) {
+                definirSelectionBouton(boutonSelectionne[0], false);
+            }
+
+            definirSelectionBouton(btnDifficile, true);
+            btnDifficile.setFont(new Font("Arial", Font.PLAIN, 16));
+            boutonSelectionne[0] = btnDifficile;
+            difficulteChoisie[0] = "PVIA_DIFFICILE";
+        });
         
         panneauBoutons.add(btnFacile);
         panneauBoutons.add(btnMoyenne);
+        panneauBoutons.add(btnDifficile);
         
         // boutons de navigation
         JButton btnRetour = creerBoutonClassique("Retour");
@@ -308,15 +320,9 @@ public class MenuPrincipal extends JFrame {
         panelValidation.add(panelBoutonDroit, BorderLayout.EAST);
         
         // écouteur pour activer/désactiver le bouton valider
-        ActionListener[] listeners = {btnFacile.getActionListeners()[0], btnMoyenne.getActionListeners()[0]};
-        for (ActionListener listener : listeners) {
-            // créer un nouveau listener pour chaque bouton
-            if (listener == btnFacile.getActionListeners()[0]) {
-                btnFacile.addActionListener(e -> btnValider.setEnabled(true));
-            } else if (listener == btnMoyenne.getActionListeners()[0]) {
-                btnMoyenne.addActionListener(e -> btnValider.setEnabled(true));
-            }
-        }
+        btnFacile.addActionListener(e -> btnValider.setEnabled(true));
+        btnMoyenne.addActionListener(e -> btnValider.setEnabled(true));
+        btnDifficile.addActionListener(e -> btnValider.setEnabled(true));
         
         btnValider.addActionListener(e -> {
             if (difficulteChoisie[0] != null) {
@@ -370,6 +376,7 @@ public class MenuPrincipal extends JFrame {
         boutonsIA1.setBackground(COULEUR_FOND);
         JButton btnIA1Facile = creerBoutonClassique("Facile");
         JButton btnIA1Moyenne = creerBoutonClassique("Moyenne");
+        JButton btnIA1Difficile = creerBoutonClassique("Difficile");
         
         btnIA1Facile.addActionListener(e -> {
             if (boutonSelectionneIA1[0] != null) {
@@ -390,9 +397,20 @@ public class MenuPrincipal extends JFrame {
             boutonSelectionneIA1[0] = btnIA1Moyenne;
             difficulteIA1Choisie[0] = "MOYEN";
         });
+
+        btnIA1Difficile.addActionListener(e -> {
+            if (boutonSelectionneIA1[0] != null) {
+                definirSelectionBouton(boutonSelectionneIA1[0], false);
+            }
+            definirSelectionBouton(btnIA1Difficile, true);
+            btnIA1Difficile.setFont(new Font("Arial", Font.PLAIN, 16));
+            boutonSelectionneIA1[0] = btnIA1Difficile;
+            difficulteIA1Choisie[0] = "DIFFICILE";
+        });
         
         boutonsIA1.add(btnIA1Facile);
         boutonsIA1.add(btnIA1Moyenne);
+        boutonsIA1.add(btnIA1Difficile);
         panelIA1.add(boutonsIA1, BorderLayout.CENTER);
         
         // IA 2 (Joueur 2)
@@ -408,6 +426,7 @@ public class MenuPrincipal extends JFrame {
         boutonsIA2.setBackground(COULEUR_FOND);
         JButton btnIA2Facile = creerBoutonClassique("Facile");
         JButton btnIA2Moyenne = creerBoutonClassique("Moyenne");
+        JButton btnIA2Difficile = creerBoutonClassique("Difficile");
         
         btnIA2Facile.addActionListener(e -> {
             if (boutonSelectionneIA2[0] != null) {
@@ -428,9 +447,20 @@ public class MenuPrincipal extends JFrame {
             boutonSelectionneIA2[0] = btnIA2Moyenne;
             difficulteIA2Choisie[0] = "MOYEN";
         });
+
+        btnIA2Difficile.addActionListener(e -> {
+            if (boutonSelectionneIA2[0] != null) {
+                definirSelectionBouton(boutonSelectionneIA2[0], false);
+            }
+            definirSelectionBouton(btnIA2Difficile, true);
+            btnIA2Difficile.setFont(new Font("Arial", Font.PLAIN, 16));
+            boutonSelectionneIA2[0] = btnIA2Difficile;
+            difficulteIA2Choisie[0] = "DIFFICILE";
+        });
         
         boutonsIA2.add(btnIA2Facile);
         boutonsIA2.add(btnIA2Moyenne);
+        boutonsIA2.add(btnIA2Difficile);
         panelIA2.add(boutonsIA2, BorderLayout.CENTER);
         
         panneauIA.add(panelIA1);
@@ -450,18 +480,12 @@ public class MenuPrincipal extends JFrame {
         panelValidation.add(btnValider);
         
         // activer le bouton valider quand les deux ia sont configurées
-        ActionListener[] listenersIA1 = {btnIA1Facile.getActionListeners()[0], btnIA1Moyenne.getActionListeners()[0]};
-        ActionListener[] listenersIA2 = {btnIA2Facile.getActionListeners()[0], btnIA2Moyenne.getActionListeners()[0]};
-        
-        for (ActionListener listener : listenersIA1) {
-            btnIA1Facile.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
-            btnIA1Moyenne.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
-        }
-        
-        for (ActionListener listener : listenersIA2) {
-            btnIA2Facile.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
-            btnIA2Moyenne.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
-        }
+        btnIA1Facile.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
+        btnIA1Moyenne.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
+        btnIA1Difficile.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
+        btnIA2Facile.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
+        btnIA2Moyenne.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
+        btnIA2Difficile.addActionListener(e -> verifierEtActiver(btnValider, difficulteIA1Choisie, difficulteIA2Choisie));
         
         btnValider.addActionListener(e -> {
             if (difficulteIA1Choisie[0] != null && difficulteIA2Choisie[0] != null) {
