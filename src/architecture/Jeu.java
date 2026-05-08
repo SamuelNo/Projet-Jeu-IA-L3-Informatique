@@ -1,16 +1,15 @@
 package architecture;
 
+import attaques.*;
 import entite.*;
 import exception.IllegalActionException;
 import exception.IllegalAttackException;
 import exception.IllegalParadeException;
 import exception.IllegalReposException;
+import ia.Coup;
 import ia.Etat;
 import ia.IAFacile;
 import ia.IAMoyenne;
-import ia.Coup;
-import ia.MoteurCoups;
-import attaques.*;
 import java.awt.*;
 import javax.swing.*;
 
@@ -491,8 +490,7 @@ public class Jeu {
                 } else if (modeJeu.equals("PVIA_MOYEN")) {
                     coupChoisi = IAMoyenne.choisirCoup(etatIA, attaqueEffectuee);
                 } else if (modeJeu.equals("PVIA_DIFFICILE")) {
-                    // todo : implémenter ia difficile
-                    coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                    coupChoisi = ia.IADifficile.choisirCoup(etatIA, attaqueEffectuee);
                 } else if (modeJeu.equals("IAVIA")) {
                     String difficulteActuelle = joueurActif == joueur1 ? difficulteIA1 : difficulteIA2;
                     if (difficulteActuelle.equals("FACILE")) {
@@ -500,8 +498,7 @@ public class Jeu {
                     } else if (difficulteActuelle.equals("MOYEN")) {
                         coupChoisi = IAMoyenne.choisirCoup(etatIA, attaqueEffectuee);
                     } else if (difficulteActuelle.equals("DIFFICILE")) {
-                        // todo : implémenter ia difficile
-                        coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
+                        coupChoisi = ia.IADifficile.choisirCoup(etatIA, attaqueEffectuee);
                     } else {
                         coupChoisi = IAFacile.choisirCoup(etatIA, attaqueEffectuee);
                     }
