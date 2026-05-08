@@ -137,47 +137,63 @@ public class Etat {
         
         double score = 0;
         
-        // 1. POINTS DE VIE (Priorité absolue)
+        // 1. POINTS DE VIE (Priorité absolue & Somme nulle)
         score += (joueurActif.getHp() - adversaire.getHp()) * 50;
 
-        // 2. DISTANCE : pénalité forte pour éviter le jeu défensif passif
+        // 2. GESTION DE L'ÉNERGIE (Mix : Anti-Farming plafonné + Avantage comparatif)
+        if (joueurActif.getEnergie() <= 50) {
+            score += joueurActif.getEnergie() * 1.5;
+        } else {
+            score += 75; // Plafond : se reposer au-delà de 50 ne rapporte plus grand chose
+        }
+        // Alerte rouge : l'IA est obligée de se reposer si elle est à sec
+        if (joueurActif.getEnergie() < 15) {
+            score -= 100;
+        }
+        // On valorise quand même le fait d'avoir plus d'énergie que l'autre
+        score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 1.0; 
+
+        // 3. DISTANCE ET CONTRÔLE DU TERRAIN
         int distance = Math.abs(joueurActif.getPosition().getLigne() - adversaire.getPosition().getLigne()) +
                        Math.abs(joueurActif.getPosition().getColonne() - adversaire.getPosition().getColonne());
-        score -= distance * 8.0;
+        score -= distance * 8.0; // Pénalité pour forcer le contact
 
-        // 3. BONUS SI À PORTÉE : récompense massivement le fait d'être en position d'attaque
+        // Contrôle du centre (Astuce pour forcer la confrontation au milieu)
+        int centreLigne = grille.length / 2;
+        int centreColonne = grille.length / 2;
+        int distCentreActif = Math.abs(joueurActif.getPosition().getLigne() - centreLigne) +
+                              Math.abs(joueurActif.getPosition().getColonne() - centreColonne);
+        int distCentreAdversaire = Math.abs(adversaire.getPosition().getLigne() - centreLigne) +
+                                   Math.abs(adversaire.getPosition().getColonne() - centreColonne);
+        
+        score += (distCentreAdversaire - distCentreActif) * 5.0; 
+
+        // 4. ATTAQUE ET INSTINCT DE TUEUR
         boolean peutAttaquer = false;
         for (AttaqueInfo a : joueurActif.getAttaques()) {
             if (joueurActif.getEnergie() >= a.getDegat() && distance <= a.getPortee()) {
-                score += 100;
+                score += 100; // Bonus massif de mise en danger
                 peutAttaquer = true;
                 break;
             }
         }
 
-        // 4. PÉNALITÉ D'ÉVITEMENT : si l'IA peut bouger et attaquer mais ne le fait pas
+        // Instinct de tueur : si proche et avec l'avantage (PV ou Énergie), on pousse à l'agression
+        if (distance <= 3 && (joueurActif.getHp() >= adversaire.getHp() || joueurActif.getEnergie() > adversaire.getEnergie())) {
+            score += 30; 
+        }
+
+        // Pénalité d'évitement : si l'IA peut attaquer mais s'enfuit
         if (!peutAttaquer && joueurActif.getEnergie() >= 15) {
             score -= 50;
         }
 
-        // 5. GESTION DE L'ÉNERGIE (Anti-Farming plafonné)
-        if (joueurActif.getEnergie() <= 50) {
-            score += joueurActif.getEnergie() * 1.5;
-        } else {
-            score += 75; // Plafond : se reposer au-delà de 50 ne rapporte PLUS de points !
-        }
+        // 5. PARADES EN INVENTAIRE (Somme nulle avec plafond pour éviter le spam)
+        score += (Math.min(joueurActif.getNbParades(), 3) - Math.min(adversaire.getNbParades(), 3)) * 15;
         
-        // Alerte rouge : l'IA est obligée de se reposer si elle n'a même plus de quoi faire une attaque légère
-        if (joueurActif.getEnergie() < 15) {
-            score -= 100;
-        }
-        
-        // 6. PARADES EN INVENTAIRE (pondération réduite pour ne pas surpasser le combat)
-        score += Math.min(joueurActif.getNbParades(), 3) * 10;
-        score -= Math.min(adversaire.getNbParades(), 3) * 8;
-        
-        // 7. BONUS CASES : attrait réduit pour ne pas détourner l'IA du combat
+        // 6. LE GPS À BONUS (Somme nulle : prendre un bonus, c'est aussi le refuser à l'adversaire)
         score += evaluerCasesBoostMoyenne(this, joueurActif);
+        score -= evaluerCasesBoostMoyenne(this, adversaire);
 
         return (int) score;
     }

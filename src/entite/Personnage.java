@@ -37,7 +37,7 @@ public class Personnage {
         this.energie = 80.0;
         this.maxEnergie = 100.0;
         this.pas = 4;
-        this.nbparades = 3;
+        this.nbparades = 0;
         this.enParade = false;
         this.nbrepos = 4;
         this.position = null;

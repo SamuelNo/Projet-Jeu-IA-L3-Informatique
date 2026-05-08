@@ -8,7 +8,7 @@ import java.util.List;
  * Utilise Minimax avec Élagage Alpha-Bêta et Approfondissement Itératif.
  *
  * ses avantages sur l'IAMoyenne :
- *  - approfondissement itératif : explore profondeur 1, 2, 3... jusqu'à
+ *  - approfondissement itératif : explore profondeur 1, 2, 3... jusqu'à 6
  *    épuisement du temps imparti. Retourne toujours le meilleur coup connu.
  *  - limite de temps (1,5 sec) : garantit une réponse fluide quelle que
  *    soit la complexité de la position.
