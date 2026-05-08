@@ -135,7 +135,7 @@ public class Etat {
         score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 1.5; 
         
         // 3. PARADES (Somme nulle parfaite)
-        score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 20;
+        score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 200;
         
         // 4. LE GPS À BONUS (Somme nulle - le bonus de l'un est la perte de l'autre)
         score += evaluerCasesBoostMoyenne(this, joueurActif);
