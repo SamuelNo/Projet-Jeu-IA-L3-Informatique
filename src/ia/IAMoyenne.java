@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * IA Moyenne - Le "Tacticien".
- * Utilise Minimax avec Élagage Alpha-Bêta (Profondeur 4).
+ * Utilise l'algorithme NegaMax avec Élagage Alpha-Bêta (Profondeur 4).
  */
 public class IAMoyenne {
     
@@ -24,13 +24,21 @@ public class IAMoyenne {
         Coup meilleurCoup = coupsLegaux.get(0);
         int meilleurScore = Integer.MIN_VALUE;
         
-        // Initialisation de l'Alpha et du Bêta
-        int alpha = Integer.MIN_VALUE;
+        int alpha = Integer.MIN_VALUE + 1; // +1 pour éviter l'overflow lors de l'inversion de signe
         int beta = Integer.MAX_VALUE;
 
         for (Coup c : coupsLegaux) {
             Etat simulation = MoteurCoups.simulerCoup(etat, c);
-            int score = minimaxAlphaBeta(simulation, PROFONDEUR - 1, false, alpha, beta);
+            
+            // Le secret du NegaMax : on inverse les bornes et on prend le score négatif de l'adversaire
+            int score = -negaMaxAlphaBeta(simulation, PROFONDEUR - 1, -beta, -alpha);
+            
+            // On maintient la petite pénalité si elle termine bêtement sur sa propre case
+            if (c.getAction() == Coup.TypeAction.TERMINER && 
+                c.getDestination().getLigne() == etat.getJoueurActif().getPosition().getLigne() &&
+                c.getDestination().getColonne() == etat.getJoueurActif().getPosition().getColonne()) {
+                score -= 5;
+            }
             
             if (score > meilleurScore) {
                 meilleurScore = score;
@@ -41,49 +49,35 @@ public class IAMoyenne {
         return meilleurCoup;
     }
 
-    private static int minimaxAlphaBeta(Etat etat, int profondeur, boolean estMax, int alpha, int beta) {
+    private static int negaMaxAlphaBeta(Etat etat, int profondeur, int alpha, int beta) {
         if (profondeur == 0 || etat.estTerminal()) {
-            if (estMax) {
-                return etat.getScoreHeuristiqueMoyenne();
-            } else {
-                // CORRECTION MAGIQUE : On inverse pour lire la grille dans le bon sens
-                etat.changerJoueurActif();
-                int score = etat.getScoreHeuristiqueMoyenne();
-                etat.changerJoueurActif();
-                return score;
-            }
+            // Chaque noeud évalue de SON propre point de vue
+            return etat.getScoreHeuristiqueMoyenne();
         }
 
         List<Coup> coups = MoteurCoups.genererCoupsLegaux(etat, false);
 
-        if (estMax) {
-            if (coups.isEmpty()) return etat.getScoreHeuristiqueMoyenne();
-            
-            int maxEval = Integer.MIN_VALUE;
-            for (Coup c : coups) {
-                int eval = minimaxAlphaBeta(MoteurCoups.simulerCoup(etat, c), profondeur - 1, false, alpha, beta);
-                maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
-                if (beta <= alpha) break; // Coupure Bêta
-            }
-            return maxEval;
-            
-        } else {
-            if (coups.isEmpty()) {
-                etat.changerJoueurActif();
-                int s = etat.getScoreHeuristiqueMoyenne();
-                etat.changerJoueurActif();
-                return s;
-            }
-            
-            int minEval = Integer.MAX_VALUE;
-            for (Coup c : coups) {
-                int eval = minimaxAlphaBeta(MoteurCoups.simulerCoup(etat, c), profondeur - 1, true, alpha, beta);
-                minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
-                if (beta <= alpha) break; // Coupure Alpha
-            }
-            return minEval;
+        if (coups.isEmpty()) {
+            // Si aucune action n'est possible, on passe le tour virtuellement
+            Etat sim = new Etat(etat);
+            sim.changerJoueurActif();
+            return -negaMaxAlphaBeta(sim, profondeur - 1, -beta, -alpha);
         }
+        
+        int maxEval = Integer.MIN_VALUE + 1;
+        
+        for (Coup c : coups) {
+            Etat simulation = MoteurCoups.simulerCoup(etat, c);
+            int eval = -negaMaxAlphaBeta(simulation, profondeur - 1, -beta, -alpha);
+            
+            maxEval = Math.max(maxEval, eval);
+            alpha = Math.max(alpha, eval);
+            
+            // Coupure Alpha-Bêta standard
+            if (alpha >= beta) {
+                break; 
+            }
+        }
+        return maxEval;
     }
 }

@@ -127,41 +127,42 @@ public class Etat {
         
         double score = 0;
         
-        // 1. POINTS DE VIE (Priorité absolue)
+        // 1. POINTS DE VIE (Somme nulle parfaite)
         score += (joueurActif.getHp() - adversaire.getHp()) * 50; 
         
-        // 2. GESTION DE L'ÉNERGIE (Anti-Farming)
-        // Les attaques coûtent 15, 20 ou 30. À partir de 50, on n'a plus besoin de "farmer" le repos.
-        if (joueurActif.getEnergie() <= 50) {
-            score += joueurActif.getEnergie() * 1.5; 
-        } else {
-            score += 75; // Plafond : se reposer au-delà de 50 ne rapporte PLUS de points !
+        // 2. GESTION DE L'ÉNERGIE (Somme nulle parfaite)
+        // On compare mon énergie à la sienne. Si j'en ai plus, j'ai l'avantage.
+        score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 1.5; 
+        
+        // 3. PARADES (Somme nulle parfaite)
+        score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 20;
+        
+        // 4. LE GPS À BONUS (Somme nulle - le bonus de l'un est la perte de l'autre)
+        score += evaluerCasesBoostMoyenne(this, joueurActif);
+        score -= evaluerCasesBoostMoyenne(this, adversaire); // On soustrait le potentiel de l'adversaire
+        
+        // 5. CONTRÔLE DU CENTRE (L'astuce pour les forcer à se battre)
+        int centreLigne = grille.length / 2;
+        int centreColonne = grille[0].length / 2;
+        
+        int distCentreActif = Math.abs(joueurActif.getPosition().getLigne() - centreLigne) +
+                              Math.abs(joueurActif.getPosition().getColonne() - centreColonne);
+                              
+        int distCentreAdversaire = Math.abs(adversaire.getPosition().getLigne() - centreLigne) +
+                                   Math.abs(adversaire.getPosition().getColonne() - centreColonne);
+                                   
+        // Si je suis plus proche du centre que toi, je gagne des points
+        score += (distCentreAdversaire - distCentreActif) * 5.0; 
+        
+        // 6. INSTINCT DE TUEUR (Prime à l'attaque)
+        int distCombat = Math.abs(joueurActif.getPosition().getLigne() - adversaire.getPosition().getLigne()) +
+                         Math.abs(joueurActif.getPosition().getColonne() - adversaire.getPosition().getColonne());
+                         
+        // Si je suis à portée de frappe et que j'ai l'avantage de PV ou d'Énergie, gros bonus offensif
+        if (distCombat <= 3 && (joueurActif.getHp() >= adversaire.getHp() || joueurActif.getEnergie() > adversaire.getEnergie())) {
+            score += 30; 
         }
-        
-        // Alerte rouge : l'IA est obligée de se reposer si elle n'a même plus de quoi faire une attaque légère
-        if (joueurActif.getEnergie() < 15) {
-            score -= 100; 
-        }
-        
-        // 3. PARADES EN INVENTAIRE
-        score += Math.min(joueurActif.getNbParades(), 3) * 20;
-        score -= Math.min(adversaire.getNbParades(), 3) * 15;
-        
-        // 4. LE "GPS" À BONUS (Boosté pour la rendre très gourmande)
-        score += evaluerCasesBoostMoyenne(this, joueurActif); 
-        
-        // 5. PRESSION CONSTANTE ET COMBAT (Anti-Standoff)
-        int distance = Math.abs(joueurActif.getPosition().getLigne() - adversaire.getPosition().getLigne()) +
-                       Math.abs(joueurActif.getPosition().getColonne() - adversaire.getPosition().getColonne());
-                       
-        // Pénalité linéaire : l'IA doit TOUJOURS chercher à réduire la distance
-        score -= distance * 3.0; 
-        
-        // Bonus immédiat si elle est à portée de tir (1 à 3 cases)
-        if (distance <= 3) {
-            score += 20.0; 
-        }
-        score += (joueurActif.getPas() * 0.2); // Bonus pour la mobilité restante (plus elle peut se déplacer, mieux c'est)
+
         return (int) score;
     }
     

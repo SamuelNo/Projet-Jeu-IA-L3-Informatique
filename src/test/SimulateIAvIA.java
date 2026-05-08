@@ -15,7 +15,7 @@ public class SimulateIAvIA {
         Personnage joueurActif = p1;
         Personnage adversaire = p2;
         int turn = 0;
-        int maxTurns = 200;
+        int maxTurns = 100;
 
         System.out.println("--- Début simulation IA Moyenne vs IA Moyenne ---");
         arene.getArene();
@@ -51,8 +51,11 @@ public class SimulateIAvIA {
                     case ATTAQUE:
                         System.out.println("Action: ATTAQUE " + coup.getTypeAttaque());
                         try {
+                            double hpAvant = adversaire.getHp();
                             joueurActif.attaquer(adversaire, coup.getTypeAttaque());
-                            System.out.println("Attaque réussie. HP adversaire=" + adversaire.getHp());
+                            if (adversaire.getHp() < hpAvant) {
+                                System.out.println("Attaque réussie. HP adversaire=" + adversaire.getHp());
+                            }
                         } catch (Exception e) {
                             System.out.println("Erreur attaque: " + e.getMessage());
                         }

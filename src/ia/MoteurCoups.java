@@ -45,7 +45,11 @@ public class MoteurCoups {
                 coups.add(new Coup(dest, Coup.TypeAction.REPOS, null));
             }
             // 3. EN DERNIER RECOURS : NE RIEN FAIRE (Se déplacer et Terminer)
-            coups.add(new Coup(dest, Coup.TypeAction.TERMINER, null));
+            // On n'ajoute TERMINER que si : on se déplace (dest != actuelle) OU pas d'autres actions possibles
+            boolean estSurSaCase = (dest.getLigne() == actif.getPosition().getLigne() && dest.getColonne() == actif.getPosition().getColonne());
+            if (!estSurSaCase || coups.isEmpty()) {
+                coups.add(new Coup(dest, Coup.TypeAction.TERMINER, null));
+            }
         }
 
         return coups;
