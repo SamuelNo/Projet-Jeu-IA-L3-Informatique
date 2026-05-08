@@ -13,6 +13,7 @@ import attaques.*;
 public class Personnage {
     private String nom;
     private double hp;
+    private double maxHp;
     private double energie;
     private double maxEnergie;
     private int pas;
@@ -34,6 +35,7 @@ public class Personnage {
         this.nom = nom;
         this.arme = arme;
         this.hp = 120.0;
+        this.maxHp = this.hp;
         this.energie = 80.0;
         this.maxEnergie = 100.0;
         this.pas = 4;
@@ -62,6 +64,7 @@ public class Personnage {
         this.nom = nom;
         this.arme = arme;
         this.hp = hp;
+        this.maxHp = hp;
         this.energie = energie;
         this.maxEnergie = Math.max(energie, 100.0);
         this.pas = pas;
@@ -79,6 +82,13 @@ public class Personnage {
      */
     public double getHp(){
         return hp;
+    }
+
+    /**
+     * Retourne le maximum de points de vie pour ce personnage.
+     */
+    public double getMaxHp() {
+        return maxHp;
     }
 
     /**

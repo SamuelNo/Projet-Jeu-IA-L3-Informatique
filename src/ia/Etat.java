@@ -137,107 +137,35 @@ public class Etat {
         
         double score = 0;
         
-        // 1. POINTS DE VIE (Priorité absolue & Somme nulle)
-        score += (joueurActif.getHp() - adversaire.getHp()) * 50;
-
-        // 2. GESTION DE L'ÉNERGIE (Mix : Anti-Farming plafonné + Avantage comparatif)
-        if (joueurActif.getEnergie() <= 50) {
-            score += joueurActif.getEnergie() * 1.5;
-        } else {
-            score += 75; // Plafond : se reposer au-delà de 50 ne rapporte plus grand chose
-        }
-        // Alerte rouge : l'IA est obligée de se reposer si elle est à sec
-        if (joueurActif.getEnergie() < 15) {
-            score -= 100;
-        }
-        // On valorise quand même le fait d'avoir plus d'énergie que l'autre
-        score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 1.0; 
-
-        // 3. DISTANCE ET CONTRÔLE DU TERRAIN
-        int distance = Math.abs(joueurActif.getPosition().getLigne() - adversaire.getPosition().getLigne()) +
-                       Math.abs(joueurActif.getPosition().getColonne() - adversaire.getPosition().getColonne());
-        score -= distance * 8.0; // Pénalité pour forcer le contact
-
-        // Contrôle du centre (Astuce pour forcer la confrontation au milieu)
-        // 1. POINTS DE VIE (Somme nulle parfaite)
-        score += (joueurActif.getHp() - adversaire.getHp()) * 50; 
+        // 1. LA LOI DU SANG (1 PV = 100 points)
+        score += (joueurActif.getHp() - adversaire.getHp()) * 100.0; 
         
-        // 2. GESTION DE L'ÉNERGIE (Somme nulle parfaite)
-        // On compare mon énergie à la sienne. Si j'en ai plus, j'ai l'avantage.
-        score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 1.5; 
+        // 2. L'ÉCONOMIE DU JEU (Rééquilibrage massif)
+        // L'énergie permet de frapper, 1 pt d'énergie = 10 points
+        score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 10.0; 
         
-        // 3. PARADES (Somme nulle parfaite)
-        score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 200;
+        // LE SECRET : Une parade sauve 30 PV (soit 3000 points d'économie).
+        // On lui donne un poids de 4000 ! L'IA va maintenant FOCALISER sur les parades,
+        // même si elle doit encaisser un coup pour aller la chercher.
+        score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 4000.0;
         
-        // 4. LE GPS À BONUS (Somme nulle - le bonus de l'un est la perte de l'autre)
-        score += evaluerCasesBoostMoyenne(this, joueurActif);
-        score -= evaluerCasesBoostMoyenne(this, adversaire); // On soustrait le potentiel de l'adversaire
+        // 3. LA COURSE AU CENTRE (Briser le No Man's Land)
+        double centreLigne = (grille.length - 1) / 2.0;
+        double centreColonne = (grille[0].length - 1) / 2.0;
         
-        // 5. CONTRÔLE DU CENTRE (L'astuce pour les forcer à se battre)
-        int centreLigne = grille.length / 2;
-        int centreColonne = grille.length / 2;
-        int distCentreActif = Math.abs(joueurActif.getPosition().getLigne() - centreLigne) +
-                              Math.abs(joueurActif.getPosition().getColonne() - centreColonne);
-        int distCentreAdversaire = Math.abs(adversaire.getPosition().getLigne() - centreLigne) +
-                                   Math.abs(adversaire.getPosition().getColonne() - centreColonne);
-        
-        score += (distCentreAdversaire - distCentreActif) * 5.0; 
-
-        // 4. ATTAQUE ET INSTINCT DE TUEUR
-        boolean peutAttaquer = false;
-        for (AttaqueInfo a : joueurActif.getAttaques()) {
-            if (joueurActif.getEnergie() >= a.getDegat() && distance <= a.getPortee()) {
-                score += 100; // Bonus massif de mise en danger
-                peutAttaquer = true;
-                break;
-            }
-        }
-
-        // Instinct de tueur : si proche et avec l'avantage (PV ou Énergie), on pousse à l'agression
-        if (distance <= 3 && (joueurActif.getHp() >= adversaire.getHp() || joueurActif.getEnergie() > adversaire.getEnergie())) {
-            score += 30; 
-        }
-
-        // Pénalité d'évitement : si l'IA peut attaquer mais s'enfuit
-        if (!peutAttaquer && joueurActif.getEnergie() >= 15) {
-            score -= 50;
-        }
-
-        // 5. PARADES EN INVENTAIRE (Somme nulle avec plafond pour éviter le spam)
-        score += (Math.min(joueurActif.getNbParades(), 3) - Math.min(adversaire.getNbParades(), 3)) * 15;
-        
-        // 6. LE GPS À BONUS (Somme nulle : prendre un bonus, c'est aussi le refuser à l'adversaire)
-        score += evaluerCasesBoostMoyenne(this, joueurActif);
-        score -= evaluerCasesBoostMoyenne(this, adversaire);
-
+        double distCentreActif = Math.abs(joueurActif.getPosition().getLigne() - centreLigne) +
+                                 Math.abs(joueurActif.getPosition().getColonne() - centreColonne);
+        double distCentreAdversaire = Math.abs(adversaire.getPosition().getLigne() - centreLigne) +
+                                      Math.abs(adversaire.getPosition().getColonne() - centreColonne);
+                                   
+        // Chaque case vers le centre rapporte 500 points (contre 10 avant !).
+        // Cela justifie largement de s'exposer à une petite attaque pour dominer le plateau.
+        score += (distCentreAdversaire - distCentreActif) * 500.0; 
+        // AJOUT IDÉE 1 : Tie-breaking déterministe
+        // On ajoute une fraction minuscule basée sur la position (max 0.011 point).
+        // Cela ne change pas le jeu tactique, mais brise les boucles de déplacement.
+        score += (joueurActif.getPosition().getLigne() * 0.001) + (joueurActif.getPosition().getColonne() * 0.0001);
         return (int) score;
-    }
-    
-    private double evaluerCasesBoostMoyenne(Etat etat, JoueurEtat actif) {
-        double scoreBoost = 0;
-        int[][] grille = etat.getGrille();
-        Position pos = actif.getPosition();
-        
-        // Rayon réduit à 3 : l'IA ne se détourne du combat que pour des bonus très proches
-        int rayon = 3;
-        
-        for(int l = Math.max(0, pos.getLigne() - rayon); l <= Math.min(grille.length - 1, pos.getLigne() + rayon); l++) {
-            for(int c = Math.max(0, pos.getColonne() - rayon); c <= Math.min(grille[0].length - 1, pos.getColonne() + rayon); c++) {
-                
-                int dist = Math.abs(pos.getLigne() - l) + Math.abs(pos.getColonne() - c);
-                
-                if (dist > 0 && dist <= rayon) {
-                    // Attrait fortement réduit (80->30, 60->20) pour ne jamais surpasser le combat
-                    if (grille[l][c] == 3 && actif.getNbParades() < 2) {
-                        scoreBoost += 30.0 / dist;
-                    } 
-                    else if (grille[l][c] == 4 && actif.getEnergie() <= 30) {
-                        scoreBoost += 20.0 / dist;
-                    }
-                }
-            }
-        }
-        return scoreBoost;
     }
 
     // =========================================================================

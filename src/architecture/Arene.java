@@ -136,4 +136,31 @@ public class Arene {
     public int[][] getGrille() {
         return grille;
     }
+
+    /**
+     * Applique la règle de Mort Subite pour départager deux joueurs vivants.
+     * Retourne 1 si joueur1 l'emporte, 2 si joueur2 l'emporte, 0 si égalité parfaite.
+     * Critères (dans l'ordre): ratio PV actuels / PV max, énergie restante, nombre de parades.
+     */
+    public int determineMortSubiteWinner() {
+        double ratio1 = joueur1.getHp() / Math.max(1.0, joueur1.getMaxHp());
+        double ratio2 = joueur2.getHp() / Math.max(1.0, joueur2.getMaxHp());
+        if (Double.compare(ratio1, ratio2) > 0) return 1;
+        if (Double.compare(ratio2, ratio1) > 0) return 2;
+
+        // égalité sur les PV relatifs -> comparer l'énergie
+        double e1 = joueur1.getEnergie();
+        double e2 = joueur2.getEnergie();
+        if (Double.compare(e1, e2) > 0) return 1;
+        if (Double.compare(e2, e1) > 0) return 2;
+
+        // égalité sur l'énergie -> comparer le nombre de parades restantes
+        int p1 = joueur1.getNbParades();
+        int p2 = joueur2.getNbParades();
+        if (p1 > p2) return 1;
+        if (p2 > p1) return 2;
+
+        // parfaite égalité
+        return 0;
+    }
 }
