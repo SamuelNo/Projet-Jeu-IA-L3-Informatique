@@ -5,7 +5,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.BufferedReader;
+import java.util.concurrent.TimeUnit;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -98,6 +100,8 @@ public class TournamentWindow extends JFrame {
     private void lancerTournoi() {
         final String ia1 = (String) cbIA1.getSelectedItem();
         final String ia2 = (String) cbIA2.getSelectedItem();
+        System.out.println("[TOURNOI] === LANCEMENT D'UN NOUVEAU TOURNOI ===");
+        System.out.println("[TOURNOI] IA1: " + ia1 + ", IA2: " + ia2);
         try {
             spNbMatches.commitEdit();
         } catch (java.text.ParseException ex) {
@@ -106,37 +110,53 @@ public class TournamentWindow extends JFrame {
                 "Tournoi", JOptionPane.WARNING_MESSAGE);
         }
         final int nb = ((Number) spNbMatches.getValue()).intValue();
+        System.out.println("[TOURNOI] Nombre de combats: " + nb);
+        
+        // Supprimer les anciens fichiers de résultats
+        System.out.println("[TOURNOI] Suppression des anciens fichiers...");
+        new File("resultats_tournoi.txt").delete();
+        new File("details_matchs_nuls.txt").delete();
+        System.out.println("[TOURNOI] Fichiers supprimés");
 
         btnLancer.setEnabled(false);
         btnFinir.setEnabled(true);
         onglets.setEnabled(false);
         lblStatus.setText("Combat en cours... " + nb + " partie(s) prévues.");
+        System.out.println("[TOURNOI] Statut mis à jour dans l'UI");
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {
                 try {
-                    // Construire la commande java pour lancer SimulateIAvIA dans un processus séparé
                     String javaCmd = System.getProperty("java.home") + "/bin/java";
+                    System.out.println("[TOURNOI] Commande Java: " + javaCmd);
+                    String workingDir = System.getProperty("user.dir", ".");
+                    System.out.println("[TOURNOI] Répertoire de travail: " + workingDir);
+                    
                     ProcessBuilder pb = new ProcessBuilder(
                         javaCmd, "-cp", "bin", "test.SimulateIAvIA",
                         ia1, ia2, String.valueOf(nb), String.valueOf(50), "resultats_tournoi.txt", "details_matchs_nuls.txt"
                     );
-                    String workingDir = System.getProperty("user.dir", ".");
+                    System.out.println("[TOURNOI] Commande: " + String.join(" ", pb.command()));
                     pb.directory(new File(workingDir));
                     pb.redirectErrorStream(true);
                     currentProcess = pb.start();
+                    System.out.println("[TOURNOI] Processus lancé avec PID: " + currentProcess.pid());
 
-                    // Lire la sortie du processus et l'afficher dans le journal en temps réel
-                    // Consommer la sortie du processus pour éviter blocage, sans l'afficher
+                    System.out.println("[TOURNOI] Lecture de la sortie du processus...");
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getInputStream(), StandardCharsets.UTF_8))) {
+                        int lineCount = 0;
                         while (reader.readLine() != null) {
-                            // lecture et jet
+                            lineCount++;
                         }
+                        System.out.println("[TOURNOI] Sortie consommée (" + lineCount + " lignes)");
                     }
 
-                    currentProcess.waitFor();
+                    int exitCode = currentProcess.waitFor();
+                    System.out.println("[TOURNOI] Processus terminé avec code: " + exitCode);
                 } catch (IOException | InterruptedException ex) {
+                    System.out.println("[TOURNOI] ERREUR lors du lancement: " + ex.getMessage());
+                    ex.printStackTrace();
                     SwingUtilities.invokeLater(() -> taStats.append("Erreur processus: " + ex.getMessage() + "\n"));
                 }
                 return null;
@@ -144,11 +164,13 @@ public class TournamentWindow extends JFrame {
 
             @Override
             protected void done() {
+                    System.out.println("[TOURNOI] SwingWorker terminé, chargement des résultats...");
                     btnLancer.setEnabled(true);
                     btnFinir.setEnabled(false);
                     onglets.setEnabled(true);
                     lblStatus.setText("");
                     chargerEtAfficherResultats();
+                    System.out.println("[TOURNOI] === FIN DU TOURNOI ===\n");
                     currentProcess = null;
             }
         };
@@ -157,14 +179,36 @@ public class TournamentWindow extends JFrame {
 
     private void finirTournoi() {
         if (currentProcess != null) {
+            System.out.println("[TOURNOI] Arrêt du tournoi demandé par l'utilisateur...");
+            // Envoyer SIGTERM au processus (destroy() sur Unix envoie SIGTERM)
             currentProcess.destroy();
+            System.out.println("[TOURNOI] Signal de termination envoyé, attente du processus (10s max)...");
+            
+            // Attendre que le processus se termine gracefully (max 10 secondes)
+            try {
+                boolean terminated = currentProcess.waitFor(10, java.util.concurrent.TimeUnit.SECONDS);
+                if (terminated) {
+                    System.out.println("[TOURNOI] Processus terminé gracefully");
+                } else {
+                    System.out.println("[TOURNOI] Processus n'a pas répondu au SIGTERM, forçage de l'arrêt...");
+                    currentProcess.destroyForcibly();
+                    Thread.sleep(500);
+                    System.out.println("[TOURNOI] Processus arrêté de force");
+                }
+            } catch (InterruptedException ex) {
+                System.out.println("[TOURNOI] Erreur lors de l'attente: " + ex.getMessage());
+                currentProcess.destroyForcibly();
+            }
+            
             lblStatus.setText("Tournoi interrompu par l'utilisateur.");
             btnFinir.setEnabled(false);
             btnLancer.setEnabled(true);
             onglets.setEnabled(true);
             // Charger ce qui a été écrit jusqu'ici
+            System.out.println("[TOURNOI] Chargement des résultats partiels...");
             chargerEtAfficherResultats();
             currentProcess = null;
+            System.out.println("[TOURNOI] === ARRÊT TERMINÉ ===");
         }
     }
 

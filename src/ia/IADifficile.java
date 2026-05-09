@@ -11,13 +11,14 @@ public class IADifficile {
 
     // ⚠️ LE RÉGLAGE CRUCIAL : La profondeur de recherche.
     // À tester ! Si le jeu dépasse les 5 secondes, il faudra la baisser à 4 ou 5.
-    private static final int PROFONDEUR_MAX = 5;
+    private static final int PROFONDEUR_MAX = 4;
 
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);
     }
 
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
+        System.out.println("⚠️ ATTENTION : LE NOUVEAU CODE PROFONDEUR FIXE TOURNE ! ⚠️");
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
 
         if (coupsLegaux.isEmpty()) {

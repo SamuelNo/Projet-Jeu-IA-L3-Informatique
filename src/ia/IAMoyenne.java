@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class IAMoyenne {
     
-    private static final int PROFONDEUR = 4;
+    private static final int PROFONDEUR = 2;
 
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);

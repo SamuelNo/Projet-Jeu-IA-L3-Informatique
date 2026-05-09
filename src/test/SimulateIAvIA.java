@@ -98,6 +98,64 @@ public class SimulateIAvIA {
         return String.format("%.2f Mo", mb);
     }
 
+    private static void ecrireResultatsPartiels(List<CombatResult> tousLesCombats, int victoiresJ1, int victoiresJ2, int nuls,
+            String iaJoueur1, String iaJoueur2, int nbCombatsTotal, int maxTours, long dureeTournoiMs,
+            long totalDecisionJ1Ns, int totalDecisionsJ1, long totalDecisionJ2Ns, int totalDecisionsJ2,
+            List<String> detailsNuls, String fichierResultats, String fichierNuls) {
+        try {
+            String horodatage = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            List<String> recap = new ArrayList<>();
+            recap.add("=== Recapitulatif Tournoi IA ===");
+            recap.add("Date: " + horodatage);
+            recap.add("IA Joueur 1: " + iaJoueur1);
+            recap.add("IA Joueur 2: " + iaJoueur2);
+            recap.add("Nombre de combats: " + tousLesCombats.size() + "/" + nbCombatsTotal);
+            recap.add("Tours max par combat: " + maxTours);
+            recap.add("");
+            recap.add("Victoires J1: " + victoiresJ1);
+            recap.add("Defaites J1: " + victoiresJ2);
+            recap.add("Victoires J2: " + victoiresJ2);
+            recap.add("Defaites J2: " + victoiresJ1);
+            recap.add("Matchs nuls: " + nuls);
+            recap.add("Temps total tournoi: " + dureeLisible(dureeTournoiMs));
+            recap.add("Temps moyen coup J1 (" + iaJoueur1 + "): " + moyenneMs(totalDecisionJ1Ns, totalDecisionsJ1));
+            recap.add("Temps moyen coup J2 (" + iaJoueur2 + "): " + moyenneMs(totalDecisionJ2Ns, totalDecisionsJ2));
+            recap.add("Temps moyen coup global: " + moyenneMs(totalDecisionJ1Ns + totalDecisionJ2Ns, totalDecisionsJ1 + totalDecisionsJ2));
+            recap.add("");
+            recap.add("=== Details par combat ===");
+
+            for (CombatResult r : tousLesCombats) {
+                recap.add("Combat " + r.index
+                    + " | issue=" + r.issue
+                    + " | matchup=" + r.matchup
+                    + " | tours=" + r.tours
+                    + " | duree=" + dureeLisible(r.dureeCombatMs)
+                    + " | avgCoupJ1=" + String.format("%.3f", r.tempsDecisionJ1Ns / 1_000_000.0 / Math.max(1, r.nbDecisionsJ1))
+                    + " | avgCoupJ2=" + String.format("%.3f", r.tempsDecisionJ2Ns / 1_000_000.0 / Math.max(1, r.nbDecisionsJ2))
+                );
+            }
+
+            List<String> nulsLines = new ArrayList<>();
+            nulsLines.add("=== Details des matchs nuls ===");
+            nulsLines.add("Date: " + horodatage);
+            nulsLines.add("IA Joueur 1: " + iaJoueur1 + " | IA Joueur 2: " + iaJoueur2);
+            nulsLines.add("Nombre de matchs nuls: " + nuls);
+            nulsLines.add("");
+            if (detailsNuls.isEmpty()) {
+                nulsLines.add("Aucun match nul sur ce tournoi.");
+            } else {
+                nulsLines.addAll(detailsNuls);
+            }
+
+            Path pathResultats = Paths.get(fichierResultats);
+            Path pathNuls = Paths.get(fichierNuls);
+            Files.write(pathResultats, recap, StandardCharsets.UTF_8);
+            Files.write(pathNuls, nulsLines, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'écriture des résultats partiels: " + e.getMessage());
+        }
+    }
+
     private static String dureeLisible(long ms) {
         if (ms < 1000) {
             return ms + " ms";
@@ -328,6 +386,12 @@ public class SimulateIAvIA {
         int totalDecisionsJ1 = 0;
         int totalDecisionsJ2 = 0;
 
+        // Initialiser les fichiers de résultats immédiatement
+        ecrireResultatsPartiels(new ArrayList<>(), 0, 0, 0,
+            iaJoueur1, iaJoueur2, nbCombats, maxTours, 0L,
+            0L, 0, 0L, 0,
+            new ArrayList<>(), fichierResultats, fichierNuls);
+
         for (int i = 1; i <= nbCombats; i++) {
             CombatResult r = simulerCombat(i, iaJoueur1, iaJoueur2, maxTours);
             tousLesCombats.add(r);
@@ -355,71 +419,15 @@ public class SimulateIAvIA {
                     detailsNuls.add(r.logComplet);
                     detailsNuls.add("------------------------------------------------------------");
                 }
+            
+            // Écrire les résultats partiels après chaque combat
+            long dureeTournoiPartielMs = (System.nanoTime() - debutTournoiNs) / 1_000_000L;
+            ecrireResultatsPartiels(tousLesCombats, victoiresJ1, victoiresJ2, nuls, 
+                iaJoueur1, iaJoueur2, nbCombats, maxTours, dureeTournoiPartielMs,
+                totalDecisionJ1Ns, totalDecisionsJ1, totalDecisionJ2Ns, totalDecisionsJ2,
+                detailsNuls, fichierResultats, fichierNuls);
         }
-        long dureeTotaleTournoiMs = (System.nanoTime() - debutTournoiNs) / 1_000_000L;
-
-        String horodatage = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        List<String> recap = new ArrayList<>();
-        recap.add("=== Recapitulatif Tournoi IA ===");
-        recap.add("Date: " + horodatage);
-        recap.add("IA Joueur 1: " + iaJoueur1);
-        recap.add("IA Joueur 2: " + iaJoueur2);
-        recap.add("Nombre de combats: " + nbCombats);
-        recap.add("Tours max par combat: " + maxTours);
-        recap.add("");
-        recap.add("Victoires J1: " + victoiresJ1);
-        recap.add("Defaites J1: " + victoiresJ2);
-        recap.add("Victoires J2: " + victoiresJ2);
-        recap.add("Defaites J2: " + victoiresJ1);
-        recap.add("Matchs nuls: " + nuls);
-        recap.add("Temps total tournoi: " + dureeLisible(dureeTotaleTournoiMs));
-        recap.add("Temps moyen coup J1 (" + iaJoueur1 + "): " + moyenneMs(totalDecisionJ1Ns, totalDecisionsJ1));
-        recap.add("Temps moyen coup J2 (" + iaJoueur2 + "): " + moyenneMs(totalDecisionJ2Ns, totalDecisionsJ2));
-        recap.add("Temps moyen coup global: " + moyenneMs(totalDecisionJ1Ns + totalDecisionJ2Ns, totalDecisionsJ1 + totalDecisionsJ2));
-        recap.add("");
-        recap.add("=== Details par combat ===");
-        for (CombatResult combat : tousLesCombats) {
-            recap.add(
-                "Combat " + combat.index
-                + " | issue=" + combat.issue
-                + " | matchup=" + combat.matchup
-                + " | tours=" + combat.tours
-                + " | duree=" + dureeLisible(combat.dureeCombatMs)
-                + " | avgCoupJ1=" + moyenneMs(combat.tempsDecisionJ1Ns, combat.nbDecisionsJ1)
-                + " | avgCoupJ2=" + moyenneMs(combat.tempsDecisionJ2Ns, combat.nbDecisionsJ2)
-            );
-        }
-
-        List<String> nulsLines = new ArrayList<>();
-        nulsLines.add("=== Details des matchs nuls ===");
-        nulsLines.add("Date: " + horodatage);
-        nulsLines.add("IA Joueur 1: " + iaJoueur1 + " | IA Joueur 2: " + iaJoueur2);
-        nulsLines.add("Nombre de matchs nuls: " + nuls);
-        nulsLines.add("");
-        if (detailsNuls.isEmpty()) {
-            nulsLines.add("Aucun match nul sur ce tournoi.");
-        } else {
-            nulsLines.addAll(detailsNuls);
-        }
-
-        try {
-            Path pathResultats = Paths.get(fichierResultats);
-            Path pathNuls = Paths.get(fichierNuls);
-            Files.write(pathResultats, recap, StandardCharsets.UTF_8);
-            Files.write(pathNuls, nulsLines, StandardCharsets.UTF_8);
-
-            long tailleNuls = Files.size(pathNuls);
-
-            System.out.println("Tournoi termine.");
-            System.out.println("Resultats: " + pathResultats.toAbsolutePath());
-            System.out.println("Details nuls: " + pathNuls.toAbsolutePath());
-            System.out.println("Taille details nuls: " + tailleLisible(tailleNuls));
-            System.out.println("Temps total tournoi: " + dureeLisible(dureeTotaleTournoiMs));
-            System.out.println("Temps moyen coup J1 (" + iaJoueur1 + "): " + moyenneMs(totalDecisionJ1Ns, totalDecisionsJ1));
-            System.out.println("Temps moyen coup J2 (" + iaJoueur2 + "): " + moyenneMs(totalDecisionJ2Ns, totalDecisionsJ2));
-            System.out.println("Bilan -> J1: " + victoiresJ1 + " victoires, J2: " + victoiresJ2 + " victoires, Nuls: " + nuls);
-        } catch (IOException e) {
-            System.out.println("Erreur ecriture fichiers: " + e.getMessage());
-        }
+        // Résultats partiels déjà écrits dans la boucle, pas besoin d'écrire à nouveau
+        System.out.println("Tournoi termine.");
     }
 }

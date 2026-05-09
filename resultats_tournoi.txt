@@ -1,48 +1,48 @@
 === Recapitulatif Tournoi IA ===
-Date: 2026-05-09 03:15:16
-IA Joueur 1: IADIFFICILE
-IA Joueur 2: IAMOYENNE
-Nombre de combats: 30
+Date: 2026-05-09 05:29:13
+IA Joueur 1: IAMOYENNE
+IA Joueur 2: IADIFFICILE
+Nombre de combats: 30/30
 Tours max par combat: 50
 
-Victoires J1: 18
-Defaites J1: 12
-Victoires J2: 12
-Defaites J2: 18
+Victoires J1: 14
+Defaites J1: 16
+Victoires J2: 16
+Defaites J2: 14
 Matchs nuls: 0
-Temps total tournoi: 745,365 s
-Temps moyen coup J1 (IADIFFICILE): 1468,227 ms
-Temps moyen coup J2 (IAMOYENNE): 160,286 ms
-Temps moyen coup global: 824,384 ms
+Temps total tournoi: 1388,203 s
+Temps moyen coup J1 (IAMOYENNE): 320,478 ms
+Temps moyen coup J2 (IADIFFICILE): 3031,664 ms
+Temps moyen coup global: 1658,256 ms
 
 === Details par combat ===
-Combat 1 | issue=J1 | matchup=Soigneur vs Soigneur | tours=39 | duree=29,491 s | avgCoupJ1=1400,418 ms | avgCoupJ2=76,321 ms
-Combat 2 | issue=J2 | matchup=Chevalier vs Chevalier | tours=16 | duree=16,773 s | avgCoupJ1=1499,433 ms | avgCoupJ2=596,897 ms
-Combat 3 | issue=J2 | matchup=Archère vs Soigneur | tours=34 | duree=25,221 s | avgCoupJ1=1356,282 ms | avgCoupJ2=127,088 ms
-Combat 4 | issue=J2 | matchup=Soigneur vs Soigneur | tours=50 | duree=43,714 s | avgCoupJ1=1499,491 ms | avgCoupJ2=248,723 ms
-Combat 5 | issue=J1 | matchup=Soigneur vs Archère | tours=50 | duree=39,511 s | avgCoupJ1=1499,524 ms | avgCoupJ2=80,737 ms
-Combat 6 | issue=J1 | matchup=Soigneur vs Soigneur | tours=25 | duree=20,956 s | avgCoupJ1=1499,517 ms | avgCoupJ2=121,576 ms
-Combat 7 | issue=J1 | matchup=Archère vs Archère | tours=19 | duree=18,924 s | avgCoupJ1=1499,427 ms | avgCoupJ2=436,473 ms
-Combat 8 | issue=J1 | matchup=Archère vs Soigneur | tours=23 | duree=17,434 s | avgCoupJ1=1316,499 ms | avgCoupJ2=148,516 ms
-Combat 9 | issue=J1 | matchup=Soigneur vs Soigneur | tours=29 | duree=28,366 s | avgCoupJ1=1499,425 ms | avgCoupJ2=419,395 ms
-Combat 10 | issue=J1 | matchup=Soigneur vs Archère | tours=50 | duree=38,607 s | avgCoupJ1=1499,437 ms | avgCoupJ2=44,723 ms
-Combat 11 | issue=J1 | matchup=Soigneur vs Archère | tours=50 | duree=39,374 s | avgCoupJ1=1499,474 ms | avgCoupJ2=75,363 ms
-Combat 12 | issue=J1 | matchup=Chevalier vs Soigneur | tours=35 | duree=30,145 s | avgCoupJ1=1417,147 ms | avgCoupJ2=272,548 ms
-Combat 13 | issue=J2 | matchup=Archère vs Soigneur | tours=30 | duree=23,769 s | avgCoupJ1=1499,435 ms | avgCoupJ2=84,969 ms
-Combat 14 | issue=J1 | matchup=Archère vs Archère | tours=21 | duree=16,348 s | avgCoupJ1=1430,648 ms | avgCoupJ2=60,904 ms
-Combat 15 | issue=J1 | matchup=Soigneur vs Soigneur | tours=50 | duree=40,997 s | avgCoupJ1=1499,453 ms | avgCoupJ2=140,286 ms
-Combat 16 | issue=J1 | matchup=Chevalier vs Soigneur | tours=29 | duree=23,035 s | avgCoupJ1=1399,506 ms | avgCoupJ2=145,579 ms
-Combat 17 | issue=J2 | matchup=Soigneur vs Chevalier | tours=36 | duree=28,136 s | avgCoupJ1=1419,046 ms | avgCoupJ2=143,921 ms
-Combat 18 | issue=J1 | matchup=Archère vs Chevalier | tours=19 | duree=16,591 s | avgCoupJ1=1499,627 ms | avgCoupJ2=177,052 ms
-Combat 19 | issue=J2 | matchup=Archère vs Archère | tours=50 | duree=39,603 s | avgCoupJ1=1499,516 ms | avgCoupJ2=84,480 ms
-Combat 20 | issue=J1 | matchup=Archère vs Soigneur | tours=15 | duree=13,798 s | avgCoupJ1=1499,733 ms | avgCoupJ2=257,045 ms
-Combat 21 | issue=J1 | matchup=Archère vs Soigneur | tours=27 | duree=23,094 s | avgCoupJ1=1454,711 ms | avgCoupJ2=209,671 ms
-Combat 22 | issue=J2 | matchup=Archère vs Archère | tours=14 | duree=11,435 s | avgCoupJ1=1499,592 ms | avgCoupJ2=133,815 ms
-Combat 23 | issue=J1 | matchup=Soigneur vs Chevalier | tours=21 | duree=18,881 s | avgCoupJ1=1499,558 ms | avgCoupJ2=238,443 ms
-Combat 24 | issue=J1 | matchup=Archère vs Soigneur | tours=23 | duree=18,575 s | avgCoupJ1=1390,081 ms | avgCoupJ2=172,044 ms
-Combat 25 | issue=J2 | matchup=Soigneur vs Soigneur | tours=22 | duree=16,648 s | avgCoupJ1=1443,181 ms | avgCoupJ2=70,107 ms
-Combat 26 | issue=J2 | matchup=Chevalier vs Soigneur | tours=18 | duree=18,627 s | avgCoupJ1=1499,560 ms | avgCoupJ2=569,958 ms
-Combat 27 | issue=J1 | matchup=Chevalier vs Chevalier | tours=23 | duree=19,456 s | avgCoupJ1=1499,680 ms | avgCoupJ2=132,580 ms
-Combat 28 | issue=J2 | matchup=Archère vs Chevalier | tours=14 | duree=10,980 s | avgCoupJ1=1499,527 ms | avgCoupJ2=69,000 ms
-Combat 29 | issue=J2 | matchup=Archère vs Archère | tours=50 | duree=39,741 s | avgCoupJ1=1499,635 ms | avgCoupJ2=89,885 ms
-Combat 30 | issue=J2 | matchup=Archère vs Chevalier | tours=22 | duree=17,121 s | avgCoupJ1=1499,551 ms | avgCoupJ2=56,754 ms
+Combat 1 | issue=J1 | matchup=Archère vs Archère | tours=15 | duree=21,360 s | avgCoupJ1=128,500 | avgCoupJ2=2901,305
+Combat 2 | issue=J2 | matchup=Soigneur vs Soigneur | tours=26 | duree=14,969 s | avgCoupJ1=261,942 | avgCoupJ2=889,078
+Combat 3 | issue=J1 | matchup=Soigneur vs Chevalier | tours=21 | duree=35,867 s | avgCoupJ1=295,968 | avgCoupJ2=3260,716
+Combat 4 | issue=J2 | matchup=Soigneur vs Archère | tours=26 | duree=31,989 s | avgCoupJ1=85,985 | avgCoupJ2=2374,387
+Combat 5 | issue=J1 | matchup=Soigneur vs Archère | tours=29 | duree=41,366 s | avgCoupJ1=141,028 | avgCoupJ2=2803,284
+Combat 6 | issue=J2 | matchup=Archère vs Soigneur | tours=20 | duree=15,826 s | avgCoupJ1=448,374 | avgCoupJ2=1133,907
+Combat 7 | issue=J1 | matchup=Archère vs Chevalier | tours=19 | duree=28,790 s | avgCoupJ1=203,656 | avgCoupJ2=2972,409
+Combat 8 | issue=J2 | matchup=Archère vs Archère | tours=50 | duree=50,210 s | avgCoupJ1=146,560 | avgCoupJ2=1861,439
+Combat 9 | issue=J1 | matchup=Soigneur vs Soigneur | tours=50 | duree=120,911 s | avgCoupJ1=163,985 | avgCoupJ2=4672,196
+Combat 10 | issue=J2 | matchup=Chevalier vs Soigneur | tours=24 | duree=93,451 s | avgCoupJ1=670,465 | avgCoupJ2=7116,756
+Combat 11 | issue=J2 | matchup=Archère vs Soigneur | tours=28 | duree=11,300 s | avgCoupJ1=158,427 | avgCoupJ2=648,537
+Combat 12 | issue=J1 | matchup=Archère vs Chevalier | tours=15 | duree=34,863 s | avgCoupJ1=696,790 | avgCoupJ2=4183,745
+Combat 13 | issue=J2 | matchup=Soigneur vs Soigneur | tours=30 | duree=21,590 s | avgCoupJ1=419,252 | avgCoupJ2=1019,830
+Combat 14 | issue=J2 | matchup=Soigneur vs Soigneur | tours=28 | duree=72,330 s | avgCoupJ1=516,718 | avgCoupJ2=4649,494
+Combat 15 | issue=J1 | matchup=Archère vs Chevalier | tours=15 | duree=19,176 s | avgCoupJ1=606,432 | avgCoupJ2=2046,154
+Combat 16 | issue=J1 | matchup=Soigneur vs Chevalier | tours=17 | duree=8,790 s | avgCoupJ1=194,053 | avgCoupJ2=880,200
+Combat 17 | issue=J2 | matchup=Soigneur vs Soigneur | tours=50 | duree=63,130 s | avgCoupJ1=282,782 | avgCoupJ2=2242,259
+Combat 18 | issue=J2 | matchup=Soigneur vs Soigneur | tours=38 | duree=43,310 s | avgCoupJ1=167,362 | avgCoupJ2=2111,937
+Combat 19 | issue=J2 | matchup=Chevalier vs Chevalier | tours=18 | duree=40,234 s | avgCoupJ1=699,085 | avgCoupJ2=3771,219
+Combat 20 | issue=J2 | matchup=Chevalier vs Archère | tours=22 | duree=70,031 s | avgCoupJ1=621,703 | avgCoupJ2=5744,532
+Combat 21 | issue=J1 | matchup=Soigneur vs Chevalier | tours=27 | duree=40,469 s | avgCoupJ1=144,446 | avgCoupJ2=2957,202
+Combat 22 | issue=J1 | matchup=Soigneur vs Archère | tours=25 | duree=7,820 s | avgCoupJ1=110,307 | avgCoupJ2=532,062
+Combat 23 | issue=J2 | matchup=Soigneur vs Archère | tours=26 | duree=15,891 s | avgCoupJ1=172,788 | avgCoupJ2=1049,477
+Combat 24 | issue=J1 | matchup=Soigneur vs Archère | tours=31 | duree=61,609 s | avgCoupJ1=360,466 | avgCoupJ2=3722,627
+Combat 25 | issue=J1 | matchup=Soigneur vs Soigneur | tours=50 | duree=108,348 s | avgCoupJ1=215,231 | avgCoupJ2=4118,531
+Combat 26 | issue=J1 | matchup=Soigneur vs Chevalier | tours=50 | duree=155,053 s | avgCoupJ1=673,633 | avgCoupJ2=5528,302
+Combat 27 | issue=J2 | matchup=Archère vs Chevalier | tours=18 | duree=18,545 s | avgCoupJ1=262,669 | avgCoupJ2=1797,799
+Combat 28 | issue=J1 | matchup=Chevalier vs Soigneur | tours=23 | duree=24,977 s | avgCoupJ1=491,912 | avgCoupJ2=1733,846
+Combat 29 | issue=J2 | matchup=Archère vs Soigneur | tours=20 | duree=29,038 s | avgCoupJ1=411,544 | avgCoupJ2=2491,995
+Combat 30 | issue=J2 | matchup=Soigneur vs Soigneur | tours=26 | duree=86,834 s | avgCoupJ1=404,942 | avgCoupJ2=6274,457
