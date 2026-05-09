@@ -167,6 +167,7 @@ public class Etat {
         score += (joueurActif.getPosition().getLigne() * 0.001) + (joueurActif.getPosition().getColonne() * 0.0001);
         return (int) score;
     }
+    
 
     // =========================================================================
     // 🧠 HEURISTIQUE DE L'IA DIFFICILE (Le Stratège)
@@ -215,13 +216,21 @@ public class Etat {
             score += 72; // Plafond : inutile de farmer au-delà de 60
         }
 
-        // 7. PARADES EN STOCK : avantage défensif sur l'adversaire
-        score += Math.min(joueurActif.getNbParades(), 3) * 25;
-        score -= Math.min(adversaire.getNbParades(), 3) * 20;
+        // 7. LE SECRET DES PARADES (Importé de l'IA Moyenne)
+        // La parade est vitale car il n'y a pas de soin.
+        score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 4000.0;
 
-        // 8. BONUS CASES (radar très court) : ne se détourne du combat que si le bonus
-        //    est vraiment sur son chemin (rayon 2 au lieu de 5)
-        score += evaluerCasesBoostDifficile();
+        // 8. LA COURSE AU CENTRE ET LE MICRO-GRADIENT
+        double centreLigne = (grille.length - 1) / 2.0;
+        double centreColonne = (grille[0].length - 1) / 2.0;
+        
+        double distCentreActif = Math.abs(joueurActif.getPosition().getLigne() - centreLigne) +
+                                 Math.abs(joueurActif.getPosition().getColonne() - centreColonne);
+        double distCentreAdversaire = Math.abs(adversaire.getPosition().getLigne() - centreLigne) +
+                                      Math.abs(adversaire.getPosition().getColonne() - centreColonne);
+                                   
+        // Dominer le centre du plateau
+        score += (distCentreAdversaire - distCentreActif) * 500.0;
 
         // 9. PÉNALITÉ SI L'ADVERSAIRE PEUT NOUS TUER AU PROCHAIN TOUR
         for (AttaqueInfo a : adversaire.getAttaques()) {
@@ -232,7 +241,8 @@ public class Etat {
                 break;
             }
         }
-
+        // 10. TIE-BREAKING DÉTERMINISTE (Le Micro-Gradient pour éviter les boucles)
+        score += (joueurActif.getPosition().getLigne() * 0.001) + (joueurActif.getPosition().getColonne() * 0.0001);
         return (int) score;
     }
 

@@ -44,7 +44,7 @@ public class MenuPrincipal extends JFrame {
         sousTitre.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
         
         // Panneau des boutons avec espacement amélioré
-        JPanel panneauBoutons = new JPanel(new GridLayout(4, 1, 20, 20));
+        JPanel panneauBoutons = new JPanel(new GridLayout(5, 1, 20, 20));
         panneauBoutons.setBackground(COULEUR_FOND);
         panneauBoutons.setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 80));
         
@@ -52,6 +52,7 @@ public class MenuPrincipal extends JFrame {
         JButton btnPvP = creerBoutonClassique("Joueur vs Joueur");
         JButton btnPvIA = creerBoutonClassique("Joueur vs IA");
         JButton btnIAvIA = creerBoutonClassique("IA vs IA (Spectateur)");
+        JButton btnTournoi = creerBoutonClassique("Tournoi IA vs IA");
         JButton btnQuitter = creerBoutonClassique("Quitter");
         
         // Actions des boutons
@@ -59,10 +60,22 @@ public class MenuPrincipal extends JFrame {
         btnPvIA.addActionListener(e -> selectionnerDifficulteIA());
         btnIAvIA.addActionListener(e -> selectionnerDifficulteIAvIA());
         btnQuitter.addActionListener(e -> System.exit(0));
+        btnTournoi.addActionListener(e -> {
+            // Ouvre la fenêtre de configuration du tournoi
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                try {
+                    new TournamentWindow().setVisible(true);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Erreur ouverture Tournoi: " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            });
+        });
         
         panneauBoutons.add(btnPvP);
         panneauBoutons.add(btnPvIA);
         panneauBoutons.add(btnIAvIA);
+        panneauBoutons.add(btnTournoi);
         panneauBoutons.add(btnQuitter);
         
         // Assemblage du panneau titre
