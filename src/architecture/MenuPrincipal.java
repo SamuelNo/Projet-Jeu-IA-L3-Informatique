@@ -18,7 +18,7 @@ public class MenuPrincipal extends JFrame {
     private static final Color COULEUR_BORDURE_ACTIVE = new Color(255, 200, 0);
     
     public MenuPrincipal() {
-        setTitle("Jeu de Combat IA");
+        setTitle("Gladius");
         setSize(700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -32,7 +32,7 @@ public class MenuPrincipal extends JFrame {
         panneauPrincipal.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         
         // Titre stylé
-        JLabel titre = new JLabel("Jeu de Combat IA", SwingConstants.CENTER);
+        JLabel titre = new JLabel("Gladius", SwingConstants.CENTER);
         titre.setForeground(COULEUR_TEXTE);
         titre.setFont(new Font("Arial", Font.BOLD, 36));
         titre.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
