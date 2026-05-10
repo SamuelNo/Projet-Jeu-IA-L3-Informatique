@@ -1,119 +1,119 @@
 === Recapitulatif Tournoi IA ===
-Date: 2026-05-10 06:49:42
-IA Joueur 1: IAMOYENNE
+Date: 2026-05-10 13:32:39
+IA Joueur 1: IADIFFICILE
 IA Joueur 2: IAMOYENNE
-Profondeur J1: 3 | Profondeur J2: 3
+Profondeur J1: 3 | Profondeur J2: 4
 Nombre de combats: 100/100
 Tours max par combat: 30
 
-Victoires J1: 54
+Victoires J1: 56
 Defaites J1: 44
 Victoires J2: 44
-Defaites J2: 54
-Matchs nuls: 2
-Temps total tournoi: 22,240 s
-Temps moyen coup J1 (IAMOYENNE): 10,598 ms
-Temps moyen coup J2 (IAMOYENNE): 10,091 ms
-Temps moyen coup global: 10,350 ms
+Defaites J2: 56
+Matchs nuls: 0
+Temps total tournoi: 244,019 s
+Temps moyen coup J1 (IADIFFICILE): 8,725 ms
+Temps moyen coup J2 (IAMOYENNE): 207,407 ms
+Temps moyen coup global: 106,078 ms
 
 === Details par combat ===
-Combat 1 | issue=NUL | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=324 ms | avgCoupJ1=11,099 | avgCoupJ2=9,149
-Combat 2 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=305 ms | avgCoupJ1=9,295 | avgCoupJ2=10,819
-Combat 3 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=209 ms | avgCoupJ1=14,933 | avgCoupJ2=8,144
-Combat 4 | issue=J2 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=14 | duree=136 ms | avgCoupJ1=11,950 | avgCoupJ2=7,395
-Combat 5 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=26 | duree=236 ms | avgCoupJ1=8,640 | avgCoupJ2=9,389
-Combat 6 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=15 | duree=117 ms | avgCoupJ1=6,964 | avgCoupJ2=8,634
-Combat 7 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=20 | duree=239 ms | avgCoupJ1=10,797 | avgCoupJ2=12,974
-Combat 8 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=27 | duree=649 ms | avgCoupJ1=25,602 | avgCoupJ2=22,188
-Combat 9 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=20 | duree=325 ms | avgCoupJ1=13,359 | avgCoupJ2=19,036
-Combat 10 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=12 | duree=72 ms | avgCoupJ1=7,492 | avgCoupJ2=4,401
-Combat 11 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=29 | duree=316 ms | avgCoupJ1=11,120 | avgCoupJ2=10,526
-Combat 12 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=150 ms | avgCoupJ1=9,570 | avgCoupJ2=7,048
-Combat 13 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=22 | duree=147 ms | avgCoupJ1=6,932 | avgCoupJ2=6,370
-Combat 14 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=22 | duree=237 ms | avgCoupJ1=9,500 | avgCoupJ2=11,972
-Combat 15 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=22 | duree=231 ms | avgCoupJ1=9,524 | avgCoupJ2=11,367
-Combat 16 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=17 | duree=121 ms | avgCoupJ1=7,473 | avgCoupJ2=6,690
-Combat 17 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=203 ms | avgCoupJ1=7,059 | avgCoupJ2=6,422
-Combat 18 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=149 ms | avgCoupJ1=7,248 | avgCoupJ2=5,615
-Combat 19 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=29 | duree=238 ms | avgCoupJ1=6,049 | avgCoupJ2=10,480
-Combat 20 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=191 ms | avgCoupJ1=10,430 | avgCoupJ2=10,767
-Combat 21 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=249 ms | avgCoupJ1=9,188 | avgCoupJ2=12,574
-Combat 22 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=176 ms | avgCoupJ1=6,339 | avgCoupJ2=15,642
-Combat 23 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=28 | duree=375 ms | avgCoupJ1=10,960 | avgCoupJ2=15,721
-Combat 24 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=283 ms | avgCoupJ1=11,404 | avgCoupJ2=13,215
-Combat 25 | issue=J1 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=15 | duree=101 ms | avgCoupJ1=7,691 | avgCoupJ2=5,610
-Combat 26 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=20 | duree=279 ms | avgCoupJ1=13,530 | avgCoupJ2=14,297
-Combat 27 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=21 | duree=107 ms | avgCoupJ1=6,400 | avgCoupJ2=3,647
-Combat 28 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=29 | duree=355 ms | avgCoupJ1=15,198 | avgCoupJ2=8,981
-Combat 29 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=25 | duree=369 ms | avgCoupJ1=18,644 | avgCoupJ2=10,521
-Combat 30 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=219 ms | avgCoupJ1=6,265 | avgCoupJ2=8,260
-Combat 31 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=22 | duree=390 ms | avgCoupJ1=22,451 | avgCoupJ2=12,934
-Combat 32 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=28 | duree=264 ms | avgCoupJ1=9,229 | avgCoupJ2=9,557
-Combat 33 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=172 ms | avgCoupJ1=10,997 | avgCoupJ2=8,076
-Combat 34 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=333 ms | avgCoupJ1=14,775 | avgCoupJ2=14,069
-Combat 35 | issue=J1 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=11 | duree=82 ms | avgCoupJ1=5,382 | avgCoupJ2=9,955
-Combat 36 | issue=J1 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=15 | duree=131 ms | avgCoupJ1=8,125 | avgCoupJ2=9,455
-Combat 37 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=178 ms | avgCoupJ1=7,860 | avgCoupJ2=7,530
-Combat 38 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=136 ms | avgCoupJ1=7,806 | avgCoupJ2=9,197
-Combat 39 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=25 | duree=327 ms | avgCoupJ1=10,644 | avgCoupJ2=15,697
-Combat 40 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=260 ms | avgCoupJ1=9,107 | avgCoupJ2=8,220
-Combat 41 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=17 | duree=183 ms | avgCoupJ1=9,591 | avgCoupJ2=12,021
-Combat 42 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=131 ms | avgCoupJ1=7,124 | avgCoupJ2=7,431
-Combat 43 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=27 | duree=298 ms | avgCoupJ1=14,748 | avgCoupJ2=7,013
-Combat 44 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=301 ms | avgCoupJ1=9,614 | avgCoupJ2=10,410
-Combat 45 | issue=J1 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=17 | duree=312 ms | avgCoupJ1=18,505 | avgCoupJ2=18,074
-Combat 46 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=157 ms | avgCoupJ1=6,466 | avgCoupJ2=3,961
-Combat 47 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=25 | duree=366 ms | avgCoupJ1=15,736 | avgCoupJ2=13,330
-Combat 48 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=413 ms | avgCoupJ1=17,702 | avgCoupJ2=9,753
-Combat 49 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=26 | duree=243 ms | avgCoupJ1=13,379 | avgCoupJ2=5,243
-Combat 50 | issue=J2 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=423 ms | avgCoupJ1=17,001 | avgCoupJ2=11,162
-Combat 51 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=26 | duree=311 ms | avgCoupJ1=11,704 | avgCoupJ2=12,199
-Combat 52 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=17 | duree=238 ms | avgCoupJ1=8,603 | avgCoupJ2=19,999
-Combat 53 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=25 | duree=499 ms | avgCoupJ1=18,335 | avgCoupJ2=21,660
-Combat 54 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=372 ms | avgCoupJ1=10,620 | avgCoupJ2=14,163
-Combat 55 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=168 ms | avgCoupJ1=11,345 | avgCoupJ2=9,611
-Combat 56 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=12 | duree=62 ms | avgCoupJ1=5,830 | avgCoupJ2=4,544
-Combat 57 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=26 | duree=247 ms | avgCoupJ1=7,564 | avgCoupJ2=11,393
-Combat 58 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=11 | duree=102 ms | avgCoupJ1=8,065 | avgCoupJ2=10,778
-Combat 59 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=10 | duree=62 ms | avgCoupJ1=8,895 | avgCoupJ2=3,484
-Combat 60 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=94 ms | avgCoupJ1=6,664 | avgCoupJ2=5,089
-Combat 61 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=17 | duree=165 ms | avgCoupJ1=13,115 | avgCoupJ2=5,862
-Combat 62 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=201 ms | avgCoupJ1=8,814 | avgCoupJ2=8,688
-Combat 63 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=27 | duree=522 ms | avgCoupJ1=20,913 | avgCoupJ2=17,575
-Combat 64 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=76 ms | avgCoupJ1=4,397 | avgCoupJ2=5,157
-Combat 65 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=24 | duree=276 ms | avgCoupJ1=11,577 | avgCoupJ2=11,411
-Combat 66 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=17 | duree=121 ms | avgCoupJ1=6,901 | avgCoupJ2=7,383
-Combat 67 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=15 | duree=95 ms | avgCoupJ1=7,099 | avgCoupJ2=5,535
-Combat 68 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=12 | duree=130 ms | avgCoupJ1=14,656 | avgCoupJ2=7,106
-Combat 69 | issue=J2 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=22 | duree=171 ms | avgCoupJ1=9,938 | avgCoupJ2=5,589
-Combat 70 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=21 | duree=211 ms | avgCoupJ1=10,537 | avgCoupJ2=9,502
-Combat 71 | issue=J2 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=198 ms | avgCoupJ1=11,579 | avgCoupJ2=10,379
-Combat 72 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=13 | duree=164 ms | avgCoupJ1=12,073 | avgCoupJ2=13,191
-Combat 73 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=25 | duree=193 ms | avgCoupJ1=6,095 | avgCoupJ2=9,504
-Combat 74 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=123 ms | avgCoupJ1=6,570 | avgCoupJ2=7,084
-Combat 75 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=142 ms | avgCoupJ1=9,074 | avgCoupJ2=8,670
-Combat 76 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=25 | duree=318 ms | avgCoupJ1=10,186 | avgCoupJ2=15,388
-Combat 77 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=140 ms | avgCoupJ1=6,980 | avgCoupJ2=5,137
-Combat 78 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=27 | duree=296 ms | avgCoupJ1=12,298 | avgCoupJ2=9,545
-Combat 79 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=21 | duree=225 ms | avgCoupJ1=11,617 | avgCoupJ2=9,754
-Combat 80 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=27 | duree=171 ms | avgCoupJ1=7,716 | avgCoupJ2=4,820
-Combat 81 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=313 ms | avgCoupJ1=18,020 | avgCoupJ2=21,042
-Combat 82 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=18 | duree=241 ms | avgCoupJ1=10,107 | avgCoupJ2=16,610
-Combat 83 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=14 | duree=127 ms | avgCoupJ1=8,945 | avgCoupJ2=9,273
-Combat 84 | issue=J1 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=13 | duree=94 ms | avgCoupJ1=5,193 | avgCoupJ2=9,653
-Combat 85 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=11 | duree=30 ms | avgCoupJ1=2,759 | avgCoupJ2=2,767
-Combat 86 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=298 ms | avgCoupJ1=10,634 | avgCoupJ2=9,231
-Combat 87 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=15 | duree=137 ms | avgCoupJ1=5,986 | avgCoupJ2=12,699
-Combat 88 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=150 ms | avgCoupJ1=8,712 | avgCoupJ2=4,112
-Combat 89 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=23 | duree=319 ms | avgCoupJ1=15,193 | avgCoupJ2=12,398
-Combat 90 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=16 | duree=97 ms | avgCoupJ1=6,010 | avgCoupJ2=6,084
-Combat 91 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=374 ms | avgCoupJ1=12,819 | avgCoupJ2=12,095
-Combat 92 | issue=J1 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=11 | duree=59 ms | avgCoupJ1=2,975 | avgCoupJ2=8,309
-Combat 93 | issue=J1 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=11 | duree=100 ms | avgCoupJ1=8,977 | avgCoupJ2=9,238
-Combat 94 | issue=J1 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=287 ms | avgCoupJ1=11,975 | avgCoupJ2=7,139
-Combat 95 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=143 ms | avgCoupJ1=4,817 | avgCoupJ2=4,757
-Combat 96 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=13 | duree=132 ms | avgCoupJ1=9,914 | avgCoupJ2=10,416
-Combat 97 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=26 | duree=294 ms | avgCoupJ1=11,572 | avgCoupJ2=11,028
-Combat 98 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=27 | duree=208 ms | avgCoupJ1=8,911 | avgCoupJ2=6,391
-Combat 99 | issue=NUL | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=3 | tours=30 | duree=310 ms | avgCoupJ1=9,837 | avgCoupJ2=10,826
-Combat 100 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=3 | tours=9 | duree=41 ms | avgCoupJ1=3,192 | avgCoupJ2=6,198
+Combat 1 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=25 | duree=1,407 s | avgCoupJ1=9,908 | avgCoupJ2=104,951
+Combat 2 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=16 | duree=2,971 s | avgCoupJ1=5,403 | avgCoupJ2=365,757
+Combat 3 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,777 s | avgCoupJ1=12,500 | avgCoupJ2=172,328
+Combat 4 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=3,731 s | avgCoupJ1=14,302 | avgCoupJ2=234,330
+Combat 5 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=25 | duree=1,489 s | avgCoupJ1=6,680 | avgCoupJ2=116,709
+Combat 6 | issue=J1 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=15 | duree=513 ms | avgCoupJ1=2,153 | avgCoupJ2=70,675
+Combat 7 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,494 s | avgCoupJ1=8,601 | avgCoupJ2=157,517
+Combat 8 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=1,622 s | avgCoupJ1=4,132 | avgCoupJ2=142,867
+Combat 9 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=22 | duree=3,881 s | avgCoupJ1=8,323 | avgCoupJ2=344,411
+Combat 10 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=1,152 s | avgCoupJ1=5,701 | avgCoupJ2=137,442
+Combat 11 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=14 | duree=2,737 s | avgCoupJ1=7,704 | avgCoupJ2=383,256
+Combat 12 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=14 | duree=4,114 s | avgCoupJ1=9,834 | avgCoupJ2=577,751
+Combat 13 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=25 | duree=1,635 s | avgCoupJ1=6,741 | avgCoupJ2=128,899
+Combat 14 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=3,542 s | avgCoupJ1=7,026 | avgCoupJ2=434,721
+Combat 15 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=21 | duree=2,194 s | avgCoupJ1=9,502 | avgCoupJ2=208,802
+Combat 16 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=27 | duree=1,535 s | avgCoupJ1=6,848 | avgCoupJ2=110,627
+Combat 17 | issue=J1 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=1,862 s | avgCoupJ1=6,529 | avgCoupJ2=162,092
+Combat 18 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=29 | duree=2,785 s | avgCoupJ1=6,579 | avgCoupJ2=191,785
+Combat 19 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=12 | duree=869 ms | avgCoupJ1=5,347 | avgCoupJ2=139,463
+Combat 20 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,448 s | avgCoupJ1=7,084 | avgCoupJ2=156,089
+Combat 21 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=2,598 s | avgCoupJ1=5,964 | avgCoupJ2=229,620
+Combat 22 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,830 s | avgCoupJ1=18,493 | avgCoupJ2=170,152
+Combat 23 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=16 | duree=1,090 s | avgCoupJ1=3,145 | avgCoupJ2=133,045
+Combat 24 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,600 s | avgCoupJ1=7,275 | avgCoupJ2=165,961
+Combat 25 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=29 | duree=4,409 s | avgCoupJ1=9,359 | avgCoupJ2=304,844
+Combat 26 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=14 | duree=817 ms | avgCoupJ1=4,829 | avgCoupJ2=111,900
+Combat 27 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=5,243 s | avgCoupJ1=10,154 | avgCoupJ2=571,186
+Combat 28 | issue=J1 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=15 | duree=3,707 s | avgCoupJ1=11,322 | avgCoupJ2=516,564
+Combat 29 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=1,611 s | avgCoupJ1=13,675 | avgCoupJ2=93,705
+Combat 30 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=3,021 s | avgCoupJ1=8,526 | avgCoupJ2=326,167
+Combat 31 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=11 | duree=1,277 s | avgCoupJ1=9,092 | avgCoupJ2=244,399
+Combat 32 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=15 | duree=1,378 s | avgCoupJ1=7,798 | avgCoupJ2=187,918
+Combat 33 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=21 | duree=2,597 s | avgCoupJ1=9,444 | avgCoupJ2=249,289
+Combat 34 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=1,903 s | avgCoupJ1=8,291 | avgCoupJ2=163,944
+Combat 35 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=2,169 s | avgCoupJ1=6,905 | avgCoupJ2=263,300
+Combat 36 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=24 | duree=1,512 s | avgCoupJ1=7,839 | avgCoupJ2=118,129
+Combat 37 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=29 | duree=2,069 s | avgCoupJ1=6,356 | avgCoupJ2=140,963
+Combat 38 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=27 | duree=1,797 s | avgCoupJ1=7,916 | avgCoupJ2=129,649
+Combat 39 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,432 s | avgCoupJ1=8,018 | avgCoupJ2=154,094
+Combat 40 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=20 | duree=1,431 s | avgCoupJ1=5,781 | avgCoupJ2=137,246
+Combat 41 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=27 | duree=3,428 s | avgCoupJ1=7,881 | avgCoupJ2=255,127
+Combat 42 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=18 | duree=628 ms | avgCoupJ1=2,537 | avgCoupJ2=67,230
+Combat 43 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=24 | duree=2,479 s | avgCoupJ1=11,055 | avgCoupJ2=195,483
+Combat 44 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=12 | duree=467 ms | avgCoupJ1=3,355 | avgCoupJ2=74,483
+Combat 45 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=3,507 s | avgCoupJ1=8,099 | avgCoupJ2=225,646
+Combat 46 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=1,580 s | avgCoupJ1=5,488 | avgCoupJ2=191,274
+Combat 47 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=20 | duree=1,780 s | avgCoupJ1=6,448 | avgCoupJ2=171,520
+Combat 48 | issue=J1 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=1,649 s | avgCoupJ1=9,137 | avgCoupJ2=139,891
+Combat 49 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=1,992 s | avgCoupJ1=7,150 | avgCoupJ2=125,617
+Combat 50 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=4,329 s | avgCoupJ1=20,609 | avgCoupJ2=458,023
+Combat 51 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=4,184 s | avgCoupJ1=7,800 | avgCoupJ2=514,160
+Combat 52 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=1,219 s | avgCoupJ1=6,345 | avgCoupJ2=74,869
+Combat 53 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=26 | duree=1,855 s | avgCoupJ1=4,700 | avgCoupJ2=137,948
+Combat 54 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=2,501 s | avgCoupJ1=8,361 | avgCoupJ2=303,248
+Combat 55 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=15 | duree=1,091 s | avgCoupJ1=5,899 | avgCoupJ2=149,073
+Combat 56 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=4,209 s | avgCoupJ1=8,763 | avgCoupJ2=271,827
+Combat 57 | issue=J2 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=20 | duree=2,464 s | avgCoupJ1=10,674 | avgCoupJ2=235,726
+Combat 58 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=1,815 s | avgCoupJ1=8,582 | avgCoupJ2=112,377
+Combat 59 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=3,568 s | avgCoupJ1=11,493 | avgCoupJ2=226,361
+Combat 60 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=26 | duree=2,900 s | avgCoupJ1=8,831 | avgCoupJ2=214,224
+Combat 61 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=5,271 s | avgCoupJ1=17,276 | avgCoupJ2=334,126
+Combat 62 | issue=J2 | matchup=Archère vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=12 | duree=722 ms | avgCoupJ1=7,028 | avgCoupJ2=113,379
+Combat 63 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=27 | duree=2,663 s | avgCoupJ1=8,745 | avgCoupJ2=195,421
+Combat 64 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=3,234 s | avgCoupJ1=4,587 | avgCoupJ2=354,191
+Combat 65 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=2,195 s | avgCoupJ1=7,091 | avgCoupJ2=266,388
+Combat 66 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=29 | duree=2,511 s | avgCoupJ1=9,055 | avgCoupJ2=169,662
+Combat 67 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=12 | duree=976 ms | avgCoupJ1=5,169 | avgCoupJ2=157,487
+Combat 68 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=24 | duree=4,702 s | avgCoupJ1=12,310 | avgCoupJ2=379,474
+Combat 69 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=22 | duree=2,832 s | avgCoupJ1=9,770 | avgCoupJ2=247,677
+Combat 70 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=20 | duree=924 ms | avgCoupJ1=3,847 | avgCoupJ2=88,590
+Combat 71 | issue=J2 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=28 | duree=5,036 s | avgCoupJ1=7,634 | avgCoupJ2=352,031
+Combat 72 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=3,354 s | avgCoupJ1=22,058 | avgCoupJ2=201,535
+Combat 73 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=24 | duree=2,437 s | avgCoupJ1=7,673 | avgCoupJ2=195,375
+Combat 74 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=15 | duree=1,754 s | avgCoupJ1=6,361 | avgCoupJ2=243,300
+Combat 75 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=2,158 s | avgCoupJ1=6,779 | avgCoupJ2=188,809
+Combat 76 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=12 | duree=596 ms | avgCoupJ1=6,596 | avgCoupJ2=92,818
+Combat 77 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=1,688 s | avgCoupJ1=8,523 | avgCoupJ2=178,029
+Combat 78 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,478 s | avgCoupJ1=8,543 | avgCoupJ2=156,608
+Combat 79 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=28 | duree=1,529 s | avgCoupJ1=5,684 | avgCoupJ2=103,541
+Combat 80 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=25 | duree=3,258 s | avgCoupJ1=8,609 | avgCoupJ2=262,112
+Combat 81 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=27 | duree=2,181 s | avgCoupJ1=10,055 | avgCoupJ2=156,909
+Combat 82 | issue=J1 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=2,692 s | avgCoupJ1=12,378 | avgCoupJ2=285,371
+Combat 83 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=17 | duree=1,188 s | avgCoupJ1=8,008 | avgCoupJ2=139,486
+Combat 84 | issue=J1 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=21 | duree=2,858 s | avgCoupJ1=9,413 | avgCoupJ2=275,420
+Combat 85 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=3,519 s | avgCoupJ1=16,080 | avgCoupJ2=218,544
+Combat 86 | issue=J2 | matchup=Soigneur vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=20 | duree=3,095 s | avgCoupJ1=5,140 | avgCoupJ2=304,382
+Combat 87 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=3,830 s | avgCoupJ1=10,598 | avgCoupJ2=244,711
+Combat 88 | issue=J1 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=1,115 s | avgCoupJ1=8,940 | avgCoupJ2=113,967
+Combat 89 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=24 | duree=945 ms | avgCoupJ1=5,379 | avgCoupJ2=73,316
+Combat 90 | issue=J1 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=19 | duree=1,661 s | avgCoupJ1=7,228 | avgCoupJ2=176,573
+Combat 91 | issue=J2 | matchup=Chevalier vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=1,158 s | avgCoupJ1=4,266 | avgCoupJ2=72,923
+Combat 92 | issue=J2 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,501 s | avgCoupJ1=9,967 | avgCoupJ2=156,728
+Combat 93 | issue=J2 | matchup=Archère vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,053 s | avgCoupJ1=8,522 | avgCoupJ2=128,336
+Combat 94 | issue=J1 | matchup=Soigneur vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=27 | duree=2,864 s | avgCoupJ1=7,520 | avgCoupJ2=212,217
+Combat 95 | issue=J2 | matchup=Soigneur vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=20 | duree=2,660 s | avgCoupJ1=9,149 | avgCoupJ2=256,838
+Combat 96 | issue=J2 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=28 | duree=4,378 s | avgCoupJ1=8,578 | avgCoupJ2=304,089
+Combat 97 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=23 | duree=5,191 s | avgCoupJ1=8,896 | avgCoupJ2=462,155
+Combat 98 | issue=J2 | matchup=Archère vs Archère | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,896 s | avgCoupJ1=14,570 | avgCoupJ2=178,511
+Combat 99 | issue=J1 | matchup=Chevalier vs Soigneur | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=2,399 s | avgCoupJ1=9,351 | avgCoupJ2=150,600
+Combat 100 | issue=J1 | matchup=Chevalier vs Chevalier | profondeurJ1=3 profondeurJ2=4 | tours=30 | duree=4,435 s | avgCoupJ1=9,776 | avgCoupJ2=285,881

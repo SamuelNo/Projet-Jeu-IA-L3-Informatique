@@ -28,6 +28,7 @@ public class Jeu {
     private String attaqueEnCours = "";
     private int pmRestants = 0;
     private boolean attaqueDejaEffectuee = false;
+    private int numTour = 1; // Numéro du tour actuel
     
     // Variable temporaire pour la sélection
     private String classChoisie = null;
@@ -137,11 +138,12 @@ public class Jeu {
         etat = "MOUVEMENT";
         pmRestants = joueurActif.getPas();
         attaqueDejaEffectuee = false;
+        numTour = 1; // Réinitialiser le compteur de tour à 1
         
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
         String modeAffiche = getModeAffichage();
         FenetreArene.MAJTexte(
-                modeAffiche + " - Tour de " + joueurActif.getNom() + " : " + pmRestants + " PM disponibles."
+                modeAffiche + " - Tour " + numTour + " - Tour de " + joueurActif.getNom() + " : " + pmRestants + " PM disponibles."
         );
         FenetreArene.rafraichir();
         
@@ -430,6 +432,7 @@ public class Jeu {
         attaqueEnCours = "";
         attaqueDejaEffectuee = false;
         pmRestants = joueurActif.getPas();
+        numTour++; // Incrémenter le numéro du tour
 
         FenetreArene.MAJStats(joueur1, joueur2, joueurActif);
 
@@ -438,7 +441,7 @@ public class Jeu {
             return;
         }
 
-        FenetreArene.MAJTexte("Tour de " + joueurActif.getNom() + " : " + pmRestants + " PM disponibles.");
+        FenetreArene.MAJTexte("Tour " + numTour + " - Tour de " + joueurActif.getNom() + " : " + pmRestants + " PM disponibles.");
         FenetreArene.rafraichir();
 
         // Si le prochain joueur est une IA, on déclenche son tour automatiquement.
@@ -615,6 +618,10 @@ public class Jeu {
     
     public String getDifficulteIA2() {
         return difficulteIA2;
+    }
+    
+    public int getNumTour() {
+        return numTour;
     }
     
     /**

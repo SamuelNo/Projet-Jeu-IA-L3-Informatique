@@ -31,58 +31,46 @@ Le projet inclut également une chaîne d’analyse expérimentale pour comparer
 └── README.md
 ```
 
-## Prérequis
-- Java Development Kit (JDK) 17 ou version supérieure.
-- Python 3.10+ pour la partie analyse.
-- Bibliothèques Python : pandas, matplotlib et seaborn.
+## Installation et Compatibilité
+Le projet se lance depuis la racine du dépôt avec `make`. La logique de compilation et d’exécution a été rendue portable pour fonctionner sur macOS, Linux et Windows, à condition d’utiliser un environnement compatible avec GNU Make.
 
-Installation des dépendances Python, si nécessaire :
+### Prérequis communs
+- Java Development Kit (JDK) 17 ou version supérieure.
+- Python 3 pour la partie analyse et la génération des graphiques.
+- `make` installé sur la machine.
+- Les bibliothèques Python `pandas`, `matplotlib` et `seaborn` si elles ne sont pas déjà présentes.
+
+### macOS
+- Support natif.
+- Les commandes `make build`, `make run`, `make analyse`, `make graphs` et `make clean` fonctionnent directement depuis un terminal standard.
+
+### Linux
+- Support natif.
+- Les mêmes commandes sont identiques à celles de macOS, sans adaptation particulière, avec Java 17+ et Python 3 installés.
+
+### Windows
+- Le plus fiable est d’utiliser Git Bash ou WSL2 afin de conserver le flux de travail basé sur `make`.
+- PowerShell peut également fonctionner si GNU Make est installé, mais Git Bash ou WSL2 évite les différences de chemins et de commandes shell.
+- Les mêmes commandes sont utilisées qu’ailleurs : `make build`, `make run`, `make analyse`, `make graphs` et `make clean`.
+
+### Installation des dépendances Python
 ```bash
 python3 -m pip install pandas matplotlib seaborn
 ```
 
-## Compilation et Exécution
-Toutes les commandes ci-dessous sont prévues pour être lancées depuis la racine du projet. Le `Makefile` centralise les chemins et évite les erreurs liées au répertoire courant.
+### Guide rapide des commandes
+Toutes les commandes ci-dessous sont identiques sur macOS, Linux et Windows, tant que l’environnement permet d’exécuter `make`.
 
 ```bash
 make build
-```
-
-Cette commande compile l’application et les utilitaires de simulation présents dans `src/test/`. Le fichier `src/test/MoteurCoupsEtatTest.java` utilise JUnit 5 et nécessite d’ajouter la dépendance correspondante au classpath si vous souhaitez le compiler ou l’exécuter séparément.
-
-Lancement du programme principal :
-
-```bash
 make run
-```
-
-### Utilisation du Makefile
-Un `Makefile` a été ajouté pour simplifier les tâches courantes. Les cibles principales :
-
-- `make build` : compile les sources Java en utilisant les chemins absolus calculés à partir du `Makefile`.
-- `make run` : compile puis lance l'interface graphique `architecture.MenuPrincipal`.
-- `make analyse` : compile puis exécute `ia.analyse.GenerateurRapport` pour lancer la campagne automatisée.
-- `make graphs` : exécute le script Python `data/generateur_graphique.py` dans le bon répertoire, avec le Python local de `venv_projet/` si disponible.
-- `make clean` : supprime `bin/` et efface les graphiques générés dans `data/graphiques/`.
-
-Exemples d'utilisation :
-
-```bash
-# Compiler
-make build
-
-# Lancer l'interface
-make run
-
-# Lancer la campagne d'analyse
 make analyse
-
-# Générer les graphiques (après analyse)
 make graphs
-
-# Nettoyer
 make clean
 ```
+
+### Justification technique
+La portabilité a été assurée en s’appuyant sur des chemins relatifs dans le projet, une détection automatique du système d’exploitation dans le `Makefile`, et une gestion explicite des séparateurs de classpath selon la plateforme. L’encodage UTF-8 a été conservé pour garantir l’affichage correct des accents et des noms français sur macOS, Linux et Windows, tandis que les commandes de nettoyage et la recherche des sources ont été réécrites pour éviter les dépendances à des outils propres à un seul système.
 
 ## Mode Analyse
 La campagne de tests automatisée est pilotée par la classe `ia.analyse.GenerateurRapport`. Elle exécute une série de matchs, met à jour les fichiers CSV dans `data/csv/` et alimente les journaux dans `data/txt/`.

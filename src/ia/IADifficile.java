@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class IADifficile {
 
-    private static int PROFONDEUR_MAX = 4;
+    private static int PROFONDEUR_MAX = 3;
     public static void setProfondeur(int p) { PROFONDEUR_MAX = Math.max(1, Math.min(p, 5)); }
 
     public static Coup choisirCoup(Etat etat) {
