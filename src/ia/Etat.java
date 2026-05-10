@@ -33,9 +33,9 @@ public class Etat {
         this.adversaire = new JoueurEtat(autre.adversaire);
     }
 
-    // =========================================================================
-    // 🧠 HEURISTIQUE DE L'IA FACILE
-    // =========================================================================
+   
+    // HEURISTIQUE DE L'IA FACILE
+
     
     public int getScoreHeuristique() {
         // 1. ÉTATS TERMINAUX (Poids de Victoire Absolu)
@@ -86,23 +86,23 @@ public class Etat {
         return (int) score;
     }
 
-    // =========================================================================
-    // ⚙️ MÉTHODES DE GESTION DE L'ÉTAT
-    // =========================================================================
 
+    // MÉTHODES DE GESTION DE L'ÉTAT
+
+    // Vérifie si l'état est terminal (victoire de l'un ou l'autre joueur).
     public boolean estTerminal() {
         return joueurActif.getHp() <= 0 || adversaire.getHp() <= 0;
     }
 
+    // Change le joueur actif (utilisé après chaque coup dans la simulation).
     public void changerJoueurActif() {
         JoueurEtat temp = joueurActif;
         joueurActif = adversaire;
         adversaire = temp;
-        
-        // CORRECTION VITALE : La parade ne dure qu'un tour !
         joueurActif.setEnParade(false);
     }
 
+    // Méthode utilitaire pour copier une grille (pour éviter les références partagées).
     private int[][] copierGrille(int[][] source) {
         int[][] copie = new int[source.length][source[0].length];
         for (int i = 0; i < source.length; i++) {
@@ -127,9 +127,7 @@ public class Etat {
     public JoueurEtat getJoueurActif() { return joueurActif; }
     public JoueurEtat getAdversaire() { return adversaire; }
 
-    // =========================================================================
-    // 🧠 HEURISTIQUE DE L'IA MOYENNE (Le Tacticien)
-    // =========================================================================
+    //HEURISTIQUE DE L'IA MOYENNE 
     
     public int getScoreHeuristiqueMoyenne() {
         if (adversaire.getHp() <= 0) return 1000000;
@@ -137,16 +135,14 @@ public class Etat {
         
         double score = 0;
         
-        // 1. LA LOI DU SANG (1 PV = 100 points)
+        // 1. (1 PV = 100 points)
         score += (joueurActif.getHp() - adversaire.getHp()) * 100.0; 
         
-        // 2. L'ÉCONOMIE DU JEU (Rééquilibrage massif)
+        // 2. L'ÉCONOMIE DU JEU : l'énergie est cruciale pour attaquer, et les parades sont vitales pour survivre.
         // L'énergie permet de frapper, 1 pt d'énergie = 10 points
         score += (joueurActif.getEnergie() - adversaire.getEnergie()) * 10.0; 
         
-        // LE SECRET : Une parade sauve 30 PV (soit 3000 points d'économie).
-        // On lui donne un poids de 4000 ! L'IA va maintenant FOCALISER sur les parades,
-        // même si elle doit encaisser un coup pour aller la chercher.
+        // La parade est vitale car il n'y a pas de soin : 1 parade = 4000 points d'écart (équivalent à 40 PV)
         score += (joueurActif.getNbParades() - adversaire.getNbParades()) * 4000.0;
         
         // 3. LA COURSE AU CENTRE (Briser le No Man's Land)
@@ -158,20 +154,15 @@ public class Etat {
         double distCentreAdversaire = Math.abs(adversaire.getPosition().getLigne() - centreLigne) +
                                       Math.abs(adversaire.getPosition().getColonne() - centreColonne);
                                    
-        // Chaque case vers le centre rapporte 500 points (contre 10 avant !).
-        // Cela justifie largement de s'exposer à une petite attaque pour dominer le plateau.
+
         score += (distCentreAdversaire - distCentreActif) * 500.0; 
-        // AJOUT IDÉE 1 : Tie-breaking déterministe
-        // On ajoute une fraction minuscule basée sur la position (max 0.011 point).
-        // Cela ne change pas le jeu tactique, mais brise les boucles de déplacement.
         score += (joueurActif.getPosition().getLigne() * 0.001) + (joueurActif.getPosition().getColonne() * 0.0001);
         return (int) score;
     }
     
 
-    // =========================================================================
-    // 🧠 HEURISTIQUE DE L'IA DIFFICILE (Le Stratège)
-    // =========================================================================
+    // HEURISTIQUE DE L'IA DIFFICILE
+
 
     public int getScoreHeuristiqueDifficile() {
         // 1. ÉTATS TERMINAUX (Poids de Victoire Absolu)
@@ -246,35 +237,12 @@ public class Etat {
         return (int) score;
     }
 
-    private double evaluerCasesBoostDifficile() {
-        double scoreBoost = 0;
-        Position pos = joueurActif.getPosition();
-        // Rayon réduit à 2 : le combat prime toujours sur la collecte de bonus
-        int rayon = 2;
-
-        for (int l = Math.max(0, pos.getLigne() - rayon); l <= Math.min(grille.length - 1, pos.getLigne() + rayon); l++) {
-            for (int c = Math.max(0, pos.getColonne() - rayon); c <= Math.min(grille[0].length - 1, pos.getColonne() + rayon); c++) {
-                int dist = Math.abs(pos.getLigne() - l) + Math.abs(pos.getColonne() - c);
-                if (dist > 0 && dist <= rayon) {
-                    // Attrait très faible pour ne jamais surpasser l'intérêt d'attaquer
-                    if (grille[l][c] == 3 && joueurActif.getNbParades() < 2) {
-                        scoreBoost += 20.0 / dist;
-                    } else if (grille[l][c] == 4 && joueurActif.getEnergie() <= 20) {
-                        scoreBoost += 15.0 / dist;
-                    }
-                }
-            }
-        }
-        return scoreBoost;
-    }
 
     private int distanceDifficile(Position p1, Position p2) {
         return Math.abs(p1.getLigne() - p2.getLigne()) + Math.abs(p1.getColonne() - p2.getColonne());
     }
 
-        // =========================================================================
-    // 👤 CLASSES INTERNES DE DONNÉES
-    // =========================================================================
+    // CLASSES INTERNES DE DONNÉES
 
     public static class JoueurEtat {
         private Position position;
@@ -317,7 +285,7 @@ public class Etat {
         }
 
         /**
-         * CORRECTION : Ajout du paramètre idJoueur pour l'affichage correct sur la grille (ex: 1 ou 2).
+         * Méthode utilitaire pour convertir un Personnage en JoueurEtat, en extrayant les informations nécessaires.
          */
         public static JoueurEtat fromPersonnage(Personnage p, int idJoueur) {
             List<AttaqueInfo> infos = new ArrayList<>();

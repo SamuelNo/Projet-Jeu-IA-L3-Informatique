@@ -7,8 +7,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.BufferedReader;
-import java.util.concurrent.TimeUnit;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -16,10 +14,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Fenêtre de configuration et de lancement du tournoi IA vs IA, affichant les résultats et les statistiques après chaque tournoi. Permet de choisir les IA, le nombre de combats, les profondeurs, et d'interrompre le tournoi en cours.
+ */
+
 public class TournamentWindow extends JFrame {
     private JComboBox<String> cbIA1;
     private JComboBox<String> cbIA2;
     private JSpinner spNbMatches;
+    private JSpinner spProfondeur1;
+    private JSpinner spProfondeur2;
     private JButton btnLancer;
     private JButton btnFinir;
     private JTabbedPane onglets;
@@ -28,6 +32,8 @@ public class TournamentWindow extends JFrame {
     private JTextArea taStats;
     private JLabel lblStatus;
     private Process currentProcess;
+    private String fichierResultatsActuel = "data/txt/resultats_tournoi.txt";
+    private String fichierNulsActuel = "data/txt/details_matchs_nuls.txt";
 
     public TournamentWindow() {
         setTitle("Tournoi IA vs IA");
@@ -57,7 +63,25 @@ public class TournamentWindow extends JFrame {
         }
         config.add(spNbMatches, c);
 
-        c.gridx = 0; c.gridy = 3; c.gridwidth = 2; c.anchor = GridBagConstraints.CENTER;
+        c.gridx = 0; c.gridy = 3; config.add(new JLabel("Profondeur J1:"), c);
+        c.gridx = 1;
+        spProfondeur1 = new JSpinner(new SpinnerNumberModel(2, 1, 5, 1));
+        JComponent depthEditor1 = spProfondeur1.getEditor();
+        if (depthEditor1 instanceof JSpinner.DefaultEditor) {
+            ((JSpinner.DefaultEditor) depthEditor1).getTextField().setColumns(4);
+        }
+        config.add(spProfondeur1, c);
+
+        c.gridx = 0; c.gridy = 4; config.add(new JLabel("Profondeur J2:"), c);
+        c.gridx = 1;
+        spProfondeur2 = new JSpinner(new SpinnerNumberModel(2, 1, 5, 1));
+        JComponent depthEditor2 = spProfondeur2.getEditor();
+        if (depthEditor2 instanceof JSpinner.DefaultEditor) {
+            ((JSpinner.DefaultEditor) depthEditor2).getTextField().setColumns(4);
+        }
+        config.add(spProfondeur2, c);
+
+        c.gridx = 0; c.gridy = 5; c.gridwidth = 2; c.anchor = GridBagConstraints.CENTER;
         btnLancer = new JButton("Lancer le tournoi");
         btnFinir = new JButton("Finir Tournoi");
         btnFinir.setEnabled(false);
@@ -76,7 +100,7 @@ public class TournamentWindow extends JFrame {
         add(lblStatus, BorderLayout.SOUTH);
 
         // Table model pour le recapitulatif par combat
-        String[] colonnes = new String[]{"Combat","Issue","Matchup","Tours","Duree","avgCoupJ1","avgCoupJ2"};
+        String[] colonnes = new String[]{"Combat","Issue","Matchup","Profondeur J1/J2","Tours","Duree","avgCoupJ1","avgCoupJ2"};
         tableModel = new DefaultTableModel(colonnes, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -97,6 +121,7 @@ public class TournamentWindow extends JFrame {
         });
     }
 
+    //** Lancement du tournoi dans un thread séparé pour ne pas bloquer l'interface, avec gestion de la configuration, des fichiers de résultats et de l'état des boutons. */
     private void lancerTournoi() {
         final String ia1 = (String) cbIA1.getSelectedItem();
         final String ia2 = (String) cbIA2.getSelectedItem();
@@ -104,24 +129,35 @@ public class TournamentWindow extends JFrame {
         System.out.println("[TOURNOI] IA1: " + ia1 + ", IA2: " + ia2);
         try {
             spNbMatches.commitEdit();
+            spProfondeur1.commitEdit();
+            spProfondeur2.commitEdit();
         } catch (java.text.ParseException ex) {
             JOptionPane.showMessageDialog(this,
-                "Nombre de combats invalide, valeur précédente conservée.",
+                "Valeur invalide, valeur précédente conservée.",
                 "Tournoi", JOptionPane.WARNING_MESSAGE);
         }
         final int nb = ((Number) spNbMatches.getValue()).intValue();
+        final int profondeur1 = ((Number) spProfondeur1.getValue()).intValue();
+        final int profondeur2 = ((Number) spProfondeur2.getValue()).intValue();
+        // Use base filenames (no per-depth files)
+        final String fichierResultats = "data/txt/resultats_tournoi.txt";
+        final String fichierNuls = "data/txt/details_matchs_nuls.txt";
+        fichierResultatsActuel = fichierResultats;
+        fichierNulsActuel = fichierNuls;
         System.out.println("[TOURNOI] Nombre de combats: " + nb);
+        System.out.println("[TOURNOI] Profondeur J1: " + profondeur1 + " Profondeur J2: " + profondeur2);
         
         // Supprimer les anciens fichiers de résultats
         System.out.println("[TOURNOI] Suppression des anciens fichiers...");
-        new File("resultats_tournoi.txt").delete();
-        new File("details_matchs_nuls.txt").delete();
+        // remove base files to start fresh
+        new File("data/txt/resultats_tournoi.txt").delete();
+        new File("data/txt/details_matchs_nuls.txt").delete();
         System.out.println("[TOURNOI] Fichiers supprimés");
 
         btnLancer.setEnabled(false);
         btnFinir.setEnabled(true);
         onglets.setEnabled(false);
-        lblStatus.setText("Combat en cours... " + nb + " partie(s) prévues.");
+        lblStatus.setText("Combat en cours... " + nb + " partie(s) prévues. ProfondeurJ1=" + profondeur1 + " ProfondeurJ2=" + profondeur2);
         System.out.println("[TOURNOI] Statut mis à jour dans l'UI");
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
@@ -135,7 +171,7 @@ public class TournamentWindow extends JFrame {
                     
                     ProcessBuilder pb = new ProcessBuilder(
                         javaCmd, "-cp", "bin", "test.SimulateIAvIA",
-                        ia1, ia2, String.valueOf(nb), String.valueOf(50), "resultats_tournoi.txt", "details_matchs_nuls.txt"
+                        ia1, ia2, String.valueOf(nb), String.valueOf(30), fichierResultats, fichierNuls, String.valueOf(profondeur1), String.valueOf(profondeur2)
                     );
                     System.out.println("[TOURNOI] Commande: " + String.join(" ", pb.command()));
                     pb.directory(new File(workingDir));
@@ -177,6 +213,7 @@ public class TournamentWindow extends JFrame {
         worker.execute();
     }
 
+    //** Gestion de l'arrêt du tournoi : envoie un signal de termination au processus en cours, attend sa fin, met à jour l'interface et charge les résultats partiels. */
     private void finirTournoi() {
         if (currentProcess != null) {
             System.out.println("[TOURNOI] Arrêt du tournoi demandé par l'utilisateur...");
@@ -212,9 +249,10 @@ public class TournamentWindow extends JFrame {
         }
     }
 
+    //** Lit les fichiers de résultats et de nuls, extrait les statistiques et les détails par combat, et met à jour l'interface avec ces informations. */
     private void chargerEtAfficherResultats() {
-        Path pathRes = Paths.get("resultats_tournoi.txt");
-        Path pathNuls = Paths.get("details_matchs_nuls.txt");
+        Path pathRes = Paths.get(fichierResultatsActuel);
+        Path pathNuls = Paths.get(fichierNulsActuel);
         try {
             // Clear previous table
             tableModel.setRowCount(0);
@@ -238,6 +276,7 @@ public class TournamentWindow extends JFrame {
                         String combat = parts.length > 0 ? parts[0].replace("Combat ", "").trim() : "";
                         String issue = "";
                         String matchup = "";
+                        String profondeur = "";
                         String tours = "";
                         String duree = "";
                         String avg1 = "";
@@ -246,12 +285,23 @@ public class TournamentWindow extends JFrame {
                             p = p.trim();
                             if (p.startsWith("issue=")) issue = p.substring(6);
                             else if (p.startsWith("matchup=")) matchup = p.substring(8);
+                            else if (p.startsWith("profondeurJ1=")) {
+                                String pj1 = p.substring(12);
+                                // try to find profondeurJ2 in same part list later
+                                // temporarily store as pj1/pj2
+                                profondeur = pj1;
+                            } else if (p.startsWith("profondeurJ2=")) {
+                                String pj2 = p.substring(12);
+                                if (profondeur.isEmpty()) profondeur = "?/" + pj2; else profondeur = profondeur + "/" + pj2;
+                            } else if (p.startsWith("profondeur=")) {
+                                profondeur = p.substring(11);
+                            }
                             else if (p.startsWith("tours=")) tours = p.substring(6);
                             else if (p.startsWith("duree=")) duree = p.substring(6);
                             else if (p.startsWith("avgCoupJ1=")) avg1 = p.substring(10);
                             else if (p.startsWith("avgCoupJ2=")) avg2 = p.substring(10);
                         }
-                        tableModel.addRow(new Object[]{combat, issue, matchup, tours, duree, avg1, avg2});
+                        tableModel.addRow(new Object[]{combat, issue, matchup, profondeur, tours, duree, avg1, avg2});
                     }
                 } else {
                     // pas de section détails, rien à remplir
@@ -266,7 +316,7 @@ public class TournamentWindow extends JFrame {
                 java.util.List<String> lines = Files.readAllLines(pathRes, StandardCharsets.UTF_8);
                 StringBuilder stats = new StringBuilder();
                 for (String l : lines) {
-                    if (l.startsWith("Victoires J1") || l.startsWith("Victoires J2") || l.startsWith("Matchs nuls") || l.startsWith("Temps total tournoi") || l.startsWith("Temps moyen coup")) {
+                    if (l.startsWith("Profondeur J1") || l.startsWith("Profondeur IA") || l.startsWith("Victoires J1") || l.startsWith("Victoires J2") || l.startsWith("Matchs nuls") || l.startsWith("Temps total tournoi") || l.startsWith("Temps moyen coup")) {
                         stats.append(l).append('\n');
                     }
                 }

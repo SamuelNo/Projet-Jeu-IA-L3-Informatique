@@ -42,7 +42,10 @@ public class Arene {
         grille[joueur1.getPosition().getLigne()][joueur1.getPosition().getColonne()] = 1;
         grille[joueur2.getPosition().getLigne()][joueur2.getPosition().getColonne()] = 2;
     }
-
+    /**
+     * Génère aléatoirement un nombre donné d'obstacles sur la grille, sans écraser les joueurs ni les bonus.
+     * @param nbObstacles
+     */
     private void genererObstacles(int nbObstacles) {
         Random rand = new Random();
         int obstaclesPlaces = 0;
@@ -58,7 +61,11 @@ public class Arene {
         }
     }
 
-    // generation des cases bonus
+        /**
+        * Génère aléatoirement un nombre donné de bonus de parade et d'énergie sur la grille, sans écraser les joueurs ni les obstacles.
+        * @param nbParades nombre de bonus de parade à générer
+        * @param nbEnergie nombre de bonus d'énergie à générer
+        */
     private void genererBonus(int nbParades, int nbEnergie) {
         Random rand = new Random();
         int places = 0;
@@ -76,7 +83,8 @@ public class Arene {
     }
 
     /**
-     * Recalcule la grille selon les positions courantes des joueurs.
+     * Met à jour la grille après un coup, en effaçant les anciennes positions des joueurs et en plaçant les nouveaux.
+     * Les obstacles et bonus restent inchangés.
      */
     public void updateFullGrille() {
         for (int i = 0; i < TAILLE; i++) {

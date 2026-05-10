@@ -13,16 +13,24 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import exception.IllegalAttackException;
+import exception.IllegalEnergieException;
+import exception.IllegalParadeException;
+import exception.IllegalReposException;
+
+/// Classe de simulation pour faire s'affronter deux IA sur un nombre défini de combats, collecter les résultats et générer des rapports. Utilisée pour valider les performances des IA et pour alimenter les analyses dans GenerateurRapport.
 
 public class SimulateIAvIA {
     private static final Random RNG = new Random();
     private static final String IA1_DEFAULT = "IAMOYENNE";
     private static final String IA2_DEFAULT = "IAMOYENNE";
     private static final int NB_COMBATS_DEFAULT = 40;
-    private static final int MAX_TOURS_DEFAULT = 50;
-    private static final String FICHIER_RESULTATS_DEFAULT = "resultats_tournoi.txt";
-    private static final String FICHIER_NULS_DEFAULT = "details_matchs_nuls.txt";
+    private static final int MAX_TOURS_DEFAULT = 30;
+    private static final int PROFONDEUR_DEFAULT = 2;
+    private static final String FICHIER_RESULTATS_DEFAULT = "data/txt/resultats_tournoi.txt";
+    private static final String FICHIER_NULS_DEFAULT = "data/txt/details_matchs_nuls.txt";
 
+    // Classe interne pour stocker les résultats d'un combat individuel
     private static class CombatResult {
         int index;
         int tours;
@@ -39,6 +47,14 @@ public class SimulateIAvIA {
         boolean mortSubite;
     }
 
+    // Progress callback: called after each combat with (combatIndex, nbCombats)
+    public static java.util.function.BiConsumer<Integer,Integer> progressCallback = null;
+
+    // profondeurs actives par joueur (remplies depuis main)
+    private static int PROFONDEUR_J1 = PROFONDEUR_DEFAULT;
+    private static int PROFONDEUR_J2 = PROFONDEUR_DEFAULT;
+
+    // Méthode utilitaire pour générer un personnage aléatoire
     private static Personnage personnageAleatoire() {
         int tirage = RNG.nextInt(3);
         if (tirage == 0) {
@@ -50,6 +66,7 @@ public class SimulateIAvIA {
         return new Soigneur();
     }
 
+    // Méthode utilitaire pour choisir un coup à partir du nom de l'IA et de l'état courant
     private static Coup choisirCoupParIA(String iaNom, Etat etat) {
         String ia = iaNom == null ? "" : iaNom.trim().toUpperCase();
         switch (ia) {
@@ -63,6 +80,7 @@ public class SimulateIAvIA {
         }
     }
 
+    // Méthodes utilitaires pour formater les résultats et les logs de combat
     private static String positionToString(Position p) {
         if (p == null) {
             return "(null)";
@@ -70,6 +88,7 @@ public class SimulateIAvIA {
         return "(" + p.getLigne() + "," + p.getColonne() + ")";
     }
 
+    // Méthode utilitaire pour convertir la grille en une chaîne de caractères lisible
     private static String grilleToString(int[][] grille) {
         StringBuilder sb = new StringBuilder();
         sb.append("    A B C D E F G H I J\n");
@@ -85,23 +104,12 @@ public class SimulateIAvIA {
         }
         return sb.toString();
     }
-
-    private static String tailleLisible(long bytes) {
-        if (bytes < 1024) {
-            return bytes + " o";
-        }
-        double kb = bytes / 1024.0;
-        if (kb < 1024) {
-            return String.format("%.2f Ko", kb);
-        }
-        double mb = kb / 1024.0;
-        return String.format("%.2f Mo", mb);
-    }
-
+    
+    // Méthode utilitaire pour formater les statistiques d'un personnage
     private static void ecrireResultatsPartiels(List<CombatResult> tousLesCombats, int victoiresJ1, int victoiresJ2, int nuls,
-            String iaJoueur1, String iaJoueur2, int nbCombatsTotal, int maxTours, long dureeTournoiMs,
-            long totalDecisionJ1Ns, int totalDecisionsJ1, long totalDecisionJ2Ns, int totalDecisionsJ2,
-            List<String> detailsNuls, String fichierResultats, String fichierNuls) {
+        String iaJoueur1, String iaJoueur2, int nbCombatsTotal, int maxTours, int profondeurJ1, int profondeurJ2, long dureeTournoiMs,
+        long totalDecisionJ1Ns, int totalDecisionsJ1, long totalDecisionJ2Ns, int totalDecisionsJ2,
+        List<String> detailsNuls, String fichierResultats, String fichierNuls) {
         try {
             String horodatage = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             List<String> recap = new ArrayList<>();
@@ -109,6 +117,7 @@ public class SimulateIAvIA {
             recap.add("Date: " + horodatage);
             recap.add("IA Joueur 1: " + iaJoueur1);
             recap.add("IA Joueur 2: " + iaJoueur2);
+            recap.add("Profondeur J1: " + profondeurJ1 + " | Profondeur J2: " + profondeurJ2);
             recap.add("Nombre de combats: " + tousLesCombats.size() + "/" + nbCombatsTotal);
             recap.add("Tours max par combat: " + maxTours);
             recap.add("");
@@ -128,6 +137,7 @@ public class SimulateIAvIA {
                 recap.add("Combat " + r.index
                     + " | issue=" + r.issue
                     + " | matchup=" + r.matchup
+                    + " | profondeurJ1=" + profondeurJ1 + " profondeurJ2=" + profondeurJ2
                     + " | tours=" + r.tours
                     + " | duree=" + dureeLisible(r.dureeCombatMs)
                     + " | avgCoupJ1=" + String.format("%.3f", r.tempsDecisionJ1Ns / 1_000_000.0 / Math.max(1, r.nbDecisionsJ1))
@@ -139,6 +149,7 @@ public class SimulateIAvIA {
             nulsLines.add("=== Details des matchs nuls ===");
             nulsLines.add("Date: " + horodatage);
             nulsLines.add("IA Joueur 1: " + iaJoueur1 + " | IA Joueur 2: " + iaJoueur2);
+            nulsLines.add("Profondeur J1: " + profondeurJ1 + " | Profondeur J2: " + profondeurJ2);
             nulsLines.add("Nombre de matchs nuls: " + nuls);
             nulsLines.add("");
             if (detailsNuls.isEmpty()) {
@@ -151,11 +162,12 @@ public class SimulateIAvIA {
             Path pathNuls = Paths.get(fichierNuls);
             Files.write(pathResultats, recap, StandardCharsets.UTF_8);
             Files.write(pathNuls, nulsLines, StandardCharsets.UTF_8);
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println("Erreur lors de l'écriture des résultats partiels: " + e.getMessage());
         }
     }
 
+    // Méthode utilitaire pour formater une durée en millisecondes dans un format lisible (ms ou s)
     private static String dureeLisible(long ms) {
         if (ms < 1000) {
             return ms + " ms";
@@ -164,6 +176,7 @@ public class SimulateIAvIA {
         return String.format("%.3f s", s);
     }
 
+    // Méthode utilitaire pour calculer la moyenne en ms à partir du total en ns et du nombre d'occurrences, avec formatage
     private static String moyenneMs(long nsTotal, int nb) {
         if (nb <= 0) {
             return "n/a";
@@ -172,6 +185,7 @@ public class SimulateIAvIA {
         return String.format("%.3f ms", ms);
     }
 
+    // Méthode principale pour simuler un combat entre deux IA, retourner les résultats détaillés et le log complet du combat
     private static CombatResult simulerCombat(int indexCombat, String iaJoueur1, String iaJoueur2, int maxTours) {
         long debutCombatNs = System.nanoTime();
         Personnage p1 = personnageAleatoire();
@@ -203,6 +217,16 @@ public class SimulateIAvIA {
 
             boolean actifEstJ1 = joueurActif == p1;
             String iaActive = actifEstJ1 ? iaJoueur1 : iaJoueur2;
+            // Appliquer la profondeur correspondante au joueur actif juste avant la décision
+            if (actifEstJ1) {
+                IAFacile.setProfondeur(PROFONDEUR_J1);
+                IAMoyenne.setProfondeur(PROFONDEUR_J1);
+                IADifficile.setProfondeur(PROFONDEUR_J1);
+            } else {
+                IAFacile.setProfondeur(PROFONDEUR_J2);
+                IAMoyenne.setProfondeur(PROFONDEUR_J2);
+                IADifficile.setProfondeur(PROFONDEUR_J2);
+            }
             long debutDecisionNs = System.nanoTime();
             Coup coup = choisirCoupParIA(iaActive, etatIA);
             long dureeDecisionNs = System.nanoTime() - debutDecisionNs;
@@ -261,7 +285,7 @@ public class SimulateIAvIA {
                             joueurActif.attaquer(adversaire, coup.getTypeAttaque());
                             log.append("Resultat attaque: hp adversaire ")
                                 .append(hpAdvAvant).append(" -> ").append(adversaire.getHp()).append('\n');
-                        } catch (Exception e) {
+                        } catch (IllegalAttackException | IllegalEnergieException | IllegalParadeException e) {
                             // On ignore l'exception de combat pour ne pas interrompre le tournoi.
                             log.append("Erreur attaque: ").append(e.getMessage()).append('\n');
                         }
@@ -270,7 +294,7 @@ public class SimulateIAvIA {
                         try {
                             joueurActif.parader();
                             log.append("Parade activee\n");
-                        } catch (Exception e) {
+                        } catch (IllegalParadeException e) {
                             // Action invalide selon l'état courant: on passe.
                             log.append("Erreur parade: ").append(e.getMessage()).append('\n');
                         }
@@ -279,7 +303,7 @@ public class SimulateIAvIA {
                         try {
                             joueurActif.seReposer();
                             log.append("Repos effectue\n");
-                        } catch (Exception e) {
+                        } catch (IllegalReposException e) {
                             // Action invalide selon l'état courant: on passe.
                             log.append("Erreur repos: ").append(e.getMessage()).append('\n');
                         }
@@ -344,6 +368,7 @@ public class SimulateIAvIA {
         return result;
     }
 
+    // Méthode utilitaire pour afficher la grille dans la console (pour debug)
     private static String valeurOuDefaut(String[] args, int index, String valeurDefaut) {
         if (args.length > index && args[index] != null && !args[index].trim().isEmpty()) {
             return args[index].trim();
@@ -351,21 +376,24 @@ public class SimulateIAvIA {
         return valeurDefaut;
     }
 
+    // Méthode utilitaire pour parser un entier à partir des arguments, avec une valeur par défaut en cas d'absence ou de format invalide
     private static int intOuDefaut(String[] args, int index, int valeurDefaut) {
         if (args.length > index) {
             try {
                 return Integer.parseInt(args[index].trim());
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 return valeurDefaut;
             }
         }
         return valeurDefaut;
     }
 
+    // Méthode utilitaire pour afficher la grille dans la console (pour debug)
     private static String statPerso(Personnage p) {
         return p.getNom() + " PV=" + p.getHp() + " EN=" + p.getEnergie() + " PAR=" + p.getParade();
     }
 
+    // Méthode utilitaire pour afficher la grille dans la console (pour debug)
     public static void main(String[] args) {
 
         String iaJoueur1 = valeurOuDefaut(args, 0, IA1_DEFAULT);
@@ -374,6 +402,11 @@ public class SimulateIAvIA {
         int maxTours = Math.max(1, intOuDefaut(args, 3, MAX_TOURS_DEFAULT));
         String fichierResultats = valeurOuDefaut(args, 4, FICHIER_RESULTATS_DEFAULT);
         String fichierNuls = valeurOuDefaut(args, 5, FICHIER_NULS_DEFAULT);
+        int profondeurJ1 = Math.max(1, intOuDefaut(args, 6, PROFONDEUR_DEFAULT));
+        int profondeurJ2 = Math.max(1, intOuDefaut(args, 7, profondeurJ1));
+        // Clamp to maximum allowed depth (5)
+        profondeurJ1 = Math.min(profondeurJ1, 5);
+        profondeurJ2 = Math.min(profondeurJ2, 5);
 
         int victoiresJ1 = 0;
         int victoiresJ2 = 0;
@@ -386,9 +419,13 @@ public class SimulateIAvIA {
         int totalDecisionsJ1 = 0;
         int totalDecisionsJ2 = 0;
 
+        // Initialiser les profondeurs actives globales pour ce tournoi
+        PROFONDEUR_J1 = profondeurJ1;
+        PROFONDEUR_J2 = profondeurJ2;
+
         // Initialiser les fichiers de résultats immédiatement
         ecrireResultatsPartiels(new ArrayList<>(), 0, 0, 0,
-            iaJoueur1, iaJoueur2, nbCombats, maxTours, 0L,
+            iaJoueur1, iaJoueur2, nbCombats, maxTours, PROFONDEUR_J1, PROFONDEUR_J2, 0L,
             0L, 0, 0L, 0,
             new ArrayList<>(), fichierResultats, fichierNuls);
 
@@ -412,6 +449,7 @@ public class SimulateIAvIA {
                     }
                     detailsNuls.add(
                         "Combat " + i
+                            + " | profondeurJ1=" + profondeurJ1 + " profondeurJ2=" + profondeurJ2
                         + " | tours=" + r.tours
                         + " | J1(" + iaJoueur1 + "): " + statPerso(r.p1)
                         + " | J2(" + iaJoueur2 + "): " + statPerso(r.p2)
@@ -423,9 +461,13 @@ public class SimulateIAvIA {
             // Écrire les résultats partiels après chaque combat
             long dureeTournoiPartielMs = (System.nanoTime() - debutTournoiNs) / 1_000_000L;
             ecrireResultatsPartiels(tousLesCombats, victoiresJ1, victoiresJ2, nuls, 
-                iaJoueur1, iaJoueur2, nbCombats, maxTours, dureeTournoiPartielMs,
+                iaJoueur1, iaJoueur2, nbCombats, maxTours, PROFONDEUR_J1, PROFONDEUR_J2, dureeTournoiPartielMs,
                 totalDecisionJ1Ns, totalDecisionsJ1, totalDecisionJ2Ns, totalDecisionsJ2,
                 detailsNuls, fichierResultats, fichierNuls);
+            // Callback optionnel pour indiquer la progression
+            if (progressCallback != null) {
+                try { progressCallback.accept(i, nbCombats); } catch (RuntimeException ex) { /* ignore */ }
+            }
         }
         // Résultats partiels déjà écrits dans la boucle, pas besoin d'écrire à nouveau
         System.out.println("Tournoi termine.");

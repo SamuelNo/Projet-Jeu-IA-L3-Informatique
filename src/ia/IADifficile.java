@@ -4,21 +4,20 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * IA Difficile - Le "Stratège".
- * Utilise Minimax avec Élagage Alpha-Bêta à profondeur FIXE.
+ * IA Difficile
+ * Utilise Minimax avec Élagage Alpha-Bêta à profondeur 4.
  */
 public class IADifficile {
 
-    // ⚠️ LE RÉGLAGE CRUCIAL : La profondeur de recherche.
-    // À tester ! Si le jeu dépasse les 5 secondes, il faudra la baisser à 4 ou 5.
-    private static final int PROFONDEUR_MAX = 4;
+    private static int PROFONDEUR_MAX = 4;
+    public static void setProfondeur(int p) { PROFONDEUR_MAX = Math.max(1, Math.min(p, 5)); }
 
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);
     }
 
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
-        System.out.println("⚠️ ATTENTION : LE NOUVEAU CODE PROFONDEUR FIXE TOURNE ! ⚠️");
+        long t0 = System.nanoTime();
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
 
         if (coupsLegaux.isEmpty()) {
@@ -47,6 +46,8 @@ public class IADifficile {
             alpha = Math.max(alpha, meilleurScore);
         }
 
+        long t1 = System.nanoTime();
+        IAStats.addMoveTimeNs(t1 - t0);
         return meilleurCoup;
     }
 
@@ -57,6 +58,7 @@ public class IADifficile {
         
         // Condition d'arrêt : on a atteint la profondeur voulue ou la fin du jeu
         if (profondeur == 0 || etat.estTerminal()) {
+                IAStats.incNode();
             if (estMax) {
                 return etat.getScoreHeuristiqueDifficile();
             } else {

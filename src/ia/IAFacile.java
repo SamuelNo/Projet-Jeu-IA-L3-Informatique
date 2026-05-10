@@ -3,18 +3,23 @@ package ia;
 import java.util.List;
 
 /**
- * IA Facile - Le "Berserker".
+ * IA Facile 
  * Profondeur 1 : Elle fonce et frappe sans se soucier de la riposte.
  */
 public class IAFacile {
     
-    private static final int PROFONDEUR = 1; 
+    private static int PROFONDEUR = 1; 
+    public static void setProfondeur(int p) { PROFONDEUR = Math.max(1, Math.min(p, 5)); }
+    
+    // Instrumentation: compte les noeuds visités et le temps passé par coup
+    // Voir ia.IAStats
 
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);
     }
 
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
+        long t0 = System.nanoTime();
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
         
         if (coupsLegaux.isEmpty()) {
@@ -34,10 +39,13 @@ public class IAFacile {
                 meilleurCoup = c;
             }
         }
+        long t1 = System.nanoTime();
+        IAStats.addMoveTimeNs(t1 - t0);
         return meilleurCoup;
     }
 
     private static int minimax(Etat etat, int profondeur, boolean estMax) {
+        IAStats.incNode();
         if (profondeur == 0 || etat.estTerminal()) {
             if (estMax) {
                 // C'est le tour de l'IA, on évalue normalement.

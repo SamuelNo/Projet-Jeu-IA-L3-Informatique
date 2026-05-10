@@ -14,3 +14,16 @@
 bin/
 out/
 target/
+
+# Python
+venv_projet/
+__pycache__/
+*.pyc
+
+# Fichiers temporaires IDE compiler args (auto-générés)
+javac.*.args
+
+# Logs d'exécution
+execution_log.txt
+progress_tournoi.txt
+details_matchs_nuls.txt

@@ -23,7 +23,8 @@ public class Coup {
         this.action = action;
         this.typeAttaque = typeAttaque;
     }
-
+    
+    // Getters pour les propriétés du coup
     public Position getDestination() {
         return destination;
     }

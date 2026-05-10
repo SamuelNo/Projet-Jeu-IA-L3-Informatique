@@ -14,6 +14,8 @@ import ia.MoteurCoups;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/// Tests unitaires pour vérifier que le moteur de coups et l'état de la grille fonctionnent correctement.
+
 public class MoteurCoupsEtatTest {
 
     @Test

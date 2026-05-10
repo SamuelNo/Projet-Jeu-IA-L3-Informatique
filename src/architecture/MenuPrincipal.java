@@ -65,7 +65,7 @@ public class MenuPrincipal extends JFrame {
             javax.swing.SwingUtilities.invokeLater(() -> {
                 try {
                     new TournamentWindow().setVisible(true);
-                } catch (Exception ex) {
+                } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(this, "Erreur ouverture Tournoi: " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
                 }
@@ -98,29 +98,7 @@ public class MenuPrincipal extends JFrame {
         
         add(panneauPrincipal);
     }
-    
-    private JButton creerBouton(String texte) {
-        JButton bouton = new JButton(texte);
-        bouton.setBackground(COULEUR_BOUTON);
-        bouton.setForeground(COULEUR_TEXTE);
-        bouton.setFont(new Font("Arial", Font.PLAIN, 16));
-        bouton.setFocusPainted(false);
-        bouton.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
-        bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        // Effet de survol
-        bouton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(COULEUR_BOUTON_SURVOL);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(COULEUR_BOUTON);
-            }
-        });
-        
-        return bouton;
-    }
-    
+
     /**
      * crée un bouton classique et ésthétique
      */
@@ -188,6 +166,7 @@ public class MenuPrincipal extends JFrame {
         return bouton;
     }
 
+    //** Lance le mode de jeu sélectionné, en fonction de la difficulté choisie pour les IA si nécessaire. */
     private boolean estSelectionActive(JButton bouton) {
         return Boolean.TRUE.equals(bouton.getClientProperty("selectionActive"));
     }
@@ -207,40 +186,6 @@ public class MenuPrincipal extends JFrame {
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
             ));
         }
-    }
-    
-    /**
-     * crée un bouton stylé avec une couleur personnalisée
-     */
-    private JButton creerBoutonStile(String texte, Color couleur) {
-        JButton bouton = new JButton(texte);
-        bouton.setBackground(couleur);
-        bouton.setForeground(Color.WHITE);
-        bouton.setFocusPainted(false);
-        bouton.setFont(new Font("Arial", Font.PLAIN, 16));
-        bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bouton.setBorder(BorderFactory.createLineBorder(couleur.darker(), 2));
-        bouton.setPreferredSize(new Dimension(300, 50));
-        
-        // effets hover
-        bouton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(couleur.brighter());
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(couleur);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(couleur.brighter().brighter());
-                bouton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                bouton.setBackground(bouton.getBounds().contains(evt.getPoint()) ? couleur.brighter() : couleur);
-                bouton.setBorder(BorderFactory.createLineBorder(couleur.darker(), 2));
-            }
-        });
-        
-        return bouton;
     }
     
     // Sélection de la difficulté de l'IA
@@ -528,7 +473,7 @@ public class MenuPrincipal extends JFrame {
         SwingUtilities.invokeLater(() -> {
             try {
                 new Jeu(mode);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(null, 
                     "Erreur lors du lancement du jeu : " + e.getMessage(), 
                     "Erreur", 

@@ -4,6 +4,8 @@ import attaques.*;
 import entite.*;
 import exception.IllegalActionException;
 import exception.IllegalAttackException;
+import exception.IllegalEnergieException;
+import exception.IllegalMoveException;
 import exception.IllegalParadeException;
 import exception.IllegalReposException;
 import ia.Coup;
@@ -12,6 +14,10 @@ import ia.IAFacile;
 import ia.IAMoyenne;
 import java.awt.*;
 import javax.swing.*;
+
+/**
+ * Classe principale du jeu, gérant la logique de combat, les interactions avec l'interface graphique et les tours des joueurs (humains et IA).
+ */
 
 public class Jeu {
     private Arene arene;
@@ -231,39 +237,14 @@ public class Jeu {
     public void clicSurCase(int ligne, int colonne) {
         if (!partieActive) return;
         if (etat.equals("MOUVEMENT")) {
-            int caseCible = arene.getGrille()[ligne][colonne];
-            
-            if (caseCible == 1 || caseCible == 2) {
-                JOptionPane.showMessageDialog(null, "Case déjà occupée par un joueur !");
-                return;
-            }
-            if (caseCible == -1) {
-                JOptionPane.showMessageDialog(null, "Case bloquée par un obstacle !");
-                return;
-            }
-
-            int distMouv = Math.abs(ligne - joueurActif.getPosition().getLigne()) + Math.abs(colonne - joueurActif.getPosition().getColonne());
-            if (distMouv == 0) return;
-            if (distMouv > pmRestants) {
-                JOptionPane.showMessageDialog(null, "Déplacement trop grand (PM restants : " + pmRestants + ")");
-                return;
-            }
-
-            // vérifier que le trajet est valide (pas d'obstacles)
-            Position depart = joueurActif.getPosition();
-            int ligneDepart = depart.getLigne();
-            int colonneDepart = depart.getColonne();
-            
-            // vérification simple : la case de destination ne doit pas être un obstacle
-            int caseDestination = arene.getGrille()[ligne][colonne];
-            if (caseDestination == -1) {
-                JOptionPane.showMessageDialog(null, "Déplacement impossible : case destination bloquée !");
-                return;
-            }
-            
-            // vérification du chemin avec pathfinding simple (BFS)
-            if (!estCheminAccessible(ligneDepart, colonneDepart, ligne, colonne, pmRestants)) {
-                JOptionPane.showMessageDialog(null, "Déplacement impossible : aucun chemin valide !");
+            int distMouv;
+            try {
+                distMouv = validerDeplacement(ligne, colonne);
+                if (distMouv == 0) {
+                    return;
+                }
+            } catch (IllegalMoveException e) {
+                JOptionPane.showMessageDialog(null, "Déplacement impossible : " + e.getMessage());
                 return;
             }
             
@@ -304,6 +285,32 @@ public class Jeu {
         }
     }
 
+    private int validerDeplacement(int ligne, int colonne) throws IllegalMoveException {
+        int caseCible = arene.getGrille()[ligne][colonne];
+        if (caseCible == 1 || caseCible == 2) {
+            throw new IllegalMoveException("case déjà occupée");
+        }
+        if (caseCible == -1) {
+            throw new IllegalMoveException("case bloquée par un obstacle");
+        }
+
+        int distMouv = Math.abs(ligne - joueurActif.getPosition().getLigne())
+                + Math.abs(colonne - joueurActif.getPosition().getColonne());
+        if (distMouv == 0) {
+            return 0;
+        }
+        if (distMouv > pmRestants) {
+            throw new IllegalMoveException("déplacement trop grand (PM restants : " + pmRestants + ")");
+        }
+
+        Position depart = joueurActif.getPosition();
+        if (!estCheminAccessible(depart.getLigne(), depart.getColonne(), ligne, colonne, pmRestants)) {
+            throw new IllegalMoveException("aucun chemin valide jusqu'à la destination");
+        }
+
+        return distMouv;
+    }
+
     public void clicAction(String action) throws IllegalAttackException {
         if (!partieActive) return;
         boolean estAttaque = "AL".equals(action) || "ALD".equals(action) || "AD".equals(action);
@@ -333,7 +340,7 @@ public class Jeu {
                         throw new IllegalAttackException("Type d'attaque inconnu.");
                     }
                     if (joueurActif.getEnergie() < coutEnergie) {
-                        throw new IllegalAttackException(
+                        throw new IllegalEnergieException(
                                 "Énergie insuffisante pour " + action + " (coût : " + coutEnergie + ")."
                         );
                     }
@@ -403,7 +410,7 @@ public class Jeu {
                 );
                 FenetreArene.rafraichir();
             }
-        } catch (Exception e) {
+        } catch (IllegalAttackException | IllegalEnergieException | IllegalParadeException e) {
             JOptionPane.showMessageDialog(null, "Erreur attaque : " + e.getMessage());
             etat = "MOUVEMENT";
             FenetreArene.MAJTexte("Choisissez une action via les boutons.");
@@ -573,8 +580,10 @@ public class Jeu {
 
                 break;
             }
-        } catch (Exception e) {
+        } catch (IllegalActionException e) {
             System.err.println("Erreur pendant le tour de l'IA : " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } finally {
             if (partieActive) {
                 finDeTour();

@@ -10,10 +10,12 @@ import java.util.List;
  */
 public class MoteurCoups {
 
+    // Génère tous les coups légaux pour le joueur actif dans l'état donné.
     public static List<Coup> genererCoupsLegaux(Etat s) {
         return genererCoupsLegaux(s, false);
     }
 
+    // Génère tous les coups légaux pour le joueur actif dans l'état donné, en tenant compte de si une attaque a déjà été effectuée ou non.
     public static List<Coup> genererCoupsLegaux(Etat s, boolean attaqueDejaEffectuee) {
         List<Coup> coups = new ArrayList<>();
         Etat.JoueurEtat actif = s.getJoueurActif();
@@ -55,7 +57,7 @@ public class MoteurCoups {
         return coups;
     }
         
-
+    // Simule l'application d'un coup sur un état donné et retourne le nouvel état résultant.
     public static Etat simulerCoup(Etat s, Coup c) {
         Etat suivant = new Etat(s);
         Etat.JoueurEtat actif = suivant.getJoueurActif();
@@ -88,6 +90,7 @@ public class MoteurCoups {
         return suivant;
     }
 
+    // Méthodes auxiliaires pour la génération et la simulation de coups
     private static List<Position> genererDestinationsLegales(Etat s, Etat.JoueurEtat actif, Etat.JoueurEtat adversaire) {
         List<Position> positions = new ArrayList<>();
         int[][] grille = s.getGrille();
@@ -112,6 +115,7 @@ public class MoteurCoups {
         return positions;
     }
 
+    // Applique le déplacement du joueur actif vers la destination, en ramassant les bonus éventuels sur la case d'arrivée.
     private static void appliquerDeplacementEtBonus(Etat etat, Etat.JoueurEtat actif, Etat.JoueurEtat adversaire, Position destination) {
         int[][] grille = etat.getGrille();
         Position ancienne = actif.getPosition();
@@ -141,6 +145,7 @@ public class MoteurCoups {
         grille[adversaire.getPosition().getLigne()][adversaire.getPosition().getColonne()] = adversaire.getId();
     }
 
+    // Applique une attaque du joueur actif sur l'adversaire, en tenant compte de la portée, de l'énergie et de la parade éventuelle.
     private static void appliquerAttaque(Etat.JoueurEtat actif, Etat.JoueurEtat adversaire, String typeAttaque) {
         Etat.AttaqueInfo attaque = null;
         for (Etat.AttaqueInfo a : actif.getAttaques()) {
@@ -167,6 +172,7 @@ public class MoteurCoups {
         actif.setEnergie(actif.getEnergie() - attaque.getDegat());
     }
 
+    // Calcul de la distance de Manhattan entre deux positions, utilisée pour les déplacements et les attaques.
     private static int distanceManhattan(Position p1, Position p2) {
         return Math.abs(p1.getLigne() - p2.getLigne()) + Math.abs(p1.getColonne() - p2.getColonne());
     }

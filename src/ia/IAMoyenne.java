@@ -3,18 +3,20 @@ package ia;
 import java.util.List;
 
 /**
- * IA Moyenne - Le "Tacticien".
- * Utilise l'algorithme NegaMax avec Élagage Alpha-Bêta (Profondeur 4).
+ * IA Moyenn
+ * Utilise l'algorithme minimax avec Élagage Alpha-Bêta (Profondeur 4).
  */
 public class IAMoyenne {
     
-    private static final int PROFONDEUR = 2;
+    private static int PROFONDEUR = 2;
+    public static void setProfondeur(int p) { PROFONDEUR = Math.max(1, Math.min(p, 5)); }
 
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);
     }
 
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
+        long t0 = System.nanoTime();
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
         
         if (coupsLegaux.isEmpty()) {
@@ -31,7 +33,7 @@ public class IAMoyenne {
             Etat simulation = MoteurCoups.simulerCoup(etat, c);
             
             // Le secret du NegaMax : on inverse les bornes et on prend le score négatif de l'adversaire
-            int score = -negaMaxAlphaBeta(simulation, PROFONDEUR - 1, -beta, -alpha);
+            int score = -minimaxAlphaBeta(simulation, PROFONDEUR - 1, -beta, -alpha);
             
             // On maintient la petite pénalité si elle termine bêtement sur sa propre case
             if (c.getAction() == Coup.TypeAction.TERMINER && 
@@ -46,10 +48,14 @@ public class IAMoyenne {
             }
             alpha = Math.max(alpha, meilleurScore);
         }
+        long t1 = System.nanoTime();
+        IAStats.addMoveTimeNs(t1 - t0);
         return meilleurCoup;
     }
 
-    private static int negaMaxAlphaBeta(Etat etat, int profondeur, int alpha, int beta) {
+    private static int minimaxAlphaBeta(Etat etat, int profondeur, int alpha, int beta) {
+        // instrumentation : un noeud visité
+        IAStats.incNode();
         if (profondeur == 0 || etat.estTerminal()) {
             // Chaque noeud évalue de SON propre point de vue
             return etat.getScoreHeuristiqueMoyenne();
@@ -61,14 +67,14 @@ public class IAMoyenne {
             // Si aucune action n'est possible, on passe le tour virtuellement
             Etat sim = new Etat(etat);
             sim.changerJoueurActif();
-            return -negaMaxAlphaBeta(sim, profondeur - 1, -beta, -alpha);
+            return -minimaxAlphaBeta(sim, profondeur - 1, -beta, -alpha);
         }
         
         int maxEval = Integer.MIN_VALUE + 1;
         
         for (Coup c : coups) {
             Etat simulation = MoteurCoups.simulerCoup(etat, c);
-            int eval = -negaMaxAlphaBeta(simulation, profondeur - 1, -beta, -alpha);
+            int eval = -minimaxAlphaBeta(simulation, profondeur - 1, -beta, -alpha);
             
             maxEval = Math.max(maxEval, eval);
             alpha = Math.max(alpha, eval);

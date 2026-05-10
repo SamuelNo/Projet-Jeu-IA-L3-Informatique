@@ -10,6 +10,8 @@ import javax.swing.*;
 import entite.Personnage;
 import exception.*;
 
+//* Fenêtre principale affichant l'arène de combat, les personnages, les obstacles, les bonus et les éléments d'interface utilisateur. */
+
 public class FenetreArene extends JPanel {
     private Arene arene;
     private Jeu jeu;
@@ -45,10 +47,11 @@ public class FenetreArene extends JPanel {
     private int hoverLigne = -1;
     private int hoverCol = -1;
 
+    //** Constructeur */
     public FenetreArene(Jeu jeu) {
         this.jeu = jeu;
         setPreferredSize(new Dimension(10 * TAILLE_CASE + MARGE * 2, 10 * TAILLE_CASE + MARGE * 2));
-        setBackground(COULEUR_FOND); // fond sombre
+        setBackground(COULEUR_FOND); 
         initialiserAssetsPixel();
 
         // ecouteur de clics
@@ -64,8 +67,8 @@ public class FenetreArene extends JPanel {
             }
         });
 
-        // ecouteur de mouvements (pour le hover et les infobulles)
         this.addMouseMotionListener(new MouseMotionAdapter() {
+            // pour l'effet de survol (hover)
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (instance.arene == null) return;
@@ -88,7 +91,9 @@ public class FenetreArene extends JPanel {
             }
         });
     }
-
+     /**
+     * Charge les images pixel art pour les tuiles et personnages.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -173,7 +178,9 @@ public class FenetreArene extends JPanel {
             }
         }
     }
-
+        /**
+        * Dessine la tuile correspondante à la valeur de la grille, ainsi que les personnages s'il y en a.
+        */
     public static void lancerFenetre(Jeu jeu) {
         JFrame fenetre = new JFrame("GLADIUS - Arène Tactique");
         fenetrePrincipale = fenetre;
@@ -364,15 +371,17 @@ public class FenetreArene extends JPanel {
         fenetre.setLocationRelativeTo(null); 
         fenetre.setVisible(true);
     }
-
+    //** Met à jour l'arène affichée (après chaque coup simulé) */
     public static void setArene(Arene a) {
         if (instance != null) instance.arene = a;
     }
 
+    //** Met à jour le texte de la barre d'infos en haut de l'écran */
     public static void MAJTexte(String texte) {
         if (infoLabel != null) infoLabel.setText(texte);
     }
-    
+
+    //** Met à jour les panneaux de stats des joueurs avec leurs informations actuelles, en indiquant clairement le joueur actif et les éventuelles IA. */
     public static void MAJStats(Personnage j1, Personnage j2, Personnage actif) {
         if (statsJ1 != null && j1 != null) {
             String tourIndic = (actif == j1) ? "<br><br><font color='#4169e1'><b>▶ À TON TOUR</b></font>" : "";
@@ -422,11 +431,12 @@ public class FenetreArene extends JPanel {
                     + tourIndic + "</div></html>");
         }
     }
-
+    //** Rafraîchit l'affichage de l'arène (après chaque action ou changement d'état) */
     public static void rafraichir() {
         if (instance != null) instance.repaint();
     }
 
+    //** Ferme la fenêtre de jeu et réinitialise les éléments statiques pour permettre une nouvelle partie propre. */
     public static void fermerFenetreDeJeu() {
         if (fenetrePrincipale != null) {
             fenetrePrincipale.dispose();
@@ -438,12 +448,14 @@ public class FenetreArene extends JPanel {
         statsJ2 = null;
     }
 
+    //** Méthodes utilitaires pour vérifier les conditions de jeu et dessiner les éléments graphiques */
     private boolean estCaseAdversaire(int ligne, int col) {
         Personnage adv = jeu.getAdversaire();
         if (adv == null || adv.getPosition() == null) return false;
         return adv.getPosition().getLigne() == ligne && adv.getPosition().getColonne() == col;
     }
 
+    //** Vérifie si une case est accessible au joueur actif */
     private boolean caseAccessible(int ligne, int col) {
         if (jeu.getJoueurActif() == null || jeu.getAdversaire() == null) return false;
         int[][] grille = arene.getGrille();
@@ -455,6 +467,7 @@ public class FenetreArene extends JPanel {
         return dist > 0 && dist <= jeu.getPmRestants();
     }
 
+    //** Vérifie si une case est dans la portée de l'attaque sélectionnée */
     private boolean caseDansPorteeAttaque(int ligne, int col) {
         if (jeu.getJoueurActif() == null) return false;
         String attaque = jeu.getAttaqueEnCours();
@@ -466,6 +479,7 @@ public class FenetreArene extends JPanel {
         return dist <= portee;
     }
 
+    //** Génère une barre de vie ou d'énergie stylisée pour l'affichage dans les stats des joueurs */
     private static String barre(double valeur, double max, String couleur) {
         int largeur = 10;
         int remplie = (int) Math.round(Math.max(0, Math.min(max, valeur)) / max * largeur);
@@ -478,6 +492,8 @@ public class FenetreArene extends JPanel {
         return sb.toString();
     }
 
+
+    //** Dessine la tuile de base (sol, obstacle, bonus) et les personnages s'il y en a sur la case */
     private void dessinerTuile(Graphics g, int valeurCase, int ligne, int col, int x, int y) {
         BufferedImage tuile;
         if (valeurCase == -1) tuile = tuileObstacle;
@@ -496,6 +512,7 @@ public class FenetreArene extends JPanel {
         }
     }
 
+    //** Retourne le sprite correspondant au personnage, en fonction de sa classe et de son équipe */
     private static void initialiserAssetsPixel() {
         if (tuileSolA != null) return;
         tuileSolA = creerTuile(new Color(92, 78, 66), new Color(108, 92, 76));
@@ -513,6 +530,8 @@ public class FenetreArene extends JPanel {
         soigneurRouge = creerSpriteSoigneur(new Color(220, 74, 74), new Color(255, 214, 214));
     }
 
+
+    //** Crée une tuile de sol avec un motif de damier en utilisant les deux couleurs fournies */
     private static BufferedImage creerTuile(Color c1, Color c2) {
         int size = 16;
         BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
@@ -525,6 +544,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Crée une tuile de mur avec un motif de brique en utilisant les deux couleurs fournies */
     private static BufferedImage creerTuileMur() {
         int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -559,6 +579,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Crée une tuile de bonus de parade avec un motif de bouclier stylisé */
     private static BufferedImage creerTuileParade() {
         int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -587,6 +608,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Crée une tuile de bonus d'énergie avec un motif d'éclair stylisé */
     private static BufferedImage creerTuileEnergie() {
         int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -613,6 +635,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Crée un sprite de personnage de classe chevalier avec les couleurs principales et d'accentuation fournies */
     private static BufferedImage creerSpriteChevalier(Color principal, Color accent) {
         int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -641,6 +664,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Crée un sprite de personnage de classe archère avec les couleurs principales et d'accentuation fournies */
     private static BufferedImage creerSpriteArchere(Color principal, Color accent) {
         int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -669,6 +693,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Crée un sprite de personnage de classe soigneur avec les couleurs principales et d'accentuation fournies */
     private static BufferedImage creerSpriteSoigneur(Color principal, Color accent) {
         int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -695,6 +720,7 @@ public class FenetreArene extends JPanel {
         return img;
     }
 
+    //** Tente de charger une image depuis le dossier "assets" et retourne une image de fallback si le chargement échoue */
     private static BufferedImage chargerImageLocale(String nomFichier, BufferedImage fallback) {
         File fichier = new File("assets", nomFichier);
         if (!fichier.exists()) return fallback;
@@ -706,6 +732,7 @@ public class FenetreArene extends JPanel {
         }
     }
 
+    //** Retourne le sprite correspondant au personnage, en fonction de sa classe et de son équipe. Si le personnage est null ou n'a pas de nom, retourne un sprite par défaut en fonction de l'équipe. */
     private static BufferedImage spritePour(Personnage p, boolean equipeBleue) {
         if (p == null || p.getNom() == null) return equipeBleue ? chevalierBleu : chevalierRouge;
         String nom = p.getNom().toLowerCase();
