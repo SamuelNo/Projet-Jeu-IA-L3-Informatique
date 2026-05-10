@@ -1,12 +1,13 @@
 package entite;
 
 /**
- * Classe Soigneur: bonus converti en points de vie supplémentaires.
+ * Classe Soigneur — spécialisation de `Personnage`.
+ * Convertit le supplément d'arme en points de vie supplémentaires.
  */
 public class Soigneur extends Personnage{
     
     /**
-     * Crée un soigneur puis applique son bonus spécifique.
+     * Construit un `Soigneur` et applique son bonus de PV.
      */
     public Soigneur(){
         super("Soigneur", new Arme("Batôn magique",30));
@@ -14,7 +15,8 @@ public class Soigneur extends Personnage{
     }
 
     /**
-     * Le soigneur utilise son supplément d'arme pour augmenter ses PV de départ.
+     * Convertit le supplément d'arme en PV initiaux.
+     * Méthode privée appelée lors de l'initialisation.
      */
     private void ajoutSupplement(){
        // Ici le bonus n'affecte pas les dégâts: il est converti en survivabilité.

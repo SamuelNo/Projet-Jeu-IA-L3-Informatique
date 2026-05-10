@@ -4,12 +4,13 @@ import attaques.Attaques;
 import attaques.Attaques_Distance;
 
 /**
- * Classe Archère: bonus appliqué sur les attaques à distance.
+ * Classe Archère — spécialisation de `Personnage`.
+ * Donne un bonus de dégâts aux attaques à distance via l'arme "Arc".
  */
 public class Archere extends Personnage{
     
     /**
-     * Crée une archère avec un arc et applique les bonus d'arme.
+     * Construit une `Archere` avec l'arme appropriée et applique son bonus.
      */
     public Archere(){
         super("Archère", new Arme("Arc",30));
@@ -18,6 +19,7 @@ public class Archere extends Personnage{
 
     /**
      * Applique le supplément d'arme uniquement sur l'attaque à distance.
+     * Méthode interne utilisée lors de l'initialisation.
      */
     private void ajoutSupplement(){
         for(Attaques a : super.getAttaques()){

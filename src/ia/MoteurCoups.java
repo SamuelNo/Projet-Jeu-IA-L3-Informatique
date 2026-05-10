@@ -9,13 +9,22 @@ import java.util.List;
  * Générateur/simulateur de coups pour les futures IA Minimax/Alpha-Bêta.
  */
 public class MoteurCoups {
-
-    // Génère tous les coups légaux pour le joueur actif dans l'état donné.
+    /**
+     * Génère tous les coups légaux pour le joueur actif dans l'état donné.
+     * Version simple qui délègue à la surcharge plus complète.
+     * @param s état courant
+     * @return liste des coups légaux
+     */
     public static List<Coup> genererCoupsLegaux(Etat s) {
         return genererCoupsLegaux(s, false);
     }
-
-    // Génère tous les coups légaux pour le joueur actif dans l'état donné, en tenant compte de si une attaque a déjà été effectuée ou non.
+    /**
+     * Génère tous les coups légaux pour le joueur actif dans l'état donné.
+     * Retourne déplacements possibles + actions (attaque, parade, repos, terminer).
+     * @param s état courant utilisé pour la simulation
+     * @param attaqueDejaEffectuee indique si l'attaque du tour a déjà été utilisée
+     * @return liste de coups légaux
+     */
     public static List<Coup> genererCoupsLegaux(Etat s, boolean attaqueDejaEffectuee) {
         List<Coup> coups = new ArrayList<>();
         Etat.JoueurEtat actif = s.getJoueurActif();
@@ -58,6 +67,13 @@ public class MoteurCoups {
     }
         
     // Simule l'application d'un coup sur un état donné et retourne le nouvel état résultant.
+    /**
+     * Simule l'application d'un coup sur une copie de l'état fourni.
+     * Utilisé par les IA pour explorer l'arbre de recherche sans modifier l'état réel.
+     * @param s état source
+     * @param c coup à appliquer
+     * @return nouvel état résultant de l'application du coup
+     */
     public static Etat simulerCoup(Etat s, Coup c) {
         Etat suivant = new Etat(s);
         Etat.JoueurEtat actif = suivant.getJoueurActif();

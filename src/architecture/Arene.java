@@ -146,6 +146,10 @@ public class Arene {
     }
 
     /**
+     * Détermine le gagnant en cas de mort subite selon des critères définis (PV relatifs, énergie, parades).
+     * @return 1 si joueur1 gagne, 2 si joueur2 gagne, 0 si égalité parfaite
+     */
+    /**
      * Applique la règle de Mort Subite pour départager deux joueurs vivants.
      * Retourne 1 si joueur1 l'emporte, 2 si joueur2 l'emporte, 0 si égalité parfaite.
      * Critères (dans l'ordre): ratio PV actuels / PV max, énergie restante, nombre de parades.

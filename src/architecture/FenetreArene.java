@@ -10,8 +10,12 @@ import javax.swing.*;
 import entite.Personnage;
 import exception.*;
 
-//* Fenêtre principale affichant l'arène de combat, les personnages, les obstacles, les bonus et les éléments d'interface utilisateur. */
-
+/**
+ * Fenêtre principale affichant l'arène de combat, les personnages, les obstacles,
+ * les bonus et les éléments d'interface utilisateur.
+ * Fournit des méthodes publiques pour lancer la fenêtre, mettre à jour l'affichage
+ * et rafraîchir l'UI après chaque action de jeu.
+ */
 public class FenetreArene extends JPanel {
     private Arene arene;
     private Jeu jeu;
@@ -179,8 +183,10 @@ public class FenetreArene extends JPanel {
         }
     }
         /**
-        * Dessine la tuile correspondante à la valeur de la grille, ainsi que les personnages s'il y en a.
-        */
+         * Ouvre la fenêtre principale du jeu et initialise les panneaux UI.
+         * Méthode d'API publique pour lancer l'interface graphique.
+         * @param jeu instance de `Jeu` gérant la logique
+         */
     public static void lancerFenetre(Jeu jeu) {
         JFrame fenetre = new JFrame("GLADIUS - Arène Tactique");
         fenetrePrincipale = fenetre;

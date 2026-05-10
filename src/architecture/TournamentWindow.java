@@ -36,6 +36,10 @@ public class TournamentWindow extends JFrame {
     private String fichierNulsActuel = "data/txt/details_matchs_nuls.txt";
 
     public TournamentWindow() {
+        /**
+         * Construit la fenêtre de configuration du tournoi IA vs IA.
+         * Permet de choisir les IA, profondeurs et lancer/arrêter les tournois.
+         */
         setTitle("Tournoi IA vs IA");
         setSize(900, 600);
         setLocationRelativeTo(null);

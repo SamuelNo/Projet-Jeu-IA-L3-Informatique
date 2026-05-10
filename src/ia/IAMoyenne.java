@@ -16,6 +16,12 @@ public class IAMoyenne {
     }
 
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
+        /**
+         * Choisit un coup avec minimax + alpha-beta (IA moyenne).
+         * @param etat état courant
+         * @param attaqueDejaEffectuee indique si l'attaque a déjà été utilisée
+         * @return coup choisi
+         */
         long t0 = System.nanoTime();
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
         

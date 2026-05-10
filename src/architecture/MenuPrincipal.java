@@ -18,6 +18,10 @@ public class MenuPrincipal extends JFrame {
     private static final Color COULEUR_BORDURE_ACTIVE = new Color(255, 200, 0);
     
     public MenuPrincipal() {
+        /**
+         * Construit le menu principal et ses options (modes de jeu, tournois, quitter).
+         * Ce constructeur initialise l'UI principale et les handlers des boutons.
+         */
         setTitle("Gladius");
         setSize(700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -37,6 +37,11 @@ public class Etat {
     // HEURISTIQUE DE L'IA FACILE
 
     
+    /**
+     * Heuristique générale utilisée par l'IA "facile".
+     * Fournit un score relatif de la position du point de vue du joueur actif.
+     * @return score heuristique (plus élevé = meilleure position)
+     */
     public int getScoreHeuristique() {
         // 1. ÉTATS TERMINAUX (Poids de Victoire Absolu)
         if (adversaire.getHp() <= 0) return 1000000; 
@@ -90,11 +95,18 @@ public class Etat {
     // MÉTHODES DE GESTION DE L'ÉTAT
 
     // Vérifie si l'état est terminal (victoire de l'un ou l'autre joueur).
+    /**
+     * Indique si l'état est terminal (une unité est morte).
+     * @return true si l'un des joueurs a 0 PV ou moins
+     */
     public boolean estTerminal() {
         return joueurActif.getHp() <= 0 || adversaire.getHp() <= 0;
     }
 
-    // Change le joueur actif (utilisé après chaque coup dans la simulation).
+    /**
+     * Change le joueur actif dans cet état (utilisé par les simulateurs et le minimax).
+     * Remet également enParade à false pour le nouveau joueur actif.
+     */
     public void changerJoueurActif() {
         JoueurEtat temp = joueurActif;
         joueurActif = adversaire;

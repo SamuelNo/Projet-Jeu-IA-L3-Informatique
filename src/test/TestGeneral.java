@@ -2,7 +2,10 @@ package test;
 
 import architecture.MenuPrincipal;
 
-// Classe de test général pour lancer le menu principal et vérifier que tout fonctionne ensemble. Permet de faire un test d'intégration rapide de l'ensemble
+/**
+ * Petit programme utilitaire pour lancer rapidement l'interface `MenuPrincipal`.
+ * Utile pour tests d'intégration manuels et vérification visuelle.
+ */
 public class TestGeneral {
     public static void main(String[] args) {
         // Lancement du menu principal

@@ -17,6 +17,13 @@ public class IADifficile {
     }
 
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
+        /**
+         * Choisit un coup en utilisant tri des coups + minimax alpha-beta (IA difficile).
+         * Optimisé pour l'élagage et la priorité des attaques.
+         * @param etat état courant
+         * @param attaqueDejaEffectuee indique si l'attaque du tour a déjà été utilisée
+         * @return coup choisi
+         */
         long t0 = System.nanoTime();
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);
 

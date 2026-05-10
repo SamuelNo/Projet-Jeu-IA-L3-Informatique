@@ -18,8 +18,12 @@ import exception.IllegalEnergieException;
 import exception.IllegalParadeException;
 import exception.IllegalReposException;
 
-/// Classe de simulation pour faire s'affronter deux IA sur un nombre défini de combats, collecter les résultats et générer des rapports. Utilisée pour valider les performances des IA et pour alimenter les analyses dans GenerateurRapport.
-
+/**
+ * SimulateIAvIA — outil de simulation de matchs IA vs IA.
+ * Lance une série de combats entre deux IA (configurables) et collecte
+ * les résultats, durées et statistiques pour générer des rapports.
+ * Utilisé par l'UI `TournamentWindow` et par les scripts d'analyse.
+ */
 public class SimulateIAvIA {
     private static final Random RNG = new Random();
     private static final String IA1_DEFAULT = "IAMOYENNE";

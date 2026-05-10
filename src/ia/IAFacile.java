@@ -14,10 +14,19 @@ public class IAFacile {
     // Instrumentation: compte les noeuds visités et le temps passé par coup
     // Voir ia.IAStats
 
+    /**
+     * Choisit un coup pour l'IA facile en analysant superficiellement les coups légaux.
+     * @param etat état courant
+     * @return coup choisi
+     */
     public static Coup choisirCoup(Etat etat) {
         return choisirCoup(etat, false);
     }
 
+    /**
+     * Version avec indication si l'attaque du tour a déjà été utilisée.
+     * Instrumentée pour collecter le temps de décision.
+     */
     public static Coup choisirCoup(Etat etat, boolean attaqueDejaEffectuee) {
         long t0 = System.nanoTime();
         List<Coup> coupsLegaux = MoteurCoups.genererCoupsLegaux(etat, attaqueDejaEffectuee);

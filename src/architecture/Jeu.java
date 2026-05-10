@@ -41,6 +41,11 @@ public class Jeu {
         this("PVP"); // Mode par défaut pour compatibilité
     }
     
+    /**
+     * Crée et démarre une partie en fonction du mode fourni.
+     * Modes supportés : PVP, PVIA_FACILE, PVIA_MOYEN, PVIA_DIFFICILE, IAVIA_* (pour config IA vs IA).
+     * @param mode chaîne décrivant le mode de jeu
+     */
     public Jeu(String mode) {
         this.modeJeu = mode;
         
@@ -599,27 +604,73 @@ public class Jeu {
         FenetreArene.fermerFenetreDeJeu();
         SwingUtilities.invokeLater(() -> new MenuPrincipal().setVisible(true));
     }
-
+    /**
+     * Démarre le menu principal (implémentation légère pour compatibilité externe).
+     */
     public void start() {}
+
+    /**
+     * Ferme proprement la logique du jeu (placeholder pour intégration).
+     */
     public void fermer() {}
+
+    /**
+     * Retourne l'instance d'`Arene` actuellement utilisée par la partie.
+     * @return arène courante
+     */
     public Arene getArene() { return arene; }
+
+    /**
+     * Retourne le `Personnage` actuellement actif (qui a la main).
+     * @return joueur actif
+     */
     public Personnage getJoueurActif() { return joueurActif; }
+
+    /**
+     * Retourne l'adversaire du joueur actif.
+     * @return adversaire
+     */
     public Personnage getAdversaire() { return adversaire; }
+
+    /**
+     * Retourne l'état textuel courant du jeu (ex: "MOUVEMENT", "CIBLE").
+     * @return état courant
+     */
     public String getEtat() { return etat; }
+
+    /**
+     * Retourne le type d'attaque actuellement sélectionné si applicable.
+     * @return code d'attaque (AL/ALD/AD) ou vide
+     */
     public String getAttaqueEnCours() { return attaqueEnCours; }
+
+    /**
+     * Retourne le nombre de PM restants pour le joueur actif.
+     * @return PM restants
+     */
     public int getPmRestants() { return pmRestants; }
+
+    /**
+     * Retourne une description du mode de jeu actif (PVP, PVIA_*, IAVIA).
+     * @return mode de jeu
+     */
     public String getModeJeu() {
         return modeJeu;
     }
     
+    /**
+     * Difficulté configurée pour l'IA 1 (si applicable).
+     * @return difficulté J1
+     */
     public String getDifficulteIA1() {
         return difficulteIA1;
     }
-    
-    public String getDifficulteIA2() {
-        return difficulteIA2;
-    }
-    
+
+    /**
+     * Exporte l'état courant du jeu vers la structure attendue par les IA.
+     * Utilisé par le moteur IA pour prendre des décisions.
+     * @return objet `Etat` représentant la position, le joueur actif et l'adversaire
+     */
     public int getNumTour() {
         return numTour;
     }
@@ -706,5 +757,13 @@ public class Jeu {
                 Etat.JoueurEtat.fromPersonnage(joueurActif),
                 Etat.JoueurEtat.fromPersonnage(adversaire)
         );
+    }
+
+    /**
+     * Retourne la difficulté configurée pour l'IA 2 (si applicable).
+     * @return difficulté J2
+     */
+    public String getDifficulteIA2() {
+        return difficulteIA2;
     }
 }

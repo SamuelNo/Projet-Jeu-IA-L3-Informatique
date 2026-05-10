@@ -3,12 +3,13 @@ package entite;
 import attaques.*;
 
 /**
- * Classe Chevalier: bonus appliqué sur les attaques lourdes.
+ * Classe Chevalier — spécialisation de `Personnage`.
+ * Le `Chevalier` reçoit un bonus sur ses attaques lourdes via l'arme "Épée".
  */
 public class Chevalier extends Personnage{
     
     /**
-     * Crée un chevalier avec une épée et applique les bonus d'arme.
+     * Construit un `Chevalier` et applique son bonus d'arme.
      */
     public Chevalier(){
         super("Chevalier", new Arme("Épée",20));
@@ -17,6 +18,7 @@ public class Chevalier extends Personnage{
 
     /**
      * Applique le supplément d'arme uniquement sur l'attaque lourde.
+     * Méthode privée invoquée à l'initialisation.
      */
     private void ajoutSupplement(){
         for(Attaques a : super.getAttaques()){
